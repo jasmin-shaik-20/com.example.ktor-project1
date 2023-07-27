@@ -31,6 +31,7 @@ class StudentInterfaceImpl : StudentInterface {
 class CourseInterfaceImpl : CourseInterface{
     override suspend fun insertCourse(id: Int, student_id: Int, name: String): course? = dbQuery{
       val insert=courses.insert {
+          it[courses.id]=id
           it[courses.student_id]=student_id
           it[courses.name]=name
       }

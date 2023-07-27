@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.Table
 
 data class student(val id:Int,val name:String)
 
-data class course(val id:Int,val student_id:Int,val name:String)
+data class course(val id:Int=1,val student_id:Int,val name:String)
 
 
 object students:Table("students"){
