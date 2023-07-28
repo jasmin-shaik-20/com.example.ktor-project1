@@ -3,6 +3,7 @@ package com.example.plugins
 import com.example.dao.*
 import com.example.interfaces.CourseInterfaceImpl
 import com.example.interfaces.ProductInterfaceImpl
+import com.example.interfaces.StudentCourseInterfaceImpl
 import com.example.interfaces.StudentInterfaceImpl
 import io.ktor.http.*
 import io.ktor.server.routing.*
@@ -249,6 +250,25 @@ fun Application.configureRouting() {
                 val getid=courseInterfaceImpl.getCourseById(id.toInt())
                 if(getid!=null){
                     call.respond(getid)
+                }
+            }
+
+        }
+        route("/studentcourse"){
+            val studentCourseInterfaceImpl=StudentCourseInterfaceImpl()
+            get("/student/{id?}"){
+                val id=call.parameters["id"]?:return@get call.respond("Invalid id")
+                val courses=studentCourseInterfaceImpl.getCoursesBystudentId(id.toInt())
+                if(courses!=null){
+                    call.respond(courses)
+                }
+            }
+
+            get("/course/{id?}"){
+                val id=call.parameters["id"]?:return@get call.respond("Invalid id")
+                val students=studentCourseInterfaceImpl.getStudentsBycourseId(id.toInt())
+                if(students!=null){
+                    call.respond(students)
                 }
             }
         }
