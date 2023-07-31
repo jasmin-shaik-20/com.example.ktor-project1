@@ -102,7 +102,12 @@ fun Application.configureRouting() {
                     }
 
                 }
-                call.respond(query)
+                if(query!=null) {
+                    call.respond(query)
+                }
+                else{
+                    throw Throwable()
+                }
             }
 
 
@@ -116,13 +121,13 @@ fun Application.configureRouting() {
             }
 
             get("/{id?}") {
-                val id=call.parameters["id"]?:return@get throw Throwable()
+                val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val user1 = usersInterfaceImpl.selectUser(id.toInt())
                 if(user1!=null){
                     call.respond(user1)
                 }
                 else{
-                    call.respond("No user found")
+                    throw UserNotFoundException()
                 }
 
             }
@@ -137,7 +142,12 @@ fun Application.configureRouting() {
                         mapOf("id" to Profile.profileid, "email" to Profile.email, "age" to Profile.age)
                     }
                 }
-                call.respond(query1)
+                if(query1!=null) {
+                    call.respond(query1)
+                }
+                else{
+                    throw Throwable()
+                }
             }
 
             post {
@@ -156,13 +166,13 @@ fun Application.configureRouting() {
 
 
             get("/{id?}"){
-                val profileid=call.parameters["id"]?:return@get throw Throwable()
+                val profileid=call.parameters["id"]?:return@get throw InvalidIDException()
                 val profile1=profileInterfaceImpl.getUserProfile(profileid.toInt())
                 if(profile1!=null) {
                     call.respond(profile1)
                 }
                 else{
-                    call.respond("No user profile")
+                    throw UserProfileNotFoundException()
                 }
 
             }
@@ -178,7 +188,12 @@ fun Application.configureRouting() {
                         "name" to it[Products.name],
                         "price" to it[Products.price]) }
                 }
-                call.respond(getProducts)
+                if(getProducts!=null) {
+                    call.respond(getProducts)
+                }
+                else{
+                    throw Throwable()
+                }
             }
 
             post{
@@ -191,10 +206,13 @@ fun Application.configureRouting() {
             }
 
             get("/{id?}"){
-                val id= call.parameters["id"]?:return@get call.respond("Invalid id")
+                val id= call.parameters["id"]?:return@get throw InvalidIDException()
                 val getid=productInterfaceImpl.getProduct(id.toInt())
                 if(getid!=null){
                     call.respond(getid)
+                }
+                else{
+                    throw ProductNotFoundException()
                 }
             }
 
@@ -208,6 +226,9 @@ fun Application.configureRouting() {
                 if (getstudents != null) {
                     call.respond(getstudents)
                 }
+                else{
+                    throw Throwable()
+                }
             }
 
             post {
@@ -219,10 +240,13 @@ fun Application.configureRouting() {
             }
 
             get("/{id?}"){
-                val id=call.parameters["id"]?:return@get call.respond("Invalid id")
+                val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val getid=studentInterfaceImpl.getStudentById(id.toInt())
                 if(getid!=null){
                     call.respond(getid)
+                }
+                else{
+                    throw StudentNotFoundException()
                 }
             }
         }
@@ -235,21 +259,27 @@ fun Application.configureRouting() {
                 if(getcourses!=null){
                     call.respond(getcourses)
                 }
+                else{
+                    throw Throwable()
+                }
             }
 
             post{
                 val courses=call.receive<course>()
-                val insert=courseInterfaceImpl.insertCourse(courses.id,courses.student_id,courses.name)
+                val insert=courseInterfaceImpl.insertCourse(courses.student_id,courses.name)
                 if(insert!=null){
                     call.respond(insert)
                 }
             }
 
             get("/{id?}"){
-                val id=call.parameters["id"]?:return@get call.respond("Invalid id")
+                val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val getid=courseInterfaceImpl.getCourseById(id.toInt())
                 if(getid!=null){
                     call.respond(getid)
+                }
+                else{
+                    throw CourseNotFoundException()
                 }
             }
 
@@ -257,7 +287,7 @@ fun Application.configureRouting() {
         route("/studentcourse"){
             val studentCourseInterfaceImpl=StudentCourseInterfaceImpl()
             get("/student/{id?}"){
-                val id=call.parameters["id"]?:return@get call.respond("Invalid id")
+                val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val courses=studentCourseInterfaceImpl.getCoursesBystudentId(id.toInt())
                 if(courses!=null){
                     call.respond(courses)

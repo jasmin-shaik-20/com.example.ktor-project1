@@ -15,7 +15,7 @@ interface StudentInterface {
 
 interface CourseInterface {
 
-    suspend fun insertCourse(id: Int, student_id: Int, name: String): course?
+    suspend fun insertCourse( student_id: Int, name: String): course?
 
     suspend fun getAllCourses():List<course>
 

@@ -27,17 +27,25 @@ class StudentInterfaceImpl : StudentInterface {
 
 
 class CourseInterfaceImpl : CourseInterface {
-    override suspend fun insertCourse(id: Int, student_id: Int, name: String): course? = dbQuery {
+    override suspend fun insertCourse(student_id: Int, name: String): course? = dbQuery {
         val insert = courses.insert {
             it[courses.student_id] = student_id
             it[courses.name] = name
         }
-        studentcourses.insert {
-            it[studentcourses.studentid] = student_id
-            it[studentcourses.courseid] = id
+        val course_id=insert.resultedValues?.singleOrNull()?.get(courses.id)
+
+
+        if(course_id!=null) {
+            studentcourses.insert {
+                it[studentid] = student_id
+                it[courseid] = course_id
+            }
         }
 
-        insert.resultedValues?.singleOrNull()?.let(::rowToCourse)
+        course_id?.let{course_id ->
+            val result = courses.select { courses.id eq course_id }.singleOrNull()
+            result?.let(::rowToCourse)
+        }
     }
 
     override suspend fun getAllCourses(): List<course> = dbQuery {
