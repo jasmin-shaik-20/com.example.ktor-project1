@@ -11,9 +11,9 @@ import io.ktor.server.routing.*
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         jackson {
-                enable(SerializationFeature.INDENT_OUTPUT)
-            }
+            enable(SerializationFeature.INDENT_OUTPUT)
         }
+    }
 
     }
 
