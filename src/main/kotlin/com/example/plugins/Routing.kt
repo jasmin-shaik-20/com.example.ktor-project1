@@ -23,6 +23,7 @@ fun Application.configureRouting() {
     configureProductRoutes()
     configureStudentRoutes()
     configureCourseRoutes()
+    configureLoginRoutes()
     configureStudentCourseRoutes()
     configureUserSession()
 
