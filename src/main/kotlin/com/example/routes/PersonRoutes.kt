@@ -8,7 +8,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import redis.clients.jedis.Jedis
-import java.util.concurrent.TimeUnit
 
 fun Application.configurePersonRoutes(){
     val jedis = Jedis("localhost")
@@ -36,7 +35,6 @@ fun Application.configurePersonRoutes(){
                     }
                     val dataFromSource = personInterfaceImpl.fetchData(id)
                     jedis.setex("my_cached_data", 300, dataFromSource)
-
                     call.respond(HttpStatusCode.OK, "Data from source: $dataFromSource")
                 }
             }
