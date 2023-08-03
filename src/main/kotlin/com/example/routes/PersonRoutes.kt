@@ -16,10 +16,12 @@ fun Application.configurePersonRoutes(){
     routing{
         route("/person"){
             val personInterfaceImpl=PersonInterfaceImpl()
-            post("/postdetails"){
-                val post=call.receive<Person>()
-                val person=personInterfaceImpl.createPersonData(post.id,post.name)
-                call.respond(HttpStatusCode.OK,"Person is created")
+            post("/postdetails") {
+                val post = call.receive<Person>()
+                val person = personInterfaceImpl.createPersonData(post.id, post.name)
+                if (person != null) {
+                    call.respond(person)
+                }
             }
 
             get("/data") {

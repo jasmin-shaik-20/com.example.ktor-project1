@@ -4,6 +4,7 @@ import com.example.dao.Person
 import com.example.dao.Persons
 import com.example.dao.student
 import com.example.dao.students
+import com.example.plugins.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -11,20 +12,20 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 interface PersonInterface{
 
-    suspend fun createPersonData(id:Int,name:String)
+    suspend fun createPersonData(id:Int,name:String):Person?
 
     suspend fun fetchData(id:Int):String
 }
 
 class PersonInterfaceImpl:PersonInterface{
 
-    override suspend fun createPersonData(id: Int, name: String) {
-        transaction {
-            Persons.insert {
-                it[Persons.name] = name
-            }
-        }
+    override suspend fun createPersonData(id: Int, name: String): Person? = dbQuery {
+       val insert=Persons.insert {
+           it[Persons.name]=name
+       }
+        insert.resultedValues?.singleOrNull()?.let(::rowToPerson)
     }
+
 
     override suspend fun fetchData(id: Int):String {
         val data= transaction {
@@ -37,8 +38,8 @@ class PersonInterfaceImpl:PersonInterface{
 }
 
 
-//private fun rowToPerson(row: ResultRow) =
-//    Person(row[Persons.id], row[Persons.name])
+private fun rowToPerson(row: ResultRow) =
+    Person(row[Persons.id], row[Persons.name])
 
 
 
