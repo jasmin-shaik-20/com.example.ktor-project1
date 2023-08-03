@@ -20,6 +20,7 @@ fun Application.configureDatabase() {
         SchemaUtils.createMissingTablesAndColumns(Users, Profile)
         SchemaUtils.createMissingTablesAndColumns(Products)
         SchemaUtils.createMissingTablesAndColumns(students,courses,studentcourses)
+        SchemaUtils.createMissingTablesAndColumns(Persons)
 
 
     }
