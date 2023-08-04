@@ -10,6 +10,7 @@ fun Application.configureRouting() {
     configureProductRoutes()
     configureStudentRoutes()
     configureCourseRoutes()
+    configureImageRoutes()
     configurePersonRoutes()
     configureLoginRoutes()
     configureStudentCourseRoutes()
