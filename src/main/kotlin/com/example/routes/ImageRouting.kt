@@ -16,7 +16,6 @@ fun Application.configureImageRoutes(){
             post("/getBase64FromImageUrl") {
                 val multipart = call.receiveMultipart()
                 var imageUrl: String? = null
-
                 multipart.forEachPart { part ->
                     if (part is PartData.FormItem) {
                         if (part.name == "imageUrl") {

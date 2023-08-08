@@ -18,7 +18,6 @@ class ImageRequest {
         val connection = URL(imageUrl).openConnection()
         connection.connect()
         val inputStream = connection.getInputStream()
-
         val byteArrayOutputStream = ByteArrayOutputStream()
         val buffer = ByteArray(1024)
         var bytesRead: Int
