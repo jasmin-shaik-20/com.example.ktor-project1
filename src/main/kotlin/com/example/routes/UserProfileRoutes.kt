@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.dao.UserProfile
+import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.ProfileInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.UserProfileNotFoundException
@@ -13,7 +14,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureUserProfile(){
     routing{
-        route("/userprofile") {
+        route(ApiEndPoint.USERPROFILE) {
             val profileInterfaceImpl = ProfileInterfaceImpl()
             get {
                 val getProfiles=profileInterfaceImpl.getAllUSerProfile()

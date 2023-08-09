@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun configureDatabase() {
     Database.connect(
-        url = "jdbc:postgresql://localhost:5432/details",
+        url = "jdbc:postgresql://localhost:5432/data",
         driver = "org.postgresql.Driver",
         user = "postgres",
         password = "Jasmin@20"

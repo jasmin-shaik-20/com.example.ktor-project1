@@ -2,6 +2,7 @@ package com.example.routes
 
 import com.example.dao.User
 import com.example.dao.Users
+import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.UsersInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.UserNotFoundException
@@ -15,11 +16,16 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureUserRoutes(){
     routing{
-        route("/user") {
+        route(ApiEndPoint.USER) {
             val usersInterfaceImpl = UsersInterfaceImpl()
-            get {
+            get("/") {
                val getUsers=usersInterfaceImpl.getAllUsers()
-                call.respond(getUsers)
+                if(getUsers.isEmpty()) {
+                    call.respond("No users found")
+                }
+                else{
+                    call.respond(getUsers)
+                }
             }
 
             post {
@@ -31,7 +37,6 @@ fun Application.configureUserRoutes(){
                 else{
                     call.respond(HttpStatusCode.InternalServerError)
                 }
-
             }
 
             get("/{id?}") {
