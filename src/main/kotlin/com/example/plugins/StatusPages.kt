@@ -19,11 +19,7 @@ fun Application.configureStatusPages() {
             }
 
         }
-
-
     }
-
-
 }
 
 class InvalidIDException():Exception()

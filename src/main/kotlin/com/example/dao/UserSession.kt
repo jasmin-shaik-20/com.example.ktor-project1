@@ -1,5 +1,3 @@
-// File: UserSession.kt
-
 package com.example.dao
 
 import kotlinx.serialization.Serializable
@@ -14,11 +12,8 @@ data class UserSession(val id:String,val username: String,val password:String) {
     }
 }
 
-
 object RedisUtils {
-     val jedisPool = JedisPool("localhost",6379)
-
-
+     private val jedisPool = JedisPool("localhost",6379)
     fun set(key: String, value: String) {
         jedisPool.resource.use { jedis ->
             jedis.set(key, value)
@@ -36,6 +31,7 @@ object RedisUtils {
             jedis.del(key)
         }
     }
+
     fun setWithExpiration(key: String, seconds: Int,value: String) {
         jedisPool.resource.use { jedis ->
             jedis.setex(key, seconds, value)

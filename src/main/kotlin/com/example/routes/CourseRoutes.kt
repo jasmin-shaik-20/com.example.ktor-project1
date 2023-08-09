@@ -1,7 +1,7 @@
 package com.example.routes
 
-import com.example.dao.course
-import com.example.interfaces.CourseInterfaceImpl
+import com.example.dao.Course
+import com.example.interfaceimpl.CourseInterfaceImpl
 import com.example.plugins.CourseNotFoundException
 import com.example.plugins.InvalidIDException
 import io.ktor.server.application.*
@@ -14,9 +14,9 @@ fun Application.configureCourseRoutes(){
         route("/course"){
             val courseInterfaceImpl= CourseInterfaceImpl()
             get{
-                val getcourses=courseInterfaceImpl.getAllCourses()
-                if(getcourses!=null){
-                    call.respond(getcourses)
+                val courses=courseInterfaceImpl.getAllCourses()
+                if(courses!=null){
+                    call.respond(courses)
                 }
                 else{
                     throw Throwable()
@@ -24,8 +24,8 @@ fun Application.configureCourseRoutes(){
             }
 
             post{
-                val courses=call.receive<course>()
-                val insert=courseInterfaceImpl.insertCourse(courses.student_id,courses.name)
+                val courses=call.receive<Course>()
+                val insert=courseInterfaceImpl.insertCourse(courses.studentId,courses.name)
                 if(insert!=null){
                     call.respond(insert)
                 }
@@ -33,9 +33,9 @@ fun Application.configureCourseRoutes(){
 
             get("/{id?}"){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val getid=courseInterfaceImpl.getCourseById(id.toInt())
-                if(getid!=null){
-                    call.respond(getid)
+                val fetid=courseInterfaceImpl.getCourseById(id.toInt())
+                if(fetid!=null){
+                    call.respond(fetid)
                 }
                 else{
                     throw CourseNotFoundException()

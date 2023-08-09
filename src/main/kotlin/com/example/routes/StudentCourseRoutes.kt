@@ -8,11 +8,11 @@ import io.ktor.server.routing.*
 
 fun Application.configureStudentCourseRoutes(){
     routing{
-        route("/studentcourse"){
+        route("/student-course"){
             val studentCourseInterfaceImpl= StudentCourseInterfaceImpl()
             get("/student/{id?}"){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val courses=studentCourseInterfaceImpl.getCoursesBystudentId(id.toInt())
+                val courses=studentCourseInterfaceImpl.getCoursesStudentId(id.toInt())
                 if(courses!=null){
                     call.respond(courses)
                 }
@@ -20,12 +20,11 @@ fun Application.configureStudentCourseRoutes(){
 
             get("/course/{id?}"){
                 val id=call.parameters["id"]?:return@get call.respond("Invalid id")
-                val students=studentCourseInterfaceImpl.getStudentsBycourseId(id.toInt())
+                val students=studentCourseInterfaceImpl.getStudentsCourseId(id.toInt())
                 if(students!=null){
                     call.respond(students)
                 }
             }
-
         }
     }
 }

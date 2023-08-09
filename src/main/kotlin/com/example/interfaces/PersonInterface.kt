@@ -2,8 +2,6 @@ package com.example.interfaces
 
 import com.example.dao.Person
 import com.example.dao.Persons
-import com.example.dao.student
-import com.example.dao.students
 import com.example.plugins.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -26,17 +24,13 @@ class PersonInterfaceImpl:PersonInterface{
         insert.resultedValues?.singleOrNull()?.let(::rowToPerson)
     }
 
-
     override suspend fun fetchData(id: Int):String {
         val data= transaction {
             Persons.select { Persons.id eq id }.singleOrNull()
         }?.get(Persons.name) ?: "Person not found"
         return data
     }
-
-
 }
-
 
 private fun rowToPerson(row: ResultRow) =
     Person(row[Persons.id], row[Persons.name])

@@ -32,12 +32,9 @@ fun Application.configureLogin() {
                 }
             }
 
-
             challenge { defaultScheme, realm ->
                 call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
             }
-
         }
-
     }
 }

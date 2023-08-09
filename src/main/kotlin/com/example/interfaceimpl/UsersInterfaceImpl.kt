@@ -1,8 +1,9 @@
-package com.example.plugins
+package com.example.interfaceimpl
 
 import UsersInterface
 import com.example.dao.User
 import com.example.dao.Users
+import com.example.plugins.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
@@ -13,10 +14,8 @@ class UsersInterfaceImpl : UsersInterface {
 
         val insertStatement = Users.insert {
             it[Users.name] = name
-
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
-
     }
 
     override suspend fun selectUser(id: Int): User? = dbQuery {
@@ -24,7 +23,6 @@ class UsersInterfaceImpl : UsersInterface {
             .select(Users.id eq id)
             .map(::resultRowToUser)
             .firstOrNull()
-
     }
 
     private fun resultRowToUser(row: ResultRow) =

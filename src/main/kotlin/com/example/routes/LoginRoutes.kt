@@ -17,7 +17,7 @@ fun Application.configureLoginRoutes(){
     val issuer = "http://0.0.0.0:8080/"
     val audience = "http://0.0.0.0:8080/hello"
     routing{
-        route("/userlogin"){
+        route("/user login"){
             post("/login"){
                 val user = call.receive<Login>()
                 if(user.username.isNotEmpty() && user.password.isNotEmpty() ) {

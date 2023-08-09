@@ -9,7 +9,6 @@ import io.ktor.server.sessions.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-
 fun Application.configureUserSession() {
     routing {
         route("/session") {
@@ -18,9 +17,9 @@ fun Application.configureUserSession() {
                 call.sessions.set(userSession)
                 RedisUtils.setWithExpiration(userSession.id, 300,userSession.toJson())
                 call.respond("login Successfully")
-                call.respondRedirect("/usersession")
+                call.respondRedirect("/user-session")
             }
-            get("/usersession") {
+            get("/user-session") {
                 val sessionId = call.sessions.get<UserSession>()?.id ?: ""
                 val userSessionJson = RedisUtils.get(sessionId)
                 if (userSessionJson != null) {

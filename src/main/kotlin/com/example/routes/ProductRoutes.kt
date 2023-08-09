@@ -2,7 +2,7 @@ package com.example.routes
 
 import com.example.dao.Product
 import com.example.dao.Products
-import com.example.interfaces.ProductInterfaceImpl
+import com.example.interfaceimpl.ProductInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.ProductNotFoundException
 import io.ktor.http.*
@@ -20,8 +20,8 @@ fun Application.configureProductRoutes(){
             get{
                 val getProducts= transaction {
                     Products.selectAll().
-                    map { mapOf("productid" to it[Products.productid],
-                        "userid" to it[Products.userid],
+                    map { mapOf("productId" to it[Products.productId],
+                        "userid" to it[Products.userId],
                         "name" to it[Products.name],
                         "price" to it[Products.price]) }
                 }
@@ -36,7 +36,7 @@ fun Application.configureProductRoutes(){
             post{
                 val insert=call.receive<Product>()
                 val postProduct=productInterfaceImpl
-                    .insertProduct(insert.productid,insert.userid,insert.name,insert.price)
+                    .insertProduct(insert.productId,insert.userId,insert.name,insert.price)
                 if(postProduct!=null) {
                     call.respond(HttpStatusCode.Created, postProduct)
                 }
@@ -44,9 +44,9 @@ fun Application.configureProductRoutes(){
 
             get("/{id?}"){
                 val id= call.parameters["id"]?:return@get throw InvalidIDException()
-                val getid=productInterfaceImpl.getProduct(id.toInt())
-                if(getid!=null){
-                    call.respond(getid)
+                val fetid=productInterfaceImpl.getProduct(id.toInt())
+                if(fetid!=null){
+                    call.respond(fetid)
                 }
                 else{
                     throw ProductNotFoundException()

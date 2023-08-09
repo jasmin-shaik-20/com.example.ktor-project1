@@ -4,6 +4,7 @@ import com.example.routes.*
 import io.ktor.server.application.*
 
 fun Application.configureRouting() {
+
     configureCustomerRoutes()
     configureUserRoutes()
     configureUserProfile()
@@ -15,17 +16,5 @@ fun Application.configureRouting() {
     configureLoginRoutes()
     configureStudentCourseRoutes()
     configureUserSession()
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

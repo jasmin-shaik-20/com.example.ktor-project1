@@ -15,7 +15,7 @@ fun Application.configurePersonRoutes(){
     routing{
         route("/person"){
             val personInterfaceImpl=PersonInterfaceImpl()
-            post("/postdetails") {
+            post("/post details") {
                 val post = call.receive<Person>()
                 val person = personInterfaceImpl.createPersonData(post.id, post.name)
                 if (person != null) {

@@ -11,7 +11,7 @@ import java.util.*
 
 fun Application.configureImageRoutes(){
     routing{
-        route("/posturl"){
+        route("/postural"){
             val imageRequest=ImageRequest()
             post("/getBase64FromImageUrl") {
                 val multipart = call.receiveMultipart()
@@ -32,7 +32,6 @@ fun Application.configureImageRoutes(){
 
                 val imageByteArray = imageRequest.downloadImage(imageUrl!!)
                 val base64Image = Base64.getEncoder().encodeToString(imageByteArray)
-
                 call.respond(HttpStatusCode.OK, base64Image)
             }
         }

@@ -1,7 +1,7 @@
 package com.example.routes
 
-import com.example.dao.student
-import com.example.interfaces.StudentInterfaceImpl
+import com.example.dao.Student
+import com.example.interfaceimpl.StudentInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.StudentNotFoundException
 import io.ktor.server.application.*
@@ -14,9 +14,9 @@ fun Application.configureStudentRoutes(){
         route("/student"){
             val studentInterfaceImpl= StudentInterfaceImpl()
             get {
-                val getstudents = studentInterfaceImpl.getAllStudents()
-                if (getstudents != null) {
-                    call.respond(getstudents)
+                val students = studentInterfaceImpl.getAllStudents()
+                if (students != null) {
+                    call.respond(students)
                 }
                 else{
                     throw Throwable()
@@ -24,18 +24,18 @@ fun Application.configureStudentRoutes(){
             }
 
             post {
-                val students = call.receive<student>()
-                val poststudent = studentInterfaceImpl.insertStudent(students.id, students.name)
-                if (poststudent != null) {
-                    call.respond(poststudent)
+                val students = call.receive<Student>()
+                val student = studentInterfaceImpl.insertStudent(students.id, students.name)
+                if (student != null) {
+                    call.respond(student)
                 }
             }
 
             get("/{id?}"){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val getid=studentInterfaceImpl.getStudentById(id.toInt())
-                if(getid!=null){
-                    call.respond(getid)
+                val fetid=studentInterfaceImpl.getStudentById(id.toInt())
+                if(fetid!=null){
+                    call.respond(fetid)
                 }
                 else{
                     throw StudentNotFoundException()

@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.configureDatabase() {
+fun configureDatabase() {
     Database.connect(
         url = "jdbc:postgresql://localhost:5432/details",
         driver = "org.postgresql.Driver",
@@ -19,12 +19,9 @@ fun Application.configureDatabase() {
     transaction {
         SchemaUtils.createMissingTablesAndColumns(Users, Profile)
         SchemaUtils.createMissingTablesAndColumns(Products)
-        SchemaUtils.createMissingTablesAndColumns(students,courses,studentcourses)
+        SchemaUtils.createMissingTablesAndColumns(Students,Courses,StudentCourses)
         SchemaUtils.createMissingTablesAndColumns(Persons)
-
-
     }
-
 }
 
 suspend fun <T> dbQuery(block: suspend () -> T): T =
