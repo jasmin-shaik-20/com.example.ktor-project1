@@ -1,33 +1,23 @@
 package com.example.routes
 
-import com.example.dao.Profile
 import com.example.dao.UserProfile
 import com.example.interfaceimpl.ProfileInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.UserProfileNotFoundException
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
+
 
 fun Application.configureUserProfile(){
     routing{
         route("/userprofile") {
             val profileInterfaceImpl = ProfileInterfaceImpl()
             get {
-                val query = transaction {
-                    Profile.selectAll().map {
-                        mapOf("id" to Profile.profileId, "email" to Profile.email, "age" to Profile.age)
-                    }
-                }
-                if(query!=null) {
-                    call.respond(query)
-                }
-                else{
-                    throw Throwable()
-                }
+                val getProfiles=profileInterfaceImpl.getAllUSerProfile()
+                call.respond(getProfiles)
             }
 
             post {
@@ -39,9 +29,11 @@ fun Application.configureUserProfile(){
                     details.age
                 )
                 if(profile!=null){
-                    call.respond(profile)
+                    call.respond(HttpStatusCode.Created,profile)
                 }
-
+                else{
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
             }
 
             get("/{id?}"){
@@ -52,6 +44,39 @@ fun Application.configureUserProfile(){
                 }
                 else{
                     throw UserProfileNotFoundException()
+                }
+            }
+
+            delete("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val delProfile=profileInterfaceImpl.deleteUserProfile(id)
+                    if(delProfile){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            put("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val profile=call.receive<UserProfile>()
+                    val editUser=profileInterfaceImpl.editUserProfile(profile.profileId,profile.email,profile.age)
+                    if(editUser){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
                 }
             }
         }

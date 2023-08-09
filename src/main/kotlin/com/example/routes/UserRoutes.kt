@@ -77,7 +77,6 @@ fun Application.configureUserRoutes(){
                     call.respond(HttpStatusCode.BadRequest)
                 }
             }
-
         }
     }
 }

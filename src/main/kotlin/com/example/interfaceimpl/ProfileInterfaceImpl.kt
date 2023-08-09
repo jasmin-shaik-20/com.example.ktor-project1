@@ -2,12 +2,11 @@ package com.example.interfaceimpl
 
 import com.example.dao.Profile
 import com.example.dao.UserProfile
+import com.example.dao.Users
 import com.example.interfaces.ProfileInterface
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 
 class ProfileInterfaceImpl : ProfileInterface {
     override suspend fun createUserProfile(profileId: Int, userId: Int, email: String, age: Int): UserProfile? =
@@ -20,8 +19,25 @@ class ProfileInterfaceImpl : ProfileInterface {
             profile.resultedValues?.singleOrNull()?.let(::resultRowToProfile)
         }
 
+    override suspend fun getAllUSerProfile(): List<UserProfile> = dbQuery {
+        Profile.selectAll().map(::resultRowToProfile)
+    }
+
     override suspend fun getUserProfile(profileId: Int):UserProfile?= dbQuery {
         Profile.select(Profile.profileId eq profileId).map(::resultRowToProfile).singleOrNull()
+    }
+
+    override suspend fun deleteUserProfile(profileId: Int): Boolean = dbQuery{
+        val delProfile=Users.deleteWhere {Users.id eq profileId  }
+        delProfile>0
+    }
+
+    override suspend fun editUserProfile(profileId: Int, newEmail: String, newAge: Int): Boolean = dbQuery{
+        val editProfile=Profile.update({Profile.profileId eq profileId}){
+            it[email]=newEmail
+            it[age]=newAge
+        }
+        editProfile>0
     }
 
     private fun resultRowToProfile(row: ResultRow) =
