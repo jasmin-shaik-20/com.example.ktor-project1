@@ -1,6 +1,6 @@
 package com.example.routes
 
-import com.example.interfaces.StudentCourseInterfaceImpl
+import com.example.interfaceimpl.StudentCourseInterfaceImpl
 import com.example.plugins.InvalidIDException
 import io.ktor.server.application.*
 import io.ktor.server.response.*
