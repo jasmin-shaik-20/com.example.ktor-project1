@@ -3,6 +3,7 @@ package com.example.routes
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.dao.Login
+import com.example.file.ApiEndPoint
 import io.ktor.http.HttpHeaders.Date
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -17,7 +18,7 @@ fun Application.configureLoginRoutes(){
     val issuer = "http://0.0.0.0:8080/"
     val audience = "http://0.0.0.0:8080/hello"
     routing{
-        route("/user login"){
+        route(ApiEndPoint.LOGIN){
             post("/login"){
                 val user = call.receive<Login>()
                 if(user.username.isNotEmpty() && user.password.isNotEmpty() ) {

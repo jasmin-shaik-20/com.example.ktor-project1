@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.dao.Person
+import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.PersonInterfaceImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -13,7 +14,7 @@ fun Application.configurePersonRoutes(){
     val jedis = Jedis("localhost")
     jedis.connect()
     routing{
-        route("/person"){
+        route(ApiEndPoint.PERSON){
             val personInterfaceImpl= PersonInterfaceImpl()
             post("/post details") {
                 val post = call.receive<Person>()

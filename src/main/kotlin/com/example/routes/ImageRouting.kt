@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.dao.ImageRequest
+import com.example.file.ApiEndPoint
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -11,7 +12,7 @@ import java.util.*
 
 fun Application.configureImageRoutes(){
     routing{
-        route("/postural"){
+        route(ApiEndPoint.IMAGE){
             val imageRequest=ImageRequest()
             post("/getBase64FromImageUrl") {
                 val multipart = call.receiveMultipart()

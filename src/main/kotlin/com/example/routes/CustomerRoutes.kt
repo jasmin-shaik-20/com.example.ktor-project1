@@ -2,6 +2,7 @@ package com.example.routes
 
 import com.example.dao.Customer
 import com.example.dao.customerStorage
+import com.example.file.ApiEndPoint
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -9,7 +10,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureCustomerRoutes(){
     routing{
-        route("/customer") {
+        route(ApiEndPoint.CUSTOMER) {
             get {
                 if (customerStorage.isNotEmpty()) {
                     call.respond(customerStorage)

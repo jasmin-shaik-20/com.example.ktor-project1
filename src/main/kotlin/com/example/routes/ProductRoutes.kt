@@ -2,6 +2,7 @@ package com.example.routes
 
 import com.example.dao.Product
 import com.example.dao.Products
+import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.ProductInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.ProductNotFoundException
@@ -15,7 +16,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureProductRoutes(){
     routing{
-        route("/product"){
+        route(ApiEndPoint.PRODUCT){
             val productInterfaceImpl= ProductInterfaceImpl()
             get{
                 val getProducts= transaction {

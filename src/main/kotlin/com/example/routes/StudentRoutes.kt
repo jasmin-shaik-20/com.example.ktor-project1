@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.dao.Student
+import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.StudentInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.StudentNotFoundException
@@ -11,7 +12,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureStudentRoutes(){
     routing {
-        route("/student"){
+        route(ApiEndPoint.STUDENT){
             val studentInterfaceImpl= StudentInterfaceImpl()
             get {
                 val students = studentInterfaceImpl.getAllStudents()

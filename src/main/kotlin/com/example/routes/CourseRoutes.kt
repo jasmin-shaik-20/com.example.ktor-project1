@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.dao.Course
+import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.CourseInterfaceImpl
 import com.example.plugins.CourseNotFoundException
 import com.example.plugins.InvalidIDException
@@ -11,7 +12,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureCourseRoutes(){
     routing {
-        route("/course"){
+        route(ApiEndPoint.COURSE){
             val courseInterfaceImpl= CourseInterfaceImpl()
             get{
                 val courses=courseInterfaceImpl.getAllCourses()

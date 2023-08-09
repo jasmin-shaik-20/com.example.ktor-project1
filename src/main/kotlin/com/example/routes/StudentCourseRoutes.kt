@@ -1,5 +1,6 @@
 package com.example.routes
 
+import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.StudentCourseInterfaceImpl
 import com.example.plugins.InvalidIDException
 import io.ktor.server.application.*
@@ -8,7 +9,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureStudentCourseRoutes(){
     routing{
-        route("/student-course"){
+        route(ApiEndPoint.STUDENTCOURSES){
             val studentCourseInterfaceImpl= StudentCourseInterfaceImpl()
             get("/student/{id?}"){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
