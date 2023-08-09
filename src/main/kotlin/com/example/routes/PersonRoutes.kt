@@ -1,7 +1,7 @@
 package com.example.routes
 
 import com.example.dao.Person
-import com.example.interfaces.PersonInterfaceImpl
+import com.example.interfaceimpl.PersonInterfaceImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -14,7 +14,7 @@ fun Application.configurePersonRoutes(){
     jedis.connect()
     routing{
         route("/person"){
-            val personInterfaceImpl=PersonInterfaceImpl()
+            val personInterfaceImpl= PersonInterfaceImpl()
             post("/post details") {
                 val post = call.receive<Person>()
                 val person = personInterfaceImpl.createPersonData(post.id, post.name)
