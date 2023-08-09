@@ -1,10 +1,12 @@
 package com.example.routes
 
 import com.example.dao.Student
+import com.example.dao.User
 import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.StudentInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.StudentNotFoundException
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -16,11 +18,11 @@ fun Application.configureStudentRoutes(){
             val studentInterfaceImpl= StudentInterfaceImpl()
             get {
                 val students = studentInterfaceImpl.getAllStudents()
-                if (students != null) {
-                    call.respond(students)
+                if (students.isEmpty()) {
+                    call.respond("No students found")
                 }
                 else{
-                    throw Throwable()
+                    call.respond(students)
                 }
             }
 
@@ -40,6 +42,39 @@ fun Application.configureStudentRoutes(){
                 }
                 else{
                     throw StudentNotFoundException()
+                }
+            }
+
+            delete("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val delStudent=studentInterfaceImpl.deleteStudent(id)
+                    if(delStudent){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            put("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val student=call.receive<Student>()
+                    val editStudent=studentInterfaceImpl.editStudent(student.id,student.name)
+                    if(editStudent){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
                 }
             }
         }

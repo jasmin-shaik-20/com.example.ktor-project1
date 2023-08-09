@@ -16,6 +16,7 @@ fun Application.configurePersonRoutes(){
     routing{
         route(ApiEndPoint.PERSON){
             val personInterfaceImpl= PersonInterfaceImpl()
+
             post("/post details") {
                 val post = call.receive<Person>()
                 val person = personInterfaceImpl.createPersonData(post.id, post.name)

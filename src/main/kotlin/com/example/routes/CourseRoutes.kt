@@ -1,10 +1,12 @@
 package com.example.routes
 
 import com.example.dao.Course
+import com.example.dao.Student
 import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.CourseInterfaceImpl
 import com.example.plugins.CourseNotFoundException
 import com.example.plugins.InvalidIDException
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -16,11 +18,11 @@ fun Application.configureCourseRoutes(){
             val courseInterfaceImpl= CourseInterfaceImpl()
             get{
                 val courses=courseInterfaceImpl.getAllCourses()
-                if(courses!=null){
-                    call.respond(courses)
+                if(courses.isEmpty()){
+                    call.respond("No courses found")
                 }
                 else{
-                    throw Throwable()
+                    call.respond(courses)
                 }
             }
 
@@ -40,6 +42,39 @@ fun Application.configureCourseRoutes(){
                 }
                 else{
                     throw CourseNotFoundException()
+                }
+            }
+
+            delete("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val delCourse=courseInterfaceImpl.deleteCourse(id)
+                    if(delCourse){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            put("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val course=call.receive<Course>()
+                    val editCourse=courseInterfaceImpl.editCourse(course.id,course.name)
+                    if(editCourse){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
                 }
             }
 

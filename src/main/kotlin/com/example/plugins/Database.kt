@@ -16,7 +16,6 @@ fun Application.configureDatabase() {
     val url = config.property("ktor.database.url").getString()
     val user = config.property("ktor.database.user").getString()
     val password = config.property("ktor.database.password").getString()
-
     Database.connect(url = url, driver = driver, user = user, password = password)
 
     transaction {
