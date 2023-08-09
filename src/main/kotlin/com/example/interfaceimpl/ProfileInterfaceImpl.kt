@@ -4,6 +4,7 @@ import com.example.dao.Profile
 import com.example.dao.UserProfile
 import com.example.dao.Users
 import com.example.interfaces.ProfileInterface
+import com.example.plugins.UserNotFoundException
 import com.example.plugins.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -11,6 +12,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 class ProfileInterfaceImpl : ProfileInterface {
     override suspend fun createUserProfile(profileId: Int, userId: Int, email: String, age: Int): UserProfile? =
         dbQuery {
+            val user=Users.select { Users.id eq userId }.singleOrNull()?: throw UserNotFoundException()
             val profile = Profile.insert {
                 it[Profile.userId] = userId
                 it[Profile.email] = email
@@ -19,16 +21,21 @@ class ProfileInterfaceImpl : ProfileInterface {
             profile.resultedValues?.singleOrNull()?.let(::resultRowToProfile)
         }
 
-    override suspend fun getAllUSerProfile(): List<UserProfile> = dbQuery {
+    override suspend fun getAllUserProfile(): List<UserProfile> = dbQuery {
         Profile.selectAll().map(::resultRowToProfile)
     }
+
 
     override suspend fun getUserProfile(profileId: Int):UserProfile?= dbQuery {
         Profile.select(Profile.profileId eq profileId).map(::resultRowToProfile).singleOrNull()
     }
 
+    override suspend fun getProfileByUserId(userId: Int):UserProfile? = dbQuery {
+        Profile.select(Profile.userId eq userId).map(::resultRowToProfile).singleOrNull()
+    }
+
     override suspend fun deleteUserProfile(profileId: Int): Boolean = dbQuery{
-        val delProfile=Users.deleteWhere {Users.id eq profileId  }
+        val delProfile=Profile.deleteWhere {Profile.userId eq profileId  }
         delProfile>0
     }
 

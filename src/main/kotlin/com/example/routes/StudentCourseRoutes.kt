@@ -17,6 +17,9 @@ fun Application.configureStudentCourseRoutes(){
                 if(courses!=null){
                     call.respond(courses)
                 }
+                else{
+                    call.respond("No courses found with given id")
+                }
             }
 
             get("/course/{id?}"){
@@ -24,6 +27,9 @@ fun Application.configureStudentCourseRoutes(){
                 val students=studentCourseInterfaceImpl.getStudentsCourseId(id.toInt())
                 if(students!=null){
                     call.respond(students)
+                }
+                else{
+                    call.respond("No students found with given courseId")
                 }
             }
         }

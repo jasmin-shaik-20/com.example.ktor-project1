@@ -17,23 +17,32 @@ fun Application.configureUserProfile(){
         route(ApiEndPoint.USERPROFILE) {
             val profileInterfaceImpl = ProfileInterfaceImpl()
             get {
-                val getProfiles=profileInterfaceImpl.getAllUSerProfile()
-                call.respond(getProfiles)
+                val getProfiles=profileInterfaceImpl.getAllUserProfile()
+                if(getProfiles.isEmpty()) {
+                    call.respond("No profiles found")
+                }
+                else{
+                    call.respond(getProfiles)
+                }
             }
 
             post {
                 val details = call.receive<UserProfile>()
-                val profile = profileInterfaceImpl.createUserProfile(
-                    details.profileId,
-                    details.userId,
-                    details.email,
-                    details.age
-                )
-                if(profile!=null){
-                    call.respond(HttpStatusCode.Created,profile)
-                }
-                else{
-                    call.respond(HttpStatusCode.InternalServerError)
+                val user = profileInterfaceImpl.getProfileByUserId(details.userId)
+                if (user != null) {
+                    call.respond("user exist")
+                } else {
+                    val profile = profileInterfaceImpl.createUserProfile(
+                        details.profileId,
+                        details.userId,
+                        details.email,
+                        details.age
+                    )
+                    if (profile != null) {
+                        call.respond(HttpStatusCode.Created, profile)
+                    } else {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
                 }
             }
 
@@ -68,8 +77,8 @@ fun Application.configureUserProfile(){
                 val id= call.parameters["id"]?.toIntOrNull()
                 if(id!=null){
                     val profile=call.receive<UserProfile>()
-                    val editUser=profileInterfaceImpl.editUserProfile(profile.profileId,profile.email,profile.age)
-                    if(editUser){
+                    val editProfile=profileInterfaceImpl.editUserProfile(profile.profileId,profile.email,profile.age)
+                    if(editProfile){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{

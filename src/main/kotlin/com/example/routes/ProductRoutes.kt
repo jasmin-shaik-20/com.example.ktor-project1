@@ -2,6 +2,7 @@ package com.example.routes
 
 import com.example.dao.Product
 import com.example.dao.Products
+import com.example.dao.User
 import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.ProductInterfaceImpl
 import com.example.plugins.InvalidIDException
@@ -19,18 +20,12 @@ fun Application.configureProductRoutes(){
         route(ApiEndPoint.PRODUCT){
             val productInterfaceImpl= ProductInterfaceImpl()
             get{
-                val getProducts= transaction {
-                    Products.selectAll().
-                    map { mapOf("productId" to it[Products.productId],
-                        "userid" to it[Products.userId],
-                        "name" to it[Products.name],
-                        "price" to it[Products.price]) }
-                }
-                if(getProducts!=null) {
-                    call.respond(getProducts)
+                val getProducts= productInterfaceImpl.getAllProducts()
+                if(getProducts.isEmpty()) {
+                    call.respond("No products found")
                 }
                 else{
-                    throw Throwable()
+                    call.respond(getProducts)
                 }
             }
 
@@ -43,6 +38,18 @@ fun Application.configureProductRoutes(){
                 }
             }
 
+            get("/userId/{id?}"){
+                val id= call.parameters["id"]?:throw  InvalidIDException()
+                val getProduct=productInterfaceImpl.getProductsById(id.toInt())
+                if(getProduct.isEmpty()){
+                    call.respond("No products found with given userId $id")
+                }
+                else
+                {
+                    call.respond(getProduct)
+                }
+            }
+
             get("/{id?}"){
                 val id= call.parameters["id"]?:return@get throw InvalidIDException()
                 val fetid=productInterfaceImpl.getProduct(id.toInt())
@@ -51,6 +58,39 @@ fun Application.configureProductRoutes(){
                 }
                 else{
                     throw ProductNotFoundException()
+                }
+            }
+
+            delete("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val delProduct=productInterfaceImpl.deleteProduct(id)
+                    if(delProduct){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            put("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val product=call.receive<Product>()
+                    val editProduct=productInterfaceImpl.editProduct(product.productId,product.name,product.price)
+                    if(editProduct){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
                 }
             }
 
