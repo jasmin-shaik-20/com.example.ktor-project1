@@ -5,6 +5,7 @@ import com.example.dao.Users
 import com.example.interfaceimpl.UsersInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.UserNotFoundException
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -17,25 +18,18 @@ fun Application.configureUserRoutes(){
         route("/user") {
             val usersInterfaceImpl = UsersInterfaceImpl()
             get {
-                val query = transaction {
-                    Users.selectAll().map {
-                        mapOf("id" to it[Users.id], "username" to it[Users.name])
-                    }
-                }
-                if(query!=null) {
-                    call.respond(query)
-                }
-                else{
-                    throw Throwable()
-                }
+               val getUsers=usersInterfaceImpl.getAllUsers()
+                call.respond(getUsers)
             }
-
 
             post {
                 val details = call.receive<User>()
                 val user = usersInterfaceImpl.createUser(details.id, details.name)
                 if(user!=null) {
-                    call.respond(user)
+                    call.respond(HttpStatusCode.Created,user)
+                }
+                else{
+                    call.respond(HttpStatusCode.InternalServerError)
                 }
 
             }
@@ -49,7 +43,39 @@ fun Application.configureUserRoutes(){
                 else{
                     throw UserNotFoundException()
                 }
+            }
 
+            delete("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val delUser=usersInterfaceImpl.deleteUser(id)
+                    if(delUser){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            put("/{id?}"){
+                val id= call.parameters["id"]?.toIntOrNull()
+                if(id!=null){
+                    val user=call.receive<User>()
+                    val editUser=usersInterfaceImpl.editUser(user.id,user.name)
+                    if(editUser){
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else{
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+                else{
+                    call.respond(HttpStatusCode.BadRequest)
+                }
             }
 
         }

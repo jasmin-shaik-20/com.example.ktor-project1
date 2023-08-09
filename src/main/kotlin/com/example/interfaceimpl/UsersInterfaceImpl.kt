@@ -4,10 +4,8 @@ import UsersInterface
 import com.example.dao.User
 import com.example.dao.Users
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 
 class UsersInterfaceImpl : UsersInterface {
     override suspend fun createUser(id: Int, name: String): User? = dbQuery {
@@ -18,11 +16,27 @@ class UsersInterfaceImpl : UsersInterface {
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
     }
 
+    override suspend fun getAllUsers(): List<User> = dbQuery {
+        Users.selectAll().map(::resultRowToUser)
+    }
+
     override suspend fun selectUser(id: Int): User? = dbQuery {
         Users
             .select(Users.id eq id)
             .map(::resultRowToUser)
             .firstOrNull()
+    }
+
+    override suspend fun deleteUser(id: Int):Boolean = dbQuery{
+        val delUser = Users.deleteWhere { Users.id eq id }
+        delUser>0
+    }
+
+    override suspend fun editUser(id: Int,newName:String): Boolean = dbQuery {
+        val editUser=Users.update ({ Users.id eq id }){
+            it[name]=newName
+        }
+        editUser>0
     }
 
     private fun resultRowToUser(row: ResultRow) =
