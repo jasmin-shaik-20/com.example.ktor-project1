@@ -1,5 +1,7 @@
 package com.example.dao
 
+import com.typesafe.config.ConfigFactory
+import io.ktor.server.config.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -13,7 +15,10 @@ data class UserSession(val id:String,val username: String,val password:String) {
 }
 
 object RedisUtils {
-     private val jedisPool = JedisPool("localhost",6379)
+    private val config = HoconApplicationConfig(ConfigFactory.load())
+    private val host = config.property("ktor.redis.host").getString()
+    private val port = config.property("ktor.redis.port").getString().toInt()
+    private val jedisPool = JedisPool(host, port)
     fun set(key: String, value: String) {
         jedisPool.resource.use { jedis ->
             jedis.set(key, value)

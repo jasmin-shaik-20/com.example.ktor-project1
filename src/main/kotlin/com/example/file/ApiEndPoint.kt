@@ -6,9 +6,10 @@ object ApiEndPoint {
     const val STUDENT="/student"
     const val COURSE="/course"
     const val PRODUCT="/product"
-    const val STUDENTCOURSES="/student-course"
+    const val STUDENTCOURSES ="/student-course"
     const val CUSTOMER="/customer"
     const val LOGIN="/userLogin"
     const val PERSON="/person"
     const val IMAGE="/postural"
+    const val SESSION="/session"
 }
