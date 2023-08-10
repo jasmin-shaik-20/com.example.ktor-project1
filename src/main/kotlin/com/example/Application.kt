@@ -13,6 +13,7 @@ fun main() {
 fun Application.module() {
     configureLogin()
     configureSerialization()
+    configureKoin()
     configureRouting()
     configureDatabase()
     configureSessions()

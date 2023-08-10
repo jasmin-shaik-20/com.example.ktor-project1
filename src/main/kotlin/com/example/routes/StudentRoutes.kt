@@ -11,11 +11,12 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.configureStudentRoutes(){
     routing {
         route(ApiEndPoint.STUDENT){
-            val studentInterfaceImpl= StudentInterfaceImpl()
+            val studentInterfaceImpl : StudentInterfaceImpl by inject()
             get {
                 val students = studentInterfaceImpl.getAllStudents()
                 if (students.isEmpty()) {

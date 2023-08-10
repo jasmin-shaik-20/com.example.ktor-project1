@@ -14,11 +14,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.ktor.ext.inject
 
 fun Application.configureProductRoutes(){
     routing{
         route(ApiEndPoint.PRODUCT){
-            val productInterfaceImpl= ProductInterfaceImpl()
+            val productInterfaceImpl : ProductInterfaceImpl by inject()
             get{
                 val getProducts= productInterfaceImpl.getAllProducts()
                 if(getProducts.isEmpty()) {

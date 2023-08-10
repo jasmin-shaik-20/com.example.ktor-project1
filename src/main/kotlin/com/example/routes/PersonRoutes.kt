@@ -8,6 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 import redis.clients.jedis.Jedis
 
 fun Application.configurePersonRoutes(){
@@ -15,7 +16,7 @@ fun Application.configurePersonRoutes(){
     jedis.connect()
     routing{
         route(ApiEndPoint.PERSON){
-            val personInterfaceImpl= PersonInterfaceImpl()
+            val personInterfaceImpl : PersonInterfaceImpl by inject()
 
             post("/post details") {
                 val post = call.receive<Person>()

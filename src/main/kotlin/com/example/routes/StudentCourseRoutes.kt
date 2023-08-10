@@ -6,11 +6,12 @@ import com.example.plugins.InvalidIDException
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.configureStudentCourseRoutes(){
     routing{
         route(ApiEndPoint.STUDENTCOURSES){
-            val studentCourseInterfaceImpl= StudentCourseInterfaceImpl()
+            val studentCourseInterfaceImpl : StudentCourseInterfaceImpl by inject()
             get("/student/{id?}"){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val courses=studentCourseInterfaceImpl.getCoursesStudentId(id.toInt())

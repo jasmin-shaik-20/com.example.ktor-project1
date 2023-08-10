@@ -1,7 +1,6 @@
 package com.example.routes
 
 import com.example.dao.User
-import com.example.dao.Users
 import com.example.file.ApiEndPoint
 import com.example.interfaceimpl.UsersInterfaceImpl
 import com.example.plugins.InvalidIDException
@@ -11,13 +10,13 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
+
+import org.koin.ktor.ext.inject
 
 fun Application.configureUserRoutes(){
     routing{
         route(ApiEndPoint.USER) {
-            val usersInterfaceImpl = UsersInterfaceImpl()
+            val usersInterfaceImpl : UsersInterfaceImpl by inject()
             get("/") {
                val getUsers=usersInterfaceImpl.getAllUsers()
                 if(getUsers.isEmpty()) {

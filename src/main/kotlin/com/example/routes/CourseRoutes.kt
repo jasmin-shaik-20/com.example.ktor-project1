@@ -11,11 +11,12 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.configureCourseRoutes(){
     routing {
         route(ApiEndPoint.COURSE){
-            val courseInterfaceImpl= CourseInterfaceImpl()
+            val courseInterfaceImpl : CourseInterfaceImpl by inject()
             get{
                 val courses=courseInterfaceImpl.getAllCourses()
                 if(courses.isEmpty()){
