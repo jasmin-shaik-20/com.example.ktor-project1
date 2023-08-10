@@ -4,19 +4,22 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.dao.Login
 import com.example.file.ApiEndPoint
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.HttpHeaders.Date
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 
 fun Application.configureLoginRoutes(){
-    val secret = "secret"
-    val issuer = "http://0.0.0.0:8080/"
-    val audience = "http://0.0.0.0:8080/hello"
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val secret = config.property("ktor.jwt.secret").getString()
+    val issuer = config.property("ktor.jwt.issuer").getString()
+    val audience = config.property("ktor.jwt.audience").getString()
     routing{
         route(ApiEndPoint.LOGIN){
             post("/login"){

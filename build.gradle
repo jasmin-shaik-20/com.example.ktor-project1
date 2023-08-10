@@ -33,11 +33,12 @@ dependencies {
     //jwt
     implementation("io.ktor:ktor-client-apache:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
 
     //session authentication
     implementation("io.ktor:ktor-server-sessions:$ktor_version")
     implementation("io.ktor:ktor-auth:1.6.4")
-    implementation("io.ktor:ktor-server-auth:$ktor_version")
+
 
     //client
     implementation "io.ktor:ktor-client-core:$ktor_version"

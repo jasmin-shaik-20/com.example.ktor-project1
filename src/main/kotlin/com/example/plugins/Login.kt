@@ -2,17 +2,20 @@ package com.example.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.config.*
 import io.ktor.server.response.*
 
 fun Application.configureLogin() {
-    val secret = "secret"
-    val issuer = "http://0.0.0.0:8080/"
-    val audience = "http://0.0.0.0:8080/hello"
-    val myRealm = "Access to 'hello'"
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val secret = config.property("ktor.jwt.secret").getString()
+    val issuer = config.property("ktor.jwt.issuer").getString()
+    val audience = config.property("ktor.jwt.audience").getString()
+    val myRealm= config.property("ktor.jwt.myRealm").getString()
     install(Authentication) {
         jwt("auth-jwt") {
             realm = myRealm
