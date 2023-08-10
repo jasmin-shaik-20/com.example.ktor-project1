@@ -22,7 +22,7 @@ fun Application.configureProductRoutes(){
             get{
                 val getProducts= productInterfaceImpl.getAllProducts()
                 if(getProducts.isEmpty()) {
-                    call.respond("No products found")
+                    throw ProductNotFoundException()
                 }
                 else{
                     call.respond(getProducts)
@@ -35,6 +35,9 @@ fun Application.configureProductRoutes(){
                     .insertProduct(insert.productId,insert.userId,insert.name,insert.price)
                 if(postProduct!=null) {
                     call.respond(HttpStatusCode.Created, postProduct)
+                }
+                else{
+                    call.respond(HttpStatusCode.InternalServerError)
                 }
             }
 
@@ -69,7 +72,7 @@ fun Application.configureProductRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw ProductNotFoundException()
                     }
                 }
                 else{
@@ -86,7 +89,7 @@ fun Application.configureProductRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw ProductNotFoundException()
                     }
                 }
                 else{

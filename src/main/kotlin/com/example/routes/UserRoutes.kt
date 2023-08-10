@@ -21,7 +21,7 @@ fun Application.configureUserRoutes(){
             get("/") {
                val getUsers=usersInterfaceImpl.getAllUsers()
                 if(getUsers.isEmpty()) {
-                    call.respond("No users found")
+                    throw UserNotFoundException()
                 }
                 else{
                     call.respond(getUsers)
@@ -58,7 +58,7 @@ fun Application.configureUserRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw UserNotFoundException()
                     }
                 }
                 else{
@@ -75,7 +75,7 @@ fun Application.configureUserRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw UserNotFoundException()
                     }
                 }
                 else{

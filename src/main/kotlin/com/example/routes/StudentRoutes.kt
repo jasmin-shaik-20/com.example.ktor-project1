@@ -19,7 +19,7 @@ fun Application.configureStudentRoutes(){
             get {
                 val students = studentInterfaceImpl.getAllStudents()
                 if (students.isEmpty()) {
-                    call.respond("No students found")
+                    throw StudentNotFoundException()
                 }
                 else{
                     call.respond(students)
@@ -30,7 +30,10 @@ fun Application.configureStudentRoutes(){
                 val students = call.receive<Student>()
                 val student = studentInterfaceImpl.insertStudent(students.id, students.name)
                 if (student != null) {
-                    call.respond(student)
+                    call.respond(HttpStatusCode.OK,student)
+                }
+                else{
+                    call.respond(HttpStatusCode.InternalServerError)
                 }
             }
 
@@ -53,7 +56,7 @@ fun Application.configureStudentRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw StudentNotFoundException()
                     }
                 }
                 else{
@@ -70,7 +73,7 @@ fun Application.configureStudentRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw StudentNotFoundException()
                     }
                 }
                 else{

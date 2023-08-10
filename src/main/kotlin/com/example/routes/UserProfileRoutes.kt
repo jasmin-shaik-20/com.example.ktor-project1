@@ -19,7 +19,7 @@ fun Application.configureUserProfile(){
             get {
                 val getProfiles=profileInterfaceImpl.getAllUserProfile()
                 if(getProfiles.isEmpty()) {
-                    call.respond("No profiles found")
+                    throw UserProfileNotFoundException()
                 }
                 else{
                     call.respond(getProfiles)
@@ -65,7 +65,7 @@ fun Application.configureUserProfile(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw UserProfileNotFoundException()
                     }
                 }
                 else{
@@ -82,7 +82,7 @@ fun Application.configureUserProfile(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw UserProfileNotFoundException()
                     }
                 }
                 else{

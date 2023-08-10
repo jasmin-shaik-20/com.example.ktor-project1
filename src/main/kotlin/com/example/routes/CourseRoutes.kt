@@ -19,7 +19,7 @@ fun Application.configureCourseRoutes(){
             get{
                 val courses=courseInterfaceImpl.getAllCourses()
                 if(courses.isEmpty()){
-                    call.respond("No courses found")
+                    throw CourseNotFoundException()
                 }
                 else{
                     call.respond(courses)
@@ -30,7 +30,10 @@ fun Application.configureCourseRoutes(){
                 val courses=call.receive<Course>()
                 val insert=courseInterfaceImpl.insertCourse(courses.studentId,courses.name)
                 if(insert!=null){
-                    call.respond(insert)
+                    call.respond(HttpStatusCode.Created,insert)
+                }
+                else{
+                    call.respond(HttpStatusCode.InternalServerError)
                 }
             }
 
@@ -53,7 +56,7 @@ fun Application.configureCourseRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw CourseNotFoundException()
                     }
                 }
                 else{
@@ -70,7 +73,7 @@ fun Application.configureCourseRoutes(){
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
-                        call.respond(HttpStatusCode.NotFound)
+                        throw CourseNotFoundException()
                     }
                 }
                 else{
