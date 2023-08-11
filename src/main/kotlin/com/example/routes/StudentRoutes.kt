@@ -41,8 +41,8 @@ fun Application.configureStudentRoutes(){
             }
 
             get("/{id?}"){
-                val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val fetid=studentInterfaceImpl.getStudentById(id.toInt())
+                val id=call.parameters["id"]?.toIntOrNull()
+                val fetid=studentInterfaceImpl.getStudentById(id!!.toInt())
                 if(fetid!=null){
                     call.application.environment.log.info("Student is found")
                     call.respond(fetid)

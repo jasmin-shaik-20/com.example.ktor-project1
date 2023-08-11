@@ -50,8 +50,8 @@ fun Application.configureUserProfile(){
             }
 
             get("/{id?}"){
-                val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val profile=profileInterfaceImpl.getUserProfile(id.toInt())
+                val id= call.parameters["id"]?.toIntOrNull()
+                val profile=profileInterfaceImpl.getUserProfile(id!!.toInt())
                 if(profile!=null) {
                     call.application.environment.log.info("Profile is found")
                     call.respond(profile)

@@ -41,8 +41,8 @@ fun Application.configureUserRoutes(){
             }
 
             get("/{id?}") {
-                val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val user = usersInterfaceImpl.selectUser(id.toInt())
+                val id=call.parameters["id"]?.toIntOrNull()
+                val user = usersInterfaceImpl.selectUser(id!!.toInt())
                 if(user!=null){
                     call.application.environment.log.info("user found with given id")
                     call.respond(user)

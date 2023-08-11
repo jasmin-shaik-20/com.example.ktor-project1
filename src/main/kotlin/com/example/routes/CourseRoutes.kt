@@ -41,8 +41,8 @@ fun Application.configureCourseRoutes(){
             }
 
             get("/{id?}"){
-                val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val fetid=courseInterfaceImpl.getCourseById(id.toInt())
+                val id=call.parameters["id"]?.toIntOrNull()
+                val fetid=courseInterfaceImpl.getCourseById(id!!.toInt())
                 if(fetid!=null){
                     call.application.environment.log.info("Course is found with given id")
                     call.respond(fetid)

@@ -13,9 +13,9 @@ fun Application.configureStudentCourseRoutes(){
         route(ApiEndPoint.STUDENTCOURSES){
             val studentCourseInterfaceImpl : StudentCourseInterfaceImpl by inject()
             get("/student/{id?}"){
-                val id=call.parameters["id"]?:return@get throw InvalidIDException()
-                val courses=studentCourseInterfaceImpl.getCoursesStudentId(id.toInt())
-                if(courses!=null){
+                val id=call.parameters["id"]?.toIntOrNull()
+                val courses=studentCourseInterfaceImpl.getCoursesStudentId(id!!.toInt())
+                if(courses.isNotEmpty()){
                     call.application.environment.log.info("Courses found")
                     call.respond(courses)
                 }
@@ -27,7 +27,7 @@ fun Application.configureStudentCourseRoutes(){
             get("/course/{id?}"){
                 val id=call.parameters["id"]?:return@get call.respond("Invalid id")
                 val students=studentCourseInterfaceImpl.getStudentsCourseId(id.toInt())
-                if(students!=null){
+                if(students.isNotEmpty()){
                     call.application.environment.log.info("Students found")
                     call.respond(students)
                 }

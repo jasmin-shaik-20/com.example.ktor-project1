@@ -59,8 +59,8 @@ fun Application.configureProductRoutes(){
             }
 
             get("/{id?}"){
-                val id= call.parameters["id"]?:return@get throw InvalidIDException()
-                val fetid=productInterfaceImpl.getProduct(id.toInt())
+                val id= call.parameters["id"]?.toIntOrNull()
+                val fetid=productInterfaceImpl.getProduct(id!!.toInt())
                 if(fetid!=null){
                     call.application.environment.log.info("Product is found")
                     call.respond(fetid)
