@@ -23,6 +23,7 @@ fun Application.configureStudentRoutes(){
                     throw StudentNotFoundException()
                 }
                 else{
+                    call.application.environment.log.info("All student details")
                     call.respond(students)
                 }
             }
@@ -31,6 +32,7 @@ fun Application.configureStudentRoutes(){
                 val students = call.receive<Student>()
                 val student = studentInterfaceImpl.insertStudent(students.id, students.name)
                 if (student != null) {
+                    call.application.environment.log.info("Student is created $student")
                     call.respond(HttpStatusCode.OK,student)
                 }
                 else{
@@ -42,6 +44,7 @@ fun Application.configureStudentRoutes(){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val fetid=studentInterfaceImpl.getStudentById(id.toInt())
                 if(fetid!=null){
+                    call.application.environment.log.info("Student is found")
                     call.respond(fetid)
                 }
                 else{
@@ -54,9 +57,11 @@ fun Application.configureStudentRoutes(){
                 if(id!=null){
                     val delStudent=studentInterfaceImpl.deleteStudent(id)
                     if(delStudent){
+                        call.application.environment.log.info("Student is deleted")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
+                        call.application.environment.log.error("No student found with given id")
                         throw StudentNotFoundException()
                     }
                 }
@@ -71,6 +76,7 @@ fun Application.configureStudentRoutes(){
                     val student=call.receive<Student>()
                     val editStudent=studentInterfaceImpl.editStudent(student.id,student.name)
                     if(editStudent){
+                        call.application.environment.log.info("Student is updated")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{

@@ -16,6 +16,7 @@ fun Application.configureStudentCourseRoutes(){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val courses=studentCourseInterfaceImpl.getCoursesStudentId(id.toInt())
                 if(courses!=null){
+                    call.application.environment.log.info("Courses found")
                     call.respond(courses)
                 }
                 else{
@@ -27,6 +28,7 @@ fun Application.configureStudentCourseRoutes(){
                 val id=call.parameters["id"]?:return@get call.respond("Invalid id")
                 val students=studentCourseInterfaceImpl.getStudentsCourseId(id.toInt())
                 if(students!=null){
+                    call.application.environment.log.info("Students found")
                     call.respond(students)
                 }
                 else{

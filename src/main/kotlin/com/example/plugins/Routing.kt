@@ -11,6 +11,7 @@ fun Application.configureRouting() {
     configureProductRoutes()
     configureStudentRoutes()
     configureCourseRoutes()
+    configureCallLogging()
     configureImageRoutes()
     configurePersonRoutes()
     configureLoginRoutes()

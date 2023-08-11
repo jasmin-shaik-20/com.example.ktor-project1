@@ -26,6 +26,7 @@ fun Application.configureProductRoutes(){
                     throw ProductNotFoundException()
                 }
                 else{
+                    call.application.environment.log.info("All product details")
                     call.respond(getProducts)
                 }
             }
@@ -35,6 +36,7 @@ fun Application.configureProductRoutes(){
                 val postProduct=productInterfaceImpl
                     .insertProduct(insert.productId,insert.userId,insert.name,insert.price)
                 if(postProduct!=null) {
+                    call.application.environment.log.info("Product is created")
                     call.respond(HttpStatusCode.Created, postProduct)
                 }
                 else{
@@ -46,10 +48,12 @@ fun Application.configureProductRoutes(){
                 val id= call.parameters["id"]?:throw  InvalidIDException()
                 val getProduct=productInterfaceImpl.getProductsById(id.toInt())
                 if(getProduct.isEmpty()){
-                    call.respond("No products found with given userId $id")
+                    call.application.environment.log.error("No product found with given id")
+                    throw ProductNotFoundException()
                 }
                 else
                 {
+                    call.application.environment.log.info("Product list with given id is found")
                     call.respond(getProduct)
                 }
             }
@@ -58,6 +62,7 @@ fun Application.configureProductRoutes(){
                 val id= call.parameters["id"]?:return@get throw InvalidIDException()
                 val fetid=productInterfaceImpl.getProduct(id.toInt())
                 if(fetid!=null){
+                    call.application.environment.log.info("Product is found")
                     call.respond(fetid)
                 }
                 else{
@@ -70,9 +75,11 @@ fun Application.configureProductRoutes(){
                 if(id!=null){
                     val delProduct=productInterfaceImpl.deleteProduct(id)
                     if(delProduct){
+                        call.application.environment.log.info("Product is deleted")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
+                        call.application.environment.log.error("No product found with given id")
                         throw ProductNotFoundException()
                     }
                 }
@@ -87,6 +94,7 @@ fun Application.configureProductRoutes(){
                     val product=call.receive<Product>()
                     val editProduct=productInterfaceImpl.editProduct(product.productId,product.name,product.price)
                     if(editProduct){
+                        call.application.environment.log.info("Product is updated")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{

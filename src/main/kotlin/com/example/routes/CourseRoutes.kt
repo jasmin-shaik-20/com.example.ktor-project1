@@ -23,6 +23,7 @@ fun Application.configureCourseRoutes(){
                     throw CourseNotFoundException()
                 }
                 else{
+                    call.application.environment.log.info("All course details")
                     call.respond(courses)
                 }
             }
@@ -31,6 +32,7 @@ fun Application.configureCourseRoutes(){
                 val courses=call.receive<Course>()
                 val insert=courseInterfaceImpl.insertCourse(courses.studentId,courses.name)
                 if(insert!=null){
+                    call.application.environment.log.info("Course is created")
                     call.respond(HttpStatusCode.Created,insert)
                 }
                 else{
@@ -42,6 +44,7 @@ fun Application.configureCourseRoutes(){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val fetid=courseInterfaceImpl.getCourseById(id.toInt())
                 if(fetid!=null){
+                    call.application.environment.log.info("Course is found with given id")
                     call.respond(fetid)
                 }
                 else{
@@ -54,9 +57,11 @@ fun Application.configureCourseRoutes(){
                 if(id!=null){
                     val delCourse=courseInterfaceImpl.deleteCourse(id)
                     if(delCourse){
+                        call.application.environment.log.info("Course is deleted")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
+                        call.application.environment.log.error("No course is found with given id")
                         throw CourseNotFoundException()
                     }
                 }
@@ -71,6 +76,7 @@ fun Application.configureCourseRoutes(){
                     val course=call.receive<Course>()
                     val editCourse=courseInterfaceImpl.editCourse(course.id,course.name)
                     if(editCourse){
+                        call.application.environment.log.info("Course is updated")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{

@@ -57,5 +57,9 @@ dependencies {
     //postgresql
     implementation("org.postgresql:postgresql:42.5.4")
 
+    //callLogging
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:1.2.6")
+
 
 }

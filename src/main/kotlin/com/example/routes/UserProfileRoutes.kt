@@ -23,6 +23,7 @@ fun Application.configureUserProfile(){
                     throw UserProfileNotFoundException()
                 }
                 else{
+                    call.application.environment.log.info("All userprofile details")
                     call.respond(getProfiles)
                 }
             }
@@ -40,6 +41,7 @@ fun Application.configureUserProfile(){
                         details.age
                     )
                     if (profile != null) {
+                        call.application.environment.log.info("Profile is created")
                         call.respond(HttpStatusCode.Created, profile)
                     } else {
                         call.respond(HttpStatusCode.InternalServerError)
@@ -51,6 +53,7 @@ fun Application.configureUserProfile(){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val profile=profileInterfaceImpl.getUserProfile(id.toInt())
                 if(profile!=null) {
+                    call.application.environment.log.info("Profile is found")
                     call.respond(profile)
                 }
                 else{
@@ -63,9 +66,11 @@ fun Application.configureUserProfile(){
                 if(id!=null){
                     val delProfile=profileInterfaceImpl.deleteUserProfile(id)
                     if(delProfile){
+                        call.application.environment.log.info("userprofile is deleted")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
+                        call.application.environment.log.error("No profile found with given id")
                         throw UserProfileNotFoundException()
                     }
                 }
@@ -80,6 +85,7 @@ fun Application.configureUserProfile(){
                     val profile=call.receive<UserProfile>()
                     val editProfile=profileInterfaceImpl.editUserProfile(profile.profileId,profile.email,profile.age)
                     if(editProfile){
+                        call.application.environment.log.info("Profile is updated")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{

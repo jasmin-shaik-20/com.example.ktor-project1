@@ -20,6 +20,7 @@ fun Application.configureUserRoutes(){
             get("/") {
                val getUsers=usersInterfaceImpl.getAllUsers()
                 if(getUsers.isEmpty()) {
+                    call.application.environment.log.error("No user found")
                     throw UserNotFoundException()
                 }
                 else{
@@ -31,6 +32,7 @@ fun Application.configureUserRoutes(){
                 val details = call.receive<User>()
                 val user = usersInterfaceImpl.createUser(details.id, details.name)
                 if(user!=null) {
+                    call.application.environment.log.info("User created $user")
                     call.respond(HttpStatusCode.Created,user)
                 }
                 else{
@@ -42,6 +44,7 @@ fun Application.configureUserRoutes(){
                 val id=call.parameters["id"]?:return@get throw InvalidIDException()
                 val user = usersInterfaceImpl.selectUser(id.toInt())
                 if(user!=null){
+                    call.application.environment.log.info("user found with given id")
                     call.respond(user)
                 }
                 else{
@@ -54,9 +57,11 @@ fun Application.configureUserRoutes(){
                 if(id!=null){
                     val delUser=usersInterfaceImpl.deleteUser(id)
                     if(delUser){
+                        call.application.environment.log.info("User is deleted")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
+                        call.application.environment.log.error("No user found with given id")
                         throw UserNotFoundException()
                     }
                 }
@@ -71,6 +76,7 @@ fun Application.configureUserRoutes(){
                     val user=call.receive<User>()
                     val editUser=usersInterfaceImpl.editUser(user.id,user.name)
                     if(editUser){
+                        call.application.environment.log.info("User is updated")
                         call.respond(HttpStatusCode.OK)
                     }
                     else{
