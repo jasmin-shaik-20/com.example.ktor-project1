@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
 @Serializable
-data class UserProfile(val profileId: Int, val userId: Int, val email: String, val age: Int)
+data class UserProfile(val profileId: Int=0, val userId: Int, val email: String, val age: Int)
 
 object Profile : Table("UserProfile") {
     val profileId = integer("profileId").autoIncrement()

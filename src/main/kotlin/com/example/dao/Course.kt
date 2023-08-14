@@ -3,7 +3,7 @@ package com.example.dao
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 @Serializable
-data class Course(val id:Int,val studentId:Int,val name:String)
+data class Course(val id:Int=0,val studentId:Int,val name:String)
 
 object Courses: Table("courses"){
     val id=integer("id").autoIncrement()

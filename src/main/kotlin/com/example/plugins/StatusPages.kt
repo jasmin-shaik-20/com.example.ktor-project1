@@ -3,6 +3,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.plugins.requestvalidation.*
 import kotlin.Exception
 
 fun Application.configureStatusPages() {
@@ -15,7 +16,7 @@ fun Application.configureStatusPages() {
                 is ProductNotFoundException -> call.respond("product not found")
                 is StudentNotFoundException -> call.respond("student not found")
                 is CourseNotFoundException -> call.respond("course not found")
-                else -> call.respond(HttpStatusCode.InternalServerError, "Internal Server Error")
+                is RequestValidationException -> call.respondText("${cause.message}")
             }
 
         }

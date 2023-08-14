@@ -26,6 +26,9 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     testImplementation "io.ktor:ktor-server-tests-jvm:$ktor_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-serialization:$ktor_version")
+
 
     //redis
     implementation ("redis.clients:jedis:3.4.0")
@@ -60,6 +63,9 @@ dependencies {
     //callLogging
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("ch.qos.logback:logback-classic:1.2.6")
+
+    //requestValidation
+    implementation("io.ktor:ktor-server-request-validation:$ktor_version")
 
     //testing
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
