@@ -9,7 +9,6 @@ import org.slf4j.event.Level
 fun Application.configureCallLogging(){
     install(CallLogging){
         level=Level.INFO
-
         filter { call->
             call.request.path().startsWith(ApiEndPoint.USER)
             call.request.path().startsWith(ApiEndPoint.USERPROFILE)
