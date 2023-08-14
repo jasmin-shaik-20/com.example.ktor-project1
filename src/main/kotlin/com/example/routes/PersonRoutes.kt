@@ -1,7 +1,7 @@
 package com.example.routes
 
 import com.example.dao.Person
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.PersonInterfaceImpl
 import io.ktor.http.*
 import io.ktor.server.application.*

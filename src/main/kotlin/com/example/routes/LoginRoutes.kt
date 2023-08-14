@@ -3,9 +3,8 @@ package com.example.routes
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.dao.Login
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import com.typesafe.config.ConfigFactory
-import io.ktor.http.HttpHeaders.Date
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*

@@ -1,9 +1,8 @@
 package com.example.routes
 
 import com.example.dao.User
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.UsersInterfaceImpl
-import com.example.plugins.InvalidIDException
 import com.example.plugins.UserNotFoundException
 import io.ktor.http.*
 import io.ktor.server.application.*

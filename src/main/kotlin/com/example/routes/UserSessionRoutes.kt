@@ -2,13 +2,11 @@ package com.example.routes
 
 import com.example.dao.RedisUtils
 import com.example.dao.UserSession
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 fun Application.configureUserSession() {
     routing {

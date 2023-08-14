@@ -1,10 +1,8 @@
 package com.example.routes
 
 import com.example.dao.Student
-import com.example.dao.User
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.StudentInterfaceImpl
-import com.example.plugins.InvalidIDException
 import com.example.plugins.StudentNotFoundException
 import io.ktor.http.*
 import io.ktor.server.application.*

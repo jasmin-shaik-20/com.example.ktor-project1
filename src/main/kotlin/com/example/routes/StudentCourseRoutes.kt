@@ -1,8 +1,7 @@
 package com.example.routes
 
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.StudentCourseInterfaceImpl
-import com.example.plugins.InvalidIDException
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

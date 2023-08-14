@@ -1,14 +1,11 @@
 package com.example
 
 import com.example.dao.User
-import com.example.file.ApiEndPoint
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
-import com.example.plugins.*
-import io.ktor.client.utils.EmptyContent.contentType
 
 class ApplicationTest {
     @Test

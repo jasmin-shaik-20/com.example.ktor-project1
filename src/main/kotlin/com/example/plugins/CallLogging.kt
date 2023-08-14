@@ -1,6 +1,6 @@
 package com.example.plugins
 
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.request.*

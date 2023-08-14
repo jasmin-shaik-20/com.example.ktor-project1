@@ -1,4 +1,4 @@
-package com.example.file
+package com.example.endpoints
 
 object ApiEndPoint {
     const val USER ="/user"

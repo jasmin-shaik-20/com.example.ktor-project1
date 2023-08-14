@@ -1,9 +1,7 @@
 package com.example.routes
 
 import com.example.dao.Product
-import com.example.dao.Products
-import com.example.dao.User
-import com.example.file.ApiEndPoint
+import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.ProductInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.ProductNotFoundException
@@ -12,8 +10,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 
 fun Application.configureProductRoutes(){
