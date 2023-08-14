@@ -1,7 +1,6 @@
 package com.example
 
 import com.example.dao.Product
-import com.example.dao.Profile
 import com.example.dao.User
 import com.example.dao.UserProfile
 import io.ktor.client.request.*
@@ -9,7 +8,6 @@ import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
-import io.netty.handler.codec.http.HttpHeaders.addHeader
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -135,8 +133,6 @@ class ApplicationTest {
         val responseProduct=Json.decodeFromString<Product>(response.bodyAsText())
         assertEquals(product,responseProduct)
     }
-
-
 
 
 }

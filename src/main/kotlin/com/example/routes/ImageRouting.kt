@@ -30,7 +30,6 @@ fun Application.configureImageRoutes(){
                     call.respond(HttpStatusCode.BadRequest, "Image URL not provided")
                     return@post
                 }
-
                 val imageByteArray = imageRequest.downloadImage(imageUrl!!)
                 val base64Image = Base64.getEncoder().encodeToString(imageByteArray)
                 call.respond(HttpStatusCode.OK, base64Image)
