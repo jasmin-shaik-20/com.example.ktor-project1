@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class ProfileInterfaceImpl : ProfileInterface {
-    override suspend fun createUserProfile(profileId: Int, userId: Int, email: String, age: Int): UserProfile? =
+    override suspend fun createUserProfile(userId: Int, email: String, age: Int): UserProfile? =
         dbQuery {
             val user=Users.select { Users.id eq userId }.singleOrNull()?: throw UserNotFoundException()
             val profile = Profile.insert {

@@ -34,7 +34,6 @@ fun Application.configureUserProfile(){
                     call.respond("user exist")
                 } else {
                     val profile = profileInterfaceImpl.createUserProfile(
-                        details.profileId,
                         details.userId,
                         details.email,
                         details.age
@@ -66,7 +65,7 @@ fun Application.configureUserProfile(){
                     val delProfile=profileInterfaceImpl.deleteUserProfile(id)
                     if(delProfile){
                         call.application.environment.log.info("userprofile is deleted")
-                        call.respond(HttpStatusCode.OK)
+                        call.respond(HttpStatusCode.OK,"Profile deleted")
                     }
                     else{
                         call.application.environment.log.error("No profile found with given id")
