@@ -1,11 +1,13 @@
 package com.example
 
 import com.example.dao.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -274,6 +276,53 @@ class ApplicationTest {
         }
         assertEquals(HttpStatusCode.OK,response.status)
     }
+
+    //customer
+    @Test
+    fun testGetAllCustomers()= testApplication {
+        val response=client.get("/customer"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testPostCustomer() = testApplication {
+        val customer=Customer("2", "Divya", "div@gmail.com")
+        val serializedCustomer=Json.encodeToString(customer)
+        val response = client.post("/customer") {
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedCustomer)
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testGetCustomer()= testApplication {
+        val customer=Customer("1","Jasmin","jas@123")
+        val response=client.get("/customer/1"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testDeleteCustomer()= testApplication {
+        val response=client.delete("/customer/2"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testUpdateCustomer()= testApplication {
+        val customer=Customer("1","Jasmin","jas@123")
+        val editCustomer=Customer("4","Jas","jasmin@gmail.com")
+        val serializedCustomer=Json.encodeToString(editCustomer)
+        val response=client.put("/customer/4"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedCustomer)
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+
+
 
 
 }

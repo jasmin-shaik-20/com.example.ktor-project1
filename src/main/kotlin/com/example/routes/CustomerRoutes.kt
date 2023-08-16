@@ -3,6 +3,7 @@ package com.example.routes
 import com.example.dao.Customer
 import com.example.dao.customerStorage
 import com.example.endpoints.ApiEndPoint
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -15,7 +16,7 @@ fun Application.configureCustomerRoutes(){
                 if (customerStorage.isNotEmpty()) {
                     call.respond(customerStorage)
                 } else {
-                    throw Throwable()
+                    call.respond("No customers found")
                 }
             }
 
@@ -36,7 +37,7 @@ fun Application.configureCustomerRoutes(){
             post {
                 val customer = call.receive<Customer>()
                 customerStorage.add(customer)
-                call.respondText("Customer stored correctly")
+                call.respond(HttpStatusCode.OK,"Customer stored correctly")
             }
 
             delete("/{id?}") {
