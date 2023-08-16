@@ -6,7 +6,7 @@ import io.ktor.server.netty.*
 import com.example.plugins.*
 
 fun main() {
-    embeddedServer(Netty, port =  getPortFromEnv(), host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = getPortFromEnv(), host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 

@@ -1,6 +1,7 @@
 package com.example
 
 import com.example.dao.Product
+import com.example.dao.Student
 import com.example.dao.User
 import com.example.dao.UserProfile
 import io.ktor.client.request.*
@@ -8,6 +9,7 @@ import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -123,7 +125,7 @@ class ApplicationTest {
     }
     @Test
     fun testPostProduct()= testApplication {
-        val product=Product(1,2,"cookie",80)
+        val product=Product(5,1,"chocolate",80)
         val serializedProduct=Json.encodeToString(product)
         val response=client.post("/product"){
             headers[HttpHeaders.ContentType]=ContentType.Application.Json.toString()
@@ -132,6 +134,83 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.Created,response.status)
         val responseProduct=Json.decodeFromString<Product>(response.bodyAsText())
         assertEquals(product,responseProduct)
+    }
+    @Test
+    fun testGetProduct()= testApplication {
+        val product=Product(5,1,"chocolate",80)
+        val response=client.get("/product/5"){
+            headers[HttpHeaders.ContentType]=ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+        val responseUserProduct = Json.decodeFromString<Product>(response.bodyAsText())
+        assertEquals(product, responseUserProduct)
+    }
+    @Test
+    fun testDeleteProduct()= testApplication {
+        val response=client.delete("/product/3"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testUpdateProduct()= testApplication {
+        val product=Product(5,1,"chocolate",80)
+        val editProduct=Product(8,2,"cake",40)
+        val serializedProduct = Json.encodeToString(editProduct)
+        val response=client.put("/product/8"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedProduct)
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+
+    //student
+    @Test
+    fun testGetAllStudents()= testApplication {
+        val response=client.get("/student"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testPostStudent()= testApplication {
+        val student=Student(5,"abc")
+        val serializedStudent=Json.encodeToString(student)
+        val response=client.post("/student"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedStudent)
+        }
+        assertEquals(HttpStatusCode.Created,response.status)
+        val responseStudent=Json.decodeFromString<Student>(response.bodyAsText())
+        assertEquals(student,responseStudent)
+    }
+    @Test
+    fun testGetStudent()= testApplication {
+        val student=Student(1,"Jasmin")
+        val response=client.get("/student/1"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+        val responseStudent=Json.decodeFromString<Student>(response.bodyAsText())
+        assertEquals(student,responseStudent)
+    }
+    @Test
+    fun testDeleteStudent()= testApplication {
+        val response=client.delete("/student/2"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testUpdateStudent()= testApplication {
+        val student=Student(1,"Jasmin")
+        val editStudent=Student(7,"Jas")
+        val serializedStudent = Json.encodeToString(editStudent)
+        val response=client.put("/student/7"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedStudent)
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
     }
 
 

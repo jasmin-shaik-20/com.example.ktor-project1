@@ -11,6 +11,12 @@ mainClassName = "com.example.ApplicationKt"
 def isDevelopment = project.ext.has("development")
 applicationDefaultJvmArgs = ["-Dio.ktor.development=$isDevelopment"]
 
+ktor {
+    fatJar {
+        archiveFileName.set("fat.jar")
+    }
+}
+
 repositories {
     mavenCentral()
 }

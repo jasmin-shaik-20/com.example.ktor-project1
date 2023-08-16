@@ -31,7 +31,7 @@ fun Application.configureStudentRoutes(){
                 val student = studentInterfaceImpl.insertStudent(students.id, students.name)
                 if (student != null) {
                     call.application.environment.log.info("Student is created $student")
-                    call.respond(HttpStatusCode.OK,student)
+                    call.respond(HttpStatusCode.Created,student)
                 }
                 else{
                     call.respond(HttpStatusCode.InternalServerError)
