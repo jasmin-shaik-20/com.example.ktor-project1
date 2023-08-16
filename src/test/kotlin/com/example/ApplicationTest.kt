@@ -1,9 +1,6 @@
 package com.example
 
-import com.example.dao.Product
-import com.example.dao.Student
-import com.example.dao.User
-import com.example.dao.UserProfile
+import com.example.dao.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.server.testing.*
@@ -209,6 +206,71 @@ class ApplicationTest {
         val response=client.put("/student/7"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
             setBody(serializedStudent)
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+
+    //course
+    @Test
+    fun testGetAllCourses()= testApplication {
+        val response=client.get("/course"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testPostCourse()= testApplication {
+        val course= Course(2,1,"Science")
+        val serializedCourse=Json.encodeToString(course)
+        val response=client.post("/course"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedCourse)
+        }
+        assertEquals(HttpStatusCode.Created,response.status)
+        val responseCourse=Json.decodeFromString<Course>(response.bodyAsText())
+        assertEquals(course,responseCourse)
+    }
+    @Test
+    fun testGetCourse()= testApplication {
+        val course=Course(1,1,"Maths")
+        val response=client.get("/course/1"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+        val responseCourse=Json.decodeFromString<Course>(response.bodyAsText())
+        assertEquals(course,responseCourse)
+    }
+    @Test
+    fun testDeleteCourse()= testApplication {
+        val response=client.delete("/course/3"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testUpdateCourse()= testApplication {
+        val course=Course(1,1,"Maths")
+        val editCourse=Course(4,5,"Social")
+        val serializedCourse=Json.encodeToString(editCourse)
+        val response=client.put("/course/4"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedCourse)
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+
+    //studentCourses
+    @Test
+    fun testGetCourseById()= testApplication {
+        val response=client.get("/student-course/student/1"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testGetStudentById()= testApplication {
+        val response=client.get("/student-course/course/1"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
         assertEquals(HttpStatusCode.OK,response.status)
     }
