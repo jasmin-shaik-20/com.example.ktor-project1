@@ -322,12 +322,4 @@ class ApplicationTest {
         }
         assertEquals(HttpStatusCode.OK,response.status)
     }
-
-
-
-
-
-
-
-
 }
