@@ -16,26 +16,26 @@ class ApplicationTest {
     //user
     @Test
     fun testGetAllUserRoot() = testApplication {
-        val response=client.get("/user/"){
+        val response=client.get("/user"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
         assertEquals(HttpStatusCode.OK,response.status)
     }
-//    @Test
-//    fun testPostUserRoot()= testApplication {
-//        val user = User(22, "stu")
-//        val serializedUser = Json.encodeToString(user)
-//        val response = client.post("/user") {
-//            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-//            setBody(serializedUser)
-//        }
-//        assertEquals(HttpStatusCode.Created, response.status)
-//        val responseUser = Json.decodeFromString<User>(response.bodyAsText())
-//        assertEquals(user, responseUser)
-//    }
+    @Test
+    fun testPostUserRoot()= testApplication {
+        val user = User(5, "def")
+        val serializedUser = Json.encodeToString(user)
+        val response = client.post("/user") {
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedUser)
+        }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val responseUser = Json.decodeFromString<User>(response.bodyAsText())
+        assertEquals(user, responseUser)
+    }
     @Test
     fun testGetUserRoot()= testApplication {
-        val user=User(3,"sumayia")
+        val user=User(3,"Sumayia")
         val response=client.get("/user/3"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
@@ -45,7 +45,7 @@ class ApplicationTest {
     }
     @Test
     fun testDeleteUserRoot()= testApplication {
-        val response=client.get("/user/4"){
+        val response=client.get("/user/1"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
         assertEquals(HttpStatusCode.OK,response.status)
@@ -73,7 +73,7 @@ class ApplicationTest {
 
     @Test
     fun testPostProfile()= testApplication {
-        val profile= UserProfile(3,3, "sumyaia@gmail.com",21)
+        val profile= UserProfile(5,5, "def@gmail.com",21)
         val serializedProfile=Json.encodeToString(profile)
         val response=client.post("/userProfile"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -86,7 +86,7 @@ class ApplicationTest {
 
     @Test
     fun testGetProfile()= testApplication {
-        val profile=UserProfile(2,2,"div@gmail.com",21)
+        val profile=UserProfile(2,2,"divya@gmail.com",21)
         val response=client.get("/userProfile/2"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
@@ -96,15 +96,15 @@ class ApplicationTest {
     }
     @Test
     fun testDeleteProfile()= testApplication {
-        val response=client.delete("/userProfile/1"){
+        val response=client.delete("/userProfile/3"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
         assertEquals(HttpStatusCode.OK,response.status)
     }
     @Test
     fun testUpdateProfile()= testApplication {
-        val profile=UserProfile(2,2,"div@gmail.com",21)
-        val editProfile=UserProfile(4,4,"divya@gmail.com",22)
+        val profile=UserProfile(2,2,"divya@gmail.com",21)
+        val editProfile=UserProfile(4,4,"div@gmail.com",22)
         val serializedUserProfile = Json.encodeToString(editProfile)
         val response=client.put("/userProfile/4"){
             headers[HttpHeaders.ContentType]=ContentType.Application.Json.toString()
@@ -123,7 +123,7 @@ class ApplicationTest {
     }
     @Test
     fun testPostProduct()= testApplication {
-        val product=Product(4,2,"cookie",80)
+        val product=Product(1,2,"cookie",80)
         val serializedProduct=Json.encodeToString(product)
         val response=client.post("/product"){
             headers[HttpHeaders.ContentType]=ContentType.Application.Json.toString()

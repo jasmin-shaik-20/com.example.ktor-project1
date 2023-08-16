@@ -16,11 +16,11 @@ fun Application.configureUserRoutes(){
     routing{
         route(ApiEndPoint.USER) {
             val usersInterfaceImpl : UsersInterfaceImpl by inject()
-            get("/") {
+            get{
                val getUsers=usersInterfaceImpl.getAllUsers()
                 if(getUsers.isEmpty()) {
-                    call.application.environment.log.error("No user found")
-                    throw UserNotFoundException()
+                    call.application.environment.log.error("No users found")
+                    call.respond("No users found")
                 }
                 else{
                     call.respond(getUsers)
