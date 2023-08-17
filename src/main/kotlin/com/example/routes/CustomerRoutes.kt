@@ -3,13 +3,18 @@ package com.example.routes
 import com.example.dao.Customer
 import com.example.dao.customerStorage
 import com.example.endpoints.ApiEndPoint
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureCustomerRoutes(){
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val customerNameMinLength= config.property("ktor.CustomerValidation.customerNameMinLength").getString()?.toIntOrNull()
+    val customerNameMaxLength= config.property("ktor.CustomerValidation.customerNameMaxLength").getString()?.toIntOrNull()
     routing{
         route(ApiEndPoint.CUSTOMER) {
             get {
@@ -36,8 +41,13 @@ fun Application.configureCustomerRoutes(){
 
             post {
                 val customer = call.receive<Customer>()
-                customerStorage.add(customer)
-                call.respond(HttpStatusCode.OK,"Customer stored correctly")
+                if(customer.name.length in customerNameMinLength!!..customerNameMaxLength!!) {
+                    customerStorage.add(customer)
+                    call.respond(HttpStatusCode.OK, "Customer stored correctly")
+                }
+                else{
+                    call.respond("Invalid Length")
+                }
             }
 
             delete("/{id?}") {

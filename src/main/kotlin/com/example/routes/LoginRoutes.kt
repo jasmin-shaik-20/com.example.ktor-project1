@@ -19,21 +19,29 @@ fun Application.configureLoginRoutes(){
     val secret = config.property("ktor.jwt.secret").getString()
     val issuer = config.property("ktor.jwt.issuer").getString()
     val audience = config.property("ktor.jwt.audience").getString()
+    val loginNameMinLength= config.property("ktor.LoginValidation.loginNameMinLength").getString()?.toIntOrNull()
+    val loginNameMaxLength= config.property("ktor.LoginValidation.loginNameMaxLength").getString()?.toIntOrNull()
+    val loginPasswordMinLength= config.property("ktor.LoginValidation.loginPasswordMinLength").getString()?.toIntOrNull()
+    val loginPasswordMaxLength= config.property("ktor.LoginValidation.loginPasswordMaxLength").getString()?.toIntOrNull()
     routing{
         route(ApiEndPoint.LOGIN){
             post("/login"){
                 val user = call.receive<Login>()
-                if(user.username.isNotEmpty() && user.password.isNotEmpty() ) {
-                    val token = JWT.create()
-                        .withAudience(audience)
-                        .withIssuer(issuer)
-                        .withClaim("username", user.username)
-                        .withExpiresAt(Date(System.currentTimeMillis() + 60000))
-                        .sign(Algorithm.HMAC256(secret))
-                    call.respond(hashMapOf("token" to token))
+                if(user.username.length in loginNameMinLength!!..loginNameMaxLength!! && user.password.length in loginPasswordMinLength!!..loginPasswordMaxLength!!) {
+                    if (user.username.isNotEmpty() && user.password.isNotEmpty()) {
+                        val token = JWT.create()
+                            .withAudience(audience)
+                            .withIssuer(issuer)
+                            .withClaim("username", user.username)
+                            .withExpiresAt(Date(System.currentTimeMillis() + 60000))
+                            .sign(Algorithm.HMAC256(secret))
+                        call.respond(hashMapOf("token" to token))
+                    } else {
+                        call.respond("Missing Parameters")
+                    }
                 }
                 else{
-                    call.respond("Missing Parameters")
+                    call.respond("Invalid length of username and password")
                 }
             }
 

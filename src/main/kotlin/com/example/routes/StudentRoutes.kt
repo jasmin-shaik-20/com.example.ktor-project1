@@ -4,14 +4,19 @@ import com.example.dao.Student
 import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.StudentInterfaceImpl
 import com.example.plugins.StudentNotFoundException
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureStudentRoutes(){
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val studentNameMinLength= config.property("ktor.StudentValidation.studentNameMinLength").getString()?.toIntOrNull()
+    val studentNameMaxLength= config.property("ktor.StudentValidation.studentNameMaxLength").getString()?.toIntOrNull()
     routing {
         route(ApiEndPoint.STUDENT){
             val studentInterfaceImpl : StudentInterfaceImpl by inject()
@@ -28,13 +33,17 @@ fun Application.configureStudentRoutes(){
 
             post {
                 val students = call.receive<Student>()
-                val student = studentInterfaceImpl.insertStudent(students.id, students.name)
-                if (student != null) {
-                    call.application.environment.log.info("Student is created $student")
-                    call.respond(HttpStatusCode.Created,student)
+                if(students.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
+                    val student = studentInterfaceImpl.insertStudent(students.id, students.name)
+                    if (student != null) {
+                        call.application.environment.log.info("Student is created $student")
+                        call.respond(HttpStatusCode.Created, student)
+                    } else {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
                 }
                 else{
-                    call.respond(HttpStatusCode.InternalServerError)
+                    call.respond("Invalid Length")
                 }
             }
 

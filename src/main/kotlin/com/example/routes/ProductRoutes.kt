@@ -5,14 +5,19 @@ import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.ProductInterfaceImpl
 import com.example.plugins.InvalidIDException
 import com.example.plugins.ProductNotFoundException
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureProductRoutes(){
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val productNameMinLength= config.property("ktor.ProductValidation.productNameMinLength").getString()?.toIntOrNull()
+    val productNameMaxLength= config.property("ktor.ProductValidation.productNameMaxLength").getString()?.toIntOrNull()
     routing{
         route(ApiEndPoint.PRODUCT){
             val productInterfaceImpl : ProductInterfaceImpl by inject()
@@ -29,14 +34,18 @@ fun Application.configureProductRoutes(){
 
             post{
                 val insert=call.receive<Product>()
-                val postProduct=productInterfaceImpl
-                    .insertProduct(insert.productId,insert.userId,insert.name,insert.price)
-                if(postProduct!=null) {
-                    call.application.environment.log.info("Product is created")
-                    call.respond(HttpStatusCode.Created, postProduct)
+                if(insert.name.length in productNameMinLength!!..productNameMaxLength!!) {
+                    val postProduct = productInterfaceImpl
+                        .insertProduct(insert.productId, insert.userId, insert.name, insert.price)
+                    if (postProduct != null) {
+                        call.application.environment.log.info("Product is created")
+                        call.respond(HttpStatusCode.Created, postProduct)
+                    } else {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
                 }
                 else{
-                    call.respond(HttpStatusCode.InternalServerError)
+                    call.respond("Invalid Length")
                 }
             }
 

@@ -4,8 +4,10 @@ import com.example.dao.UserProfile
 import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.ProfileInterfaceImpl
 import com.example.plugins.UserProfileNotFoundException
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -13,6 +15,9 @@ import org.koin.ktor.ext.inject
 
 
 fun Application.configureUserProfile(){
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val emailMinLength= config.property("ktor.ProfileValidation.emailMinLength").getString()?.toIntOrNull()
+    val emailMaxLength= config.property("ktor.ProfileValidation.emailMaxLength").getString()?.toIntOrNull()
     routing{
         route(ApiEndPoint.USERPROFILE) {
             val profileInterfaceImpl : ProfileInterfaceImpl by inject()
@@ -29,21 +34,26 @@ fun Application.configureUserProfile(){
 
             post {
                 val details = call.receive<UserProfile>()
-                val user = profileInterfaceImpl.getProfileByUserId(details.userId)
-                if (user != null) {
-                    call.respond("user exist")
-                } else {
-                    val profile = profileInterfaceImpl.createUserProfile(
-                        details.userId,
-                        details.email,
-                        details.age
-                    )
-                    if (profile != null) {
-                        call.application.environment.log.info("Profile is created")
-                        call.respond(HttpStatusCode.Created, profile)
+                if(details.email.length in emailMinLength!!..emailMaxLength!!) {
+                    val user = profileInterfaceImpl.getProfileByUserId(details.userId)
+                    if (user != null) {
+                        call.respond("user exist")
                     } else {
-                        call.respond(HttpStatusCode.InternalServerError)
+                        val profile = profileInterfaceImpl.createUserProfile(
+                            details.userId,
+                            details.email,
+                            details.age
+                        )
+                        if (profile != null) {
+                            call.application.environment.log.info("Profile is created")
+                            call.respond(HttpStatusCode.Created, profile)
+                        } else {
+                            call.respond(HttpStatusCode.InternalServerError)
+                        }
                     }
+                }
+                else{
+                    call.respond("Invalid Length")
                 }
             }
 

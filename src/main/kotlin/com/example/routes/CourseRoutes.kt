@@ -4,14 +4,19 @@ import com.example.dao.Course
 import com.example.endpoints.ApiEndPoint
 import com.example.interfaceimpl.CourseInterfaceImpl
 import com.example.plugins.CourseNotFoundException
+import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureCourseRoutes(){
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val courseNameMinLength= config.property("ktor.CourseValidation.courseNameMinLength").getString()?.toIntOrNull()
+    val courseNameMaxLength= config.property("ktor.CourseValidation.courseNameMaxLength").getString()?.toIntOrNull()
     routing {
         route(ApiEndPoint.COURSE){
             val courseInterfaceImpl : CourseInterfaceImpl by inject()
@@ -28,13 +33,17 @@ fun Application.configureCourseRoutes(){
 
             post{
                 val courses=call.receive<Course>()
-                val insert=courseInterfaceImpl.insertCourse(courses.studentId,courses.name)
-                if(insert!=null){
-                    call.application.environment.log.info("Course is created")
-                    call.respond(HttpStatusCode.Created,insert)
+                if(courses.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
+                    val insert = courseInterfaceImpl.insertCourse(courses.studentId, courses.name)
+                    if (insert != null) {
+                        call.application.environment.log.info("Course is created")
+                        call.respond(HttpStatusCode.Created, insert)
+                    } else {
+                        call.respond(HttpStatusCode.InternalServerError)
+                    }
                 }
                 else{
-                    call.respond(HttpStatusCode.InternalServerError)
+                    call.respond("Invalid Length")
                 }
             }
 
