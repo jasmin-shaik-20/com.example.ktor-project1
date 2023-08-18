@@ -1,9 +1,15 @@
 package com.example.plugins
 
-import com.example.dao.*
+import com.example.dao.Students
+import com.example.dao.Courses
+import com.example.dao.Profile
+import com.example.dao.Users
+import com.example.dao.Products
+import com.example.dao.StudentCourses
+import com.example.dao.Persons
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.application.*
-import io.ktor.server.config.*
+import io.ktor.server.application.Application
+import io.ktor.server.config.HoconApplicationConfig
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils

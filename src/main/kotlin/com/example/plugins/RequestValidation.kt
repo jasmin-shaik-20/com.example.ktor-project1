@@ -5,8 +5,10 @@ import com.example.dao.UserProfile
 import com.example.dao.Product
 import com.example.dao.Student
 import com.example.dao.Course
-import io.ktor.server.application.*
-import io.ktor.server.plugins.requestvalidation.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.requestvalidation.RequestValidation
+import io.ktor.server.plugins.requestvalidation.ValidationResult
 
 fun Application.configureValidation() {
     install(RequestValidation) {
@@ -30,7 +32,8 @@ private fun validateUserProfile(bodyText: UserProfile): ValidationResult {
     return when {
         bodyText.userId <= 0 -> ValidationResult.Invalid("userId should be greater than 0")
         bodyText.email.isBlank() -> ValidationResult.Invalid("Email should not be empty")
-        !bodyText.email.matches(Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")) -> ValidationResult.Invalid("Invalid email address")
+        !bodyText.email.matches(Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")) ->
+            ValidationResult.Invalid("Invalid email address")
         bodyText.age <= 0 -> ValidationResult.Invalid("Age must be positive")
         else -> ValidationResult.Valid
     }
@@ -60,3 +63,4 @@ private fun validateCourse(bodyText: Course): ValidationResult {
         else -> ValidationResult.Valid
     }
 }
+

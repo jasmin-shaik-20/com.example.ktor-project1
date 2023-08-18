@@ -1,6 +1,6 @@
 package com.example.interfaces
 
-import com.example.dao.*
+import com.example.dao.Student
 
 interface StudentInterface {
     suspend fun insertStudent(id: Int, name: String): Student?
@@ -9,4 +9,5 @@ interface StudentInterface {
     suspend fun editStudent(id:Int,newName: String):Boolean
     suspend fun getStudentById(id: Int): Student?
 }
+
 

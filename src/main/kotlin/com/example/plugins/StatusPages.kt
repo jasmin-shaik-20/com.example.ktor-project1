@@ -1,8 +1,10 @@
 package com.example.plugins
-import io.ktor.server.application.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.response.*
-import io.ktor.server.plugins.requestvalidation.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
+import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import kotlin.Exception
 
 fun Application.configureStatusPages() {
@@ -28,3 +30,4 @@ class UserProfileNotFoundException:Exception()
 class ProductNotFoundException:Exception()
 class StudentNotFoundException:Exception()
 class CourseNotFoundException:Exception()
+
