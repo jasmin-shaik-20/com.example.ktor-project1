@@ -5,7 +5,12 @@ import com.example.dao.Courses
 import com.example.dao.StudentCourses
 import com.example.interfaces.CourseInterface
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class CourseInterfaceImpl : CourseInterface {
@@ -48,6 +53,7 @@ class CourseInterfaceImpl : CourseInterface {
     }
 
 }
+
 
 private fun rowToCourse(row: ResultRow) =
     Course(row[Courses.id], row[Courses.studentId], row[Courses.name])

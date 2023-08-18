@@ -2,13 +2,14 @@ package com.example.dao
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
+
 @Serializable
-data class Course(val id:Int=0,val studentId:Int,val name:String)
+data class Course(val id: Int = 0, val studentId: Int, val name: String)
 
-object Courses: Table("courses"){
-    val id=integer("id").autoIncrement()
-    val studentId=integer("studentId") references(Students.id)
-    val name= varchar("name",100)
-    override val primaryKey=PrimaryKey(id)
-
+object Courses : Table("courses") {
+    private const val MAX_LENGTH=100
+    val id = integer("id").autoIncrement()
+    val studentId = integer("studentId") references (Students.id)
+    val name = varchar("name",MAX_LENGTH )
+    override val primaryKey = PrimaryKey(id)
 }

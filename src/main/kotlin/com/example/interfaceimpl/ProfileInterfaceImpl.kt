@@ -6,13 +6,18 @@ import com.example.dao.Users
 import com.example.interfaces.ProfileInterface
 import com.example.plugins.UserNotFoundException
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class ProfileInterfaceImpl : ProfileInterface {
     override suspend fun createUserProfile(userId: Int, email: String, age: Int): UserProfile? =
         dbQuery {
-            val user=Users.select { Users.id eq userId }.singleOrNull()?: throw UserNotFoundException()
+            Users.select { Users.id eq userId }.singleOrNull()?: throw UserNotFoundException()
             val profile = Profile.insert {
                 it[Profile.userId] = userId
                 it[Profile.email] = email

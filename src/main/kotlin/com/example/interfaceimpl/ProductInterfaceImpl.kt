@@ -6,12 +6,17 @@ import com.example.dao.Users
 import com.example.plugins.ProductInterface
 import com.example.plugins.UserNotFoundException
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class ProductInterfaceImpl : ProductInterface {
     override suspend fun insertProduct(productId: Int, userId: Int, name: String, price: Int): Product? = dbQuery {
-        val user= Users.select { Users.id eq userId }.singleOrNull()?:throw UserNotFoundException()
+        Users.select { Users.id eq userId }.singleOrNull()?:throw UserNotFoundException()
         val insert = Products.insert {
             it[Products.userId] = userId
             it[Products.name] = name

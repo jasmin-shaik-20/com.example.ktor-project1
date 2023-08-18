@@ -4,7 +4,12 @@ import com.example.dao.Student
 import com.example.dao.Students
 import com.example.interfaces.StudentInterface
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class StudentInterfaceImpl : StudentInterface {
@@ -37,3 +42,4 @@ class StudentInterfaceImpl : StudentInterface {
 
 private fun rowToStudent(row: ResultRow) =
     Student(row[Students.id], row[Students.name])
+

@@ -1,7 +1,7 @@
 package com.example.dao
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.config.*
+import io.ktor.server.config.HoconApplicationConfig
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
