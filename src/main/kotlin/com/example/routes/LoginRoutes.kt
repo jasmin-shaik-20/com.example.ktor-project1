@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.dao.Login
 import com.example.endpoints.ApiEndPoint
+import com.example.endpoints.ApiEndPoint.TOKEN_EXPIRATION
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -32,7 +33,6 @@ fun Application.configureLoginRoutes(){
     getString()?.toIntOrNull()
     val loginPasswordMaxLength= config.property("ktor.LoginValidation.loginPasswordMaxLength").
     getString()?.toIntOrNull()
-    val tokenExpiration= 60000L
 
     routing{
         route(ApiEndPoint.LOGIN){
@@ -45,7 +45,7 @@ fun Application.configureLoginRoutes(){
                             .withAudience(audience)
                             .withIssuer(issuer)
                             .withClaim("username", user.username)
-                            .withExpiresAt(Date(System.currentTimeMillis() + tokenExpiration))
+                            .withExpiresAt(Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
                             .sign(Algorithm.HMAC256(secret))
                         call.respond(hashMapOf("token" to token))
                     } else {

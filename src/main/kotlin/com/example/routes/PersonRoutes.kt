@@ -2,6 +2,7 @@ package com.example.routes
 
 import com.example.dao.Person
 import com.example.endpoints.ApiEndPoint
+import com.example.endpoints.ApiEndPoint.TIME
 import com.example.interfaceimpl.PersonInterfaceImpl
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -40,7 +41,7 @@ fun Application.configurePersonRoutes(){
                         return@get
                     }
                     val dataFromSource = personInterfaceImpl.fetchData(id)
-                    jedis.setex("my_cached_data", 300, dataFromSource)
+                    jedis.setex("my_cached_data", TIME, dataFromSource)
                     call.respond(HttpStatusCode.OK, "Data from source: $dataFromSource")
                 }
             }

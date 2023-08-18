@@ -3,6 +3,7 @@ package com.example.routes
 import com.example.dao.RedisUtils
 import com.example.dao.UserSession
 import com.example.endpoints.ApiEndPoint
+import com.example.endpoints.ApiEndPoint.EXPIRE_TIME
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -34,7 +35,7 @@ fun Application.configureUserSession() {
                 if(userSession.username.length in sessionNameMinLength!!..sessionNameMaxLength!! &&
                     userSession.password.length in sessionPasswordMinLength!!..sessionPasswordMaxLength!!) {
                     call.sessions.set(userSession)
-                    RedisUtils.setWithExpiration(userSession.id, 300, userSession.toJson())
+                    RedisUtils.setWithExpiration(userSession.id, EXPIRE_TIME, userSession.toJson())
                     call.respond("login Successfully")
                     call.respondRedirect("/user-session")
                 }
