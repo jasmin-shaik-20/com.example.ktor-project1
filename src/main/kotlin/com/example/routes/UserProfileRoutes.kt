@@ -6,7 +6,10 @@ import com.example.interfaceimpl.ProfileInterfaceImpl
 import com.example.plugins.UserProfileNotFoundException
 import com.typesafe.config.ConfigFactory
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.application
+import io.ktor.server.application.call
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -16,7 +19,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.get
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.put
-import io.ktor.util.pipeline.*
+import io.ktor.util.pipeline.PipelineContext
 import org.koin.ktor.ext.inject
 
 
@@ -142,3 +145,4 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.handlePutUserProfile(
         call.respond(HttpStatusCode.BadRequest)
     }
 }
+

@@ -5,7 +5,9 @@ import com.example.dao.customerStorage
 import com.example.endpoints.ApiEndPoint
 import com.typesafe.config.ConfigFactory
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -17,12 +19,14 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.put
 import io.ktor.server.routing.patch
-import io.ktor.util.pipeline.*
+import io.ktor.util.pipeline.PipelineContext
 
 fun Application.configureCustomerRoutes() {
     val config = HoconApplicationConfig(ConfigFactory.load())
-    val customerNameMinLength = config.property("ktor.CustomerValidation.customerNameMinLength").getString()?.toIntOrNull()
-    val customerNameMaxLength = config.property("ktor.CustomerValidation.customerNameMaxLength").getString()?.toIntOrNull()
+    val customerNameMinLength = config.property("ktor.CustomerValidation.customerNameMinLength").
+    getString()?.toIntOrNull()
+    val customerNameMaxLength = config.property("ktor.CustomerValidation.customerNameMaxLength").
+    getString()?.toIntOrNull()
 
     routing {
         route(ApiEndPoint.CUSTOMER) {

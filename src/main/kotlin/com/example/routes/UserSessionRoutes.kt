@@ -4,11 +4,18 @@ import com.example.dao.RedisUtils
 import com.example.dao.UserSession
 import com.example.endpoints.ApiEndPoint
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.application.*
-import io.ktor.server.config.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.config.HoconApplicationConfig
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
+import io.ktor.server.response.respondRedirect
+import io.ktor.server.routing.routing
+import io.ktor.server.routing.route
+import io.ktor.server.routing.get
+import io.ktor.server.sessions.sessions
+import io.ktor.server.sessions.get
+import io.ktor.server.sessions.set
 
 fun Application.configureUserSession() {
     val config = HoconApplicationConfig(ConfigFactory.load())

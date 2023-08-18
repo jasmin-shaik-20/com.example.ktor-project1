@@ -2,13 +2,17 @@ package com.example.routes
 
 import com.example.dao.ImageRequest
 import com.example.endpoints.ApiEndPoint
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import java.util.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.forEachPart
+import io.ktor.http.content.PartData
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.request.receiveMultipart
+import io.ktor.server.response.respond
+import io.ktor.server.routing.routing
+import io.ktor.server.routing.route
+import io.ktor.server.routing.post
+import java.util.Base64
 
 fun Application.configureImageRoutes(){
     routing{
