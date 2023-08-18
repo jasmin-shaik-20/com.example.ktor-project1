@@ -21,13 +21,18 @@ fun Application.configureUserSession() {
     val config = HoconApplicationConfig(ConfigFactory.load())
     val sessionNameMinLength= config.property("ktor.SessionValidation.sessionNameMinLength").getString()?.toIntOrNull()
     val sessionNameMaxLength= config.property("ktor.SessionValidation.sessionNameMaxLength").getString()?.toIntOrNull()
-    val sessionPasswordMinLength= config.property("ktor.SessionValidation.sessionPasswordMinLength").getString()?.toIntOrNull()
-    val sessionPasswordMaxLength= config.property("ktor.SessionValidation.sessionPasswordMaxLength").getString()?.toIntOrNull()
+    val sessionPasswordMinLength= config.property("ktor.SessionValidation.sessionPasswordMinLength").
+    getString()?.toIntOrNull()
+    val sessionPasswordMaxLength= config.property("ktor.SessionValidation.sessionPasswordMaxLength").
+    getString()?.toIntOrNull()
+
     routing {
         route(ApiEndPoint.SESSION) {
+
             get("/login") {
                 val userSession = UserSession(id = "2", username = "Jasmin", password = "Jas@20")
-                if(userSession.username.length in sessionNameMinLength!!..sessionNameMaxLength!! && userSession.password.length in sessionPasswordMinLength!!..sessionPasswordMaxLength!!) {
+                if(userSession.username.length in sessionNameMinLength!!..sessionNameMaxLength!! &&
+                    userSession.password.length in sessionPasswordMinLength!!..sessionPasswordMaxLength!!) {
                     call.sessions.set(userSession)
                     RedisUtils.setWithExpiration(userSession.id, 300, userSession.toJson())
                     call.respond("login Successfully")
@@ -37,6 +42,7 @@ fun Application.configureUserSession() {
                     call.respond("Invalid length of username and password")
                 }
             }
+
             get("/user-session") {
                 val sessionId = call.sessions.get<UserSession>()?.id ?: ""
                 val userSessionJson = RedisUtils.get(sessionId)

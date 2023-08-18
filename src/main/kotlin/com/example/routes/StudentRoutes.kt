@@ -54,7 +54,8 @@ fun Application.configureStudentRoutes() {
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.handleGetStudents(studentInterfaceImpl: StudentInterfaceImpl) {
+private suspend fun PipelineContext<Unit, ApplicationCall>.
+        handleGetStudents(studentInterfaceImpl: StudentInterfaceImpl) {
     val students = studentInterfaceImpl.getAllStudents()
     if (students.isEmpty()) {
         throw StudentNotFoundException()

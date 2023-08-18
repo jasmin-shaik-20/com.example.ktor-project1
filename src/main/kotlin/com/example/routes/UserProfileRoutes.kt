@@ -55,7 +55,8 @@ fun Application.configureUserProfile() {
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.handleGetUserProfiles(profileInterfaceImpl: ProfileInterfaceImpl) {
+private suspend fun PipelineContext<Unit, ApplicationCall>.
+        handleGetUserProfiles(profileInterfaceImpl: ProfileInterfaceImpl) {
     val profiles = profileInterfaceImpl.getAllUserProfile()
     if (profiles.isEmpty()) {
         throw UserProfileNotFoundException()
