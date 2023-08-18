@@ -1,9 +1,15 @@
 package com.example
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import com.example.plugins.*
+import io.ktor.server.application.Application
+import com.example.plugins.configureLogin
+import com.example.plugins.configureSerialization
+import com.example.plugins.configureKoin
+import com.example.plugins.configureRouting
+import com.example.plugins.configureValidation
+import com.example.plugins.configureDatabase
+import com.example.plugins.configureSessions
+import com.example.plugins.configureStatusPages
+import io.ktor.server.netty.EngineMain
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -12,7 +18,7 @@ fun Application.module() {
     configureSerialization()
     configureKoin()
     configureRouting()
-    configureRequestValidation()
+    configureValidation()
     configureDatabase()
     configureSessions()
     configureStatusPages()

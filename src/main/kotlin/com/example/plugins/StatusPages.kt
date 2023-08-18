@@ -2,7 +2,6 @@ package com.example.plugins
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.plugins.requestvalidation.*
 import kotlin.Exception
 
@@ -23,9 +22,9 @@ fun Application.configureStatusPages() {
     }
 }
 
-class InvalidIDException():Exception()
-class UserNotFoundException():Exception()
-class UserProfileNotFoundException():Exception()
-class ProductNotFoundException():Exception()
-class StudentNotFoundException():Exception()
-class CourseNotFoundException():Exception()
+class InvalidIDException:Exception()
+class UserNotFoundException:Exception()
+class UserProfileNotFoundException:Exception()
+class ProductNotFoundException:Exception()
+class StudentNotFoundException:Exception()
+class CourseNotFoundException:Exception()
