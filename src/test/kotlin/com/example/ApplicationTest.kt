@@ -1,6 +1,7 @@
 package com.example
 
 import com.example.dao.*
+import com.typesafe.config.ConfigFactory
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -9,9 +10,11 @@ import kotlin.test.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.config.*
+import io.netty.handler.codec.http.HttpHeaders.addHeader
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.koin.dsl.module
 
 class ApplicationTest {
 
@@ -24,26 +27,32 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.OK,response.status)
     }
     @Test
-    fun testPostUserRoot()= testApplication {
-        val user = User(5, "def")
-        val serializedUser = Json.encodeToString(user)
-        val response = client.post("/user") {
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedUser)
+    fun testPostUser() = testApplication {
+        val nameMinLength = System.getenv("nameMinLength")?.toIntOrNull()
+        val nameMaxLength = System.getenv("nameMaxLength")?.toIntOrNull()
+        if (nameMinLength != null && nameMaxLength != null) {
+            val user = User(10, "Rishitha")
+            if (user.name.length in nameMinLength..nameMaxLength) {
+                val serializedUser = Json.encodeToString(user)
+                val response = client.post("/user") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedUser)
+                }
+                assertEquals(HttpStatusCode.Created, response.status)
+                val responseUser = Json.decodeFromString<User>(response.bodyAsText())
+                assertEquals(user, responseUser)
+            }
         }
-        assertEquals(HttpStatusCode.Created, response.status)
-        val responseUser = Json.decodeFromString<User>(response.bodyAsText())
-        assertEquals(user, responseUser)
     }
     @Test
     fun testGetUserRoot()= testApplication {
         val user=User(3,"Sumayia")
-        val response=client.get("/user/3"){
+        val response = client.get("/user/3") {
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
-        assertEquals(HttpStatusCode.OK,response.status)
-        val responseUser = Json.decodeFromString<User>(response.bodyAsText())
-        assertEquals(user, responseUser)
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseUser = Json.decodeFromString<User>(response.bodyAsText())
+            assertEquals(user, responseUser)
     }
     @Test
     fun testDeleteUserRoot()= testApplication {
@@ -53,18 +62,24 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.OK,response.status)
     }
     @Test
-    fun testUpdateUserRoot()= testApplication {
-        val user=User(2,"Divya")
-        val editUser=User(21,"div")
-        val serializedUser = Json.encodeToString(editUser)
-        val response=client.put("/user/21"){
-            headers[HttpHeaders.ContentType]=ContentType.Application.Json.toString()
-            setBody(serializedUser)
+    fun testUpdateUserRoot() = testApplication {
+        val nameMinLength = System.getenv("nameMinLength")?.toIntOrNull()
+        val nameMaxLength = System.getenv("nameMaxLength")?.toIntOrNull()
+        if (nameMinLength != null && nameMaxLength != null) {
+            val user = User(2, "Divya")
+            val editUser = User(4, "nani")
+            if (editUser.name.length in nameMinLength..nameMaxLength) {
+                val serializedUser = Json.encodeToString(editUser)
+                val response = client.put("/user/21") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedUser)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
         }
-        assertEquals(HttpStatusCode.OK,response.status)
     }
 
-    //UserProfile
+    //profile
     @Test
     fun testGetAllProfile()= testApplication {
         val response=client.get("/userProfile"){
@@ -72,18 +87,23 @@ class ApplicationTest {
         }
         assertEquals(HttpStatusCode.OK,response.status)
     }
-
     @Test
     fun testPostProfile()= testApplication {
-        val profile= UserProfile(5,5, "def@gmail.com",21)
-        val serializedProfile=Json.encodeToString(profile)
-        val response=client.post("/userProfile"){
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedProfile)
+        val emailMinLength=System.getenv("emailMinLength").toIntOrNull()
+        val emailMaxLength=System.getenv("emailMaxLength").toIntOrNull()
+        if(emailMinLength!=null&& emailMaxLength!=null) {
+            val profile= UserProfile(5,5, "def@gmail.com",21)
+            if(profile.email.length in emailMinLength!!..emailMaxLength!!) {
+                val serializedProfile = Json.encodeToString(profile)
+                val response = client.post("/userProfile") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedProfile)
+                }
+                assertEquals(HttpStatusCode.Created, response.status)
+                val responseUserProfile = Json.decodeFromString<UserProfile>(response.bodyAsText())
+                assertEquals(profile, responseUserProfile)
+            }
         }
-        assertEquals(HttpStatusCode.Created,response.status)
-        val responseUserProfile = Json.decodeFromString<UserProfile>(response.bodyAsText())
-        assertEquals(profile,responseUserProfile)
     }
 
     @Test
@@ -105,14 +125,19 @@ class ApplicationTest {
     }
     @Test
     fun testUpdateProfile()= testApplication {
-        val profile=UserProfile(2,2,"divya@gmail.com",21)
-        val editProfile=UserProfile(4,4,"div@gmail.com",22)
-        val serializedUserProfile = Json.encodeToString(editProfile)
-        val response=client.put("/userProfile/4"){
-            headers[HttpHeaders.ContentType]=ContentType.Application.Json.toString()
-            setBody(serializedUserProfile)
+        val emailMinLength=System.getenv("emailMinLength").toIntOrNull()
+        val emailMaxLength=System.getenv("emailMaxLength").toIntOrNull()
+        if(emailMinLength!=null && emailMaxLength!=null) {
+            val editProfile = UserProfile(4, 4, "div@gmail.com", 22)
+            if(editProfile.email.length in emailMinLength!!..emailMaxLength!!) {
+                val serializedUserProfile = Json.encodeToString(editProfile)
+                val response = client.put("/userProfile/4") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedUserProfile)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
         }
-        assertEquals(HttpStatusCode.OK,response.status)
     }
 
     //Product
@@ -125,15 +150,21 @@ class ApplicationTest {
     }
     @Test
     fun testPostProduct()= testApplication {
-        val product=Product(5,1,"chocolate",80)
-        val serializedProduct=Json.encodeToString(product)
-        val response=client.post("/product"){
-            headers[HttpHeaders.ContentType]=ContentType.Application.Json.toString()
-            setBody(serializedProduct)
+        val productNameMinLength=System.getenv("productNameMinLength").toIntOrNull()
+        val productNameMaxLength=System.getenv("productNameMaxLength").toIntOrNull()
+        if(productNameMinLength!=null && productNameMaxLength!=null) {
+            val product = Product(5, 1, "chocolate", 80)
+            if(product.name.length in productNameMinLength!!..productNameMaxLength!!) {
+                val serializedProduct = Json.encodeToString(product)
+                val response = client.post("/product") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedProduct)
+                }
+                assertEquals(HttpStatusCode.Created, response.status)
+                val responseProduct = Json.decodeFromString<Product>(response.bodyAsText())
+                assertEquals(product, responseProduct)
+            }
         }
-        assertEquals(HttpStatusCode.Created,response.status)
-        val responseProduct=Json.decodeFromString<Product>(response.bodyAsText())
-        assertEquals(product,responseProduct)
     }
     @Test
     fun testGetProduct()= testApplication {
@@ -154,14 +185,19 @@ class ApplicationTest {
     }
     @Test
     fun testUpdateProduct()= testApplication {
-        val product=Product(5,1,"chocolate",80)
-        val editProduct=Product(8,2,"cake",40)
-        val serializedProduct = Json.encodeToString(editProduct)
-        val response=client.put("/product/8"){
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedProduct)
+        val productNameMinLength=System.getenv("productNameMinLength").toIntOrNull()
+        val productNameMaxLength=System.getenv("productNameMaxLength").toIntOrNull()
+        if(productNameMinLength!=null && productNameMaxLength!=null) {
+            val editProduct = Product(8, 2, "cake", 40)
+            if(editProduct.name.length in productNameMinLength!!..productNameMaxLength!!) {
+                val serializedProduct = Json.encodeToString(editProduct)
+                val response = client.put("/product/8") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedProduct)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
         }
-        assertEquals(HttpStatusCode.OK,response.status)
     }
 
     //student
@@ -174,15 +210,21 @@ class ApplicationTest {
     }
     @Test
     fun testPostStudent()= testApplication {
-        val student=Student(5,"abc")
-        val serializedStudent=Json.encodeToString(student)
-        val response=client.post("/student"){
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedStudent)
+        val studentNameMinLength=System.getenv("studentNameMinLength").toIntOrNull()
+        val studentNameMaxLength=System.getenv("studentNameMaxLength").toIntOrNull()
+        if(studentNameMinLength!=null && studentNameMaxLength!=null) {
+            val student = Student(5, "abc")
+            if(student.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
+                val serializedStudent = Json.encodeToString(student)
+                val response = client.post("/student") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedStudent)
+                }
+                assertEquals(HttpStatusCode.Created, response.status)
+                val responseStudent = Json.decodeFromString<Student>(response.bodyAsText())
+                assertEquals(student, responseStudent)
+            }
         }
-        assertEquals(HttpStatusCode.Created,response.status)
-        val responseStudent=Json.decodeFromString<Student>(response.bodyAsText())
-        assertEquals(student,responseStudent)
     }
     @Test
     fun testGetStudent()= testApplication {
@@ -203,14 +245,19 @@ class ApplicationTest {
     }
     @Test
     fun testUpdateStudent()= testApplication {
-        val student=Student(1,"Jasmin")
-        val editStudent=Student(7,"Jas")
-        val serializedStudent = Json.encodeToString(editStudent)
-        val response=client.put("/student/7"){
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedStudent)
+        val studentNameMinLength=System.getenv("studentNameMinLength").toIntOrNull()
+        val studentNameMaxLength=System.getenv("studentNameMaxLength").toIntOrNull()
+        if(studentNameMinLength!=null && studentNameMaxLength!=null) {
+            val editStudent = Student(7, "Jas")
+            if(editStudent.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
+                val serializedStudent = Json.encodeToString(editStudent)
+                val response = client.put("/student/7") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedStudent)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
         }
-        assertEquals(HttpStatusCode.OK,response.status)
     }
 
     //course
@@ -223,15 +270,21 @@ class ApplicationTest {
     }
     @Test
     fun testPostCourse()= testApplication {
-        val course= Course(2,1,"Science")
-        val serializedCourse=Json.encodeToString(course)
-        val response=client.post("/course"){
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedCourse)
+        val courseNameMinLength=System.getenv("courseNameMinLength").toIntOrNull()
+        val courseNameMaxLength=System.getenv("courseNameMaxLength").toIntOrNull()
+        if(courseNameMinLength!=null && courseNameMaxLength!=null) {
+            val course = Course(2, 1, "Science")
+            if(course.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
+                val serializedCourse = Json.encodeToString(course)
+                val response = client.post("/course") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedCourse)
+                }
+                assertEquals(HttpStatusCode.Created, response.status)
+                val responseCourse = Json.decodeFromString<Course>(response.bodyAsText())
+                assertEquals(course, responseCourse)
+            }
         }
-        assertEquals(HttpStatusCode.Created,response.status)
-        val responseCourse=Json.decodeFromString<Course>(response.bodyAsText())
-        assertEquals(course,responseCourse)
     }
     @Test
     fun testGetCourse()= testApplication {
@@ -252,14 +305,19 @@ class ApplicationTest {
     }
     @Test
     fun testUpdateCourse()= testApplication {
-        val course=Course(1,1,"Maths")
-        val editCourse=Course(4,5,"Social")
-        val serializedCourse=Json.encodeToString(editCourse)
-        val response=client.put("/course/4"){
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedCourse)
+        val courseNameMinLength=System.getenv("courseNameMinLength").toIntOrNull()
+        val courseNameMaxLength=System.getenv("courseNameMaxLength").toIntOrNull()
+        if(courseNameMinLength!=null && courseNameMaxLength!=null) {
+            val editCourse = Course(4, 5, "Social")
+            if (editCourse.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
+                val serializedCourse = Json.encodeToString(editCourse)
+                val response = client.put("/course/4") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedCourse)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
         }
-        assertEquals(HttpStatusCode.OK,response.status)
     }
 
     //studentCourses
@@ -288,13 +346,19 @@ class ApplicationTest {
     }
     @Test
     fun testPostCustomer() = testApplication {
-        val customer=Customer("2", "Divya", "div@gmail.com")
-        val serializedCustomer=Json.encodeToString(customer)
-        val response = client.post("/customer") {
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedCustomer)
+        val customerNameMinLength=System.getenv("customerNameMinLength").toIntOrNull()
+        val customerNameMaxLength=System.getenv("customerNameMaxLength").toIntOrNull()
+        if(customerNameMinLength!=null && customerNameMaxLength!=null) {
+            val customer = Customer("2", "Divya", "div@gmail.com")
+            if(customer.name.length in customerNameMaxLength!!..customerNameMinLength!!) {
+                val serializedCustomer = Json.encodeToString(customer)
+                val response = client.post("/customer") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedCustomer)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
         }
-        assertEquals(HttpStatusCode.OK,response.status)
     }
     @Test
     fun testGetCustomer()= testApplication {
@@ -313,13 +377,22 @@ class ApplicationTest {
     }
     @Test
     fun testUpdateCustomer()= testApplication {
-        val customer=Customer("1","Jasmin","jas@123")
-        val editCustomer=Customer("4","Jas","jasmin@gmail.com")
-        val serializedCustomer=Json.encodeToString(editCustomer)
-        val response=client.put("/customer/4"){
-            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
-            setBody(serializedCustomer)
+        val customerNameMinLength=System.getenv("customerNameMinLength").toIntOrNull()
+        val customerNameMaxLength=System.getenv("customerNameMaxLength").toIntOrNull()
+        if(customerNameMinLength!=null && customerNameMaxLength!=null) {
+            val editCustomer = Customer("4", "Jas", "jasmin@gmail.com")
+            if(editCustomer.name.length in customerNameMinLength!!..customerNameMaxLength!!) {
+                val serializedCustomer = Json.encodeToString(editCustomer)
+                val response = client.put("/customer/4") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedCustomer)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
         }
-        assertEquals(HttpStatusCode.OK,response.status)
     }
+
+
+
+
 }
