@@ -24,9 +24,9 @@ import io.ktor.util.pipeline.PipelineContext
 fun Application.configureCustomerRoutes() {
     val config = HoconApplicationConfig(ConfigFactory.load())
     val customerNameMinLength = config.property("ktor.CustomerValidation.customerNameMinLength").
-    getString()?.toIntOrNull()
+    getString().toIntOrNull()
     val customerNameMaxLength = config.property("ktor.CustomerValidation.customerNameMaxLength").
-    getString()?.toIntOrNull()
+    getString().toIntOrNull()
 
     routing {
         route(ApiEndPoint.CUSTOMER) {
@@ -59,7 +59,7 @@ fun Application.configureCustomerRoutes() {
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.handleGetCustomers() {
     if (customerStorage.isNotEmpty()) {
-        call.respond(customerStorage)
+        call.respond(HttpStatusCode.OK,customerStorage)
     } else {
         call.respond("No customers found")
     }

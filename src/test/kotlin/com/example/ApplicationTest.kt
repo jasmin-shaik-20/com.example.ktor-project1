@@ -31,8 +31,8 @@ class ApplicationTest {
         val nameMinLength = System.getenv("nameMinLength")?.toIntOrNull()
         val nameMaxLength = System.getenv("nameMaxLength")?.toIntOrNull()
         if (nameMinLength != null && nameMaxLength != null) {
-            val user = User(10, "Rishitha")
-            if (user.name.length in nameMinLength..nameMaxLength) {
+            val user = User(11, "Aafiya")
+            if (user.name.length in (nameMinLength..nameMaxLength)) {
                 val serializedUser = Json.encodeToString(user)
                 val response = client.post("/user") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -66,11 +66,10 @@ class ApplicationTest {
         val nameMinLength = System.getenv("nameMinLength")?.toIntOrNull()
         val nameMaxLength = System.getenv("nameMaxLength")?.toIntOrNull()
         if (nameMinLength != null && nameMaxLength != null) {
-            val user = User(2, "Divya")
-            val editUser = User(4, "nani")
+            val editUser = User(1, "Jas")
             if (editUser.name.length in nameMinLength..nameMaxLength) {
                 val serializedUser = Json.encodeToString(editUser)
-                val response = client.put("/user/21") {
+                val response = client.put("/user/1") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
                     setBody(serializedUser)
                 }
@@ -92,8 +91,8 @@ class ApplicationTest {
         val emailMinLength=System.getenv("emailMinLength").toIntOrNull()
         val emailMaxLength=System.getenv("emailMaxLength").toIntOrNull()
         if(emailMinLength!=null&& emailMaxLength!=null) {
-            val profile= UserProfile(5,5, "def@gmail.com",21)
-            if(profile.email.length in emailMinLength!!..emailMaxLength!!) {
+            val profile= UserProfile(6,6, "ammi@gmail.com",21)
+            if(profile.email.length in emailMinLength..emailMaxLength) {
                 val serializedProfile = Json.encodeToString(profile)
                 val response = client.post("/userProfile") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -118,7 +117,7 @@ class ApplicationTest {
     }
     @Test
     fun testDeleteProfile()= testApplication {
-        val response=client.delete("/userProfile/3"){
+        val response=client.delete("/userProfile/4"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
         assertEquals(HttpStatusCode.OK,response.status)
@@ -128,10 +127,10 @@ class ApplicationTest {
         val emailMinLength=System.getenv("emailMinLength").toIntOrNull()
         val emailMaxLength=System.getenv("emailMaxLength").toIntOrNull()
         if(emailMinLength!=null && emailMaxLength!=null) {
-            val editProfile = UserProfile(4, 4, "div@gmail.com", 22)
-            if(editProfile.email.length in emailMinLength!!..emailMaxLength!!) {
+            val editProfile = UserProfile(5, 5, "defg@gmail.com", 22)
+            if(editProfile.email.length in emailMinLength..emailMaxLength) {
                 val serializedUserProfile = Json.encodeToString(editProfile)
-                val response = client.put("/userProfile/4") {
+                val response = client.put("/userProfile/5") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
                     setBody(serializedUserProfile)
                 }
@@ -153,8 +152,8 @@ class ApplicationTest {
         val productNameMinLength=System.getenv("productNameMinLength").toIntOrNull()
         val productNameMaxLength=System.getenv("productNameMaxLength").toIntOrNull()
         if(productNameMinLength!=null && productNameMaxLength!=null) {
-            val product = Product(5, 1, "chocolate", 80)
-            if(product.name.length in productNameMinLength!!..productNameMaxLength!!) {
+            val product = Product(8, 1, "biscuit", 80)
+            if(product.name.length in productNameMinLength..productNameMaxLength) {
                 val serializedProduct = Json.encodeToString(product)
                 val response = client.post("/product") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -188,10 +187,10 @@ class ApplicationTest {
         val productNameMinLength=System.getenv("productNameMinLength").toIntOrNull()
         val productNameMaxLength=System.getenv("productNameMaxLength").toIntOrNull()
         if(productNameMinLength!=null && productNameMaxLength!=null) {
-            val editProduct = Product(8, 2, "cake", 40)
-            if(editProduct.name.length in productNameMinLength!!..productNameMaxLength!!) {
+            val editProduct = Product(7, 2, "apple", 40)
+            if(editProduct.name.length in productNameMinLength..productNameMaxLength) {
                 val serializedProduct = Json.encodeToString(editProduct)
-                val response = client.put("/product/8") {
+                val response = client.put("/product/7") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
                     setBody(serializedProduct)
                 }
@@ -213,8 +212,8 @@ class ApplicationTest {
         val studentNameMinLength=System.getenv("studentNameMinLength").toIntOrNull()
         val studentNameMaxLength=System.getenv("studentNameMaxLength").toIntOrNull()
         if(studentNameMinLength!=null && studentNameMaxLength!=null) {
-            val student = Student(5, "abc")
-            if(student.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
+            val student = Student(4, "Sumayia")
+            if(student.name.length in studentNameMinLength..studentNameMaxLength) {
                 val serializedStudent = Json.encodeToString(student)
                 val response = client.post("/student") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -248,10 +247,10 @@ class ApplicationTest {
         val studentNameMinLength=System.getenv("studentNameMinLength").toIntOrNull()
         val studentNameMaxLength=System.getenv("studentNameMaxLength").toIntOrNull()
         if(studentNameMinLength!=null && studentNameMaxLength!=null) {
-            val editStudent = Student(7, "Jas")
-            if(editStudent.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
+            val editStudent = Student(1, "Jas")
+            if(editStudent.name.length in studentNameMinLength..studentNameMaxLength) {
                 val serializedStudent = Json.encodeToString(editStudent)
-                val response = client.put("/student/7") {
+                val response = client.put("/student/1") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
                     setBody(serializedStudent)
                 }
@@ -273,8 +272,8 @@ class ApplicationTest {
         val courseNameMinLength=System.getenv("courseNameMinLength").toIntOrNull()
         val courseNameMaxLength=System.getenv("courseNameMaxLength").toIntOrNull()
         if(courseNameMinLength!=null && courseNameMaxLength!=null) {
-            val course = Course(2, 1, "Science")
-            if(course.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
+            val course = Course(10, 3, "ktor")
+            if(course.name.length in courseNameMinLength..courseNameMaxLength) {
                 val serializedCourse = Json.encodeToString(course)
                 val response = client.post("/course") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -308,8 +307,8 @@ class ApplicationTest {
         val courseNameMinLength=System.getenv("courseNameMinLength").toIntOrNull()
         val courseNameMaxLength=System.getenv("courseNameMaxLength").toIntOrNull()
         if(courseNameMinLength!=null && courseNameMaxLength!=null) {
-            val editCourse = Course(4, 5, "Social")
-            if (editCourse.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
+            val editCourse = Course(4, 2, "Social")
+            if (editCourse.name.length in courseNameMinLength..courseNameMaxLength) {
                 val serializedCourse = Json.encodeToString(editCourse)
                 val response = client.put("/course/4") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -349,8 +348,8 @@ class ApplicationTest {
         val customerNameMinLength=System.getenv("customerNameMinLength").toIntOrNull()
         val customerNameMaxLength=System.getenv("customerNameMaxLength").toIntOrNull()
         if(customerNameMinLength!=null && customerNameMaxLength!=null) {
-            val customer = Customer("2", "Divya", "div@gmail.com")
-            if(customer.name.length in customerNameMaxLength!!..customerNameMinLength!!) {
+            val customer = Customer("3", "Sumayia", "sum@gmail.com")
+            if(customer.name.length in customerNameMaxLength..customerNameMinLength) {
                 val serializedCustomer = Json.encodeToString(customer)
                 val response = client.post("/customer") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -362,7 +361,6 @@ class ApplicationTest {
     }
     @Test
     fun testGetCustomer()= testApplication {
-        val customer=Customer("1","Jasmin","jas@123")
         val response=client.get("/customer/1"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
         }
@@ -380,8 +378,8 @@ class ApplicationTest {
         val customerNameMinLength=System.getenv("customerNameMinLength").toIntOrNull()
         val customerNameMaxLength=System.getenv("customerNameMaxLength").toIntOrNull()
         if(customerNameMinLength!=null && customerNameMaxLength!=null) {
-            val editCustomer = Customer("4", "Jas", "jasmin@gmail.com")
-            if(editCustomer.name.length in customerNameMinLength!!..customerNameMaxLength!!) {
+            val editCustomer = Customer("2", "Div", "div@gmail.com")
+            if(editCustomer.name.length in customerNameMinLength..customerNameMaxLength) {
                 val serializedCustomer = Json.encodeToString(editCustomer)
                 val response = client.put("/customer/4") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -390,6 +388,22 @@ class ApplicationTest {
                 assertEquals(HttpStatusCode.OK, response.status)
             }
         }
+    }
+
+    //login
+    @Test
+    fun testPostLogin()= testApplication {
+        val config = HoconApplicationConfig(ConfigFactory.load())
+        val secret = config.property("ktor.jwt.secret").getString()
+        val issuer = config.property("ktor.jwt.issuer").getString()
+        val audience = config.property("ktor.jwt.audience").getString()
+        val myRealm= config.property("ktor.jwt.myRealm").getString()
+        val loginNameMinLength=System.getenv("loginNameMinLength").toIntOrNull()
+        val loginNameMaxLength=System.getenv("loginNameMaxLength").toIntOrNull()
+        val loginPasswordMinLength=System.getenv("loginPasswordMinLength").toIntOrNull()
+        val loginPasswordMaxLength=System.getenv("loginPasswordMaxLength").toIntOrNull()
+
+
     }
 
 

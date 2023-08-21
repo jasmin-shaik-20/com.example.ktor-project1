@@ -20,6 +20,7 @@ fun Application.configureRouting() {
     configureUserProfile()
     configureProductRoutes()
     configureStudentRoutes()
+    configureCustomerRoutes()
     configureCourseRoutes()
     configureCallLogging()
     configureImageRoutes()
