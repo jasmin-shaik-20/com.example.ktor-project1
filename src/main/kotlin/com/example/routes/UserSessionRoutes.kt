@@ -44,7 +44,7 @@ fun Application.configureUserSession() {
                 }
             }
 
-            get("/user-session") {
+            get("/userSession") {
                 val sessionId = call.sessions.get<UserSession>()?.id ?: ""
                 val userSessionJson = RedisUtils.get(sessionId)
                 if (userSessionJson != null) {

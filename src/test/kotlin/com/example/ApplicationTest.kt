@@ -1,6 +1,11 @@
 package com.example
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.JWTVerifier
+import com.auth0.jwt.interfaces.Payload
 import com.example.dao.*
+import com.example.endpoints.ApiEndPoint
 import com.typesafe.config.ConfigFactory
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -9,12 +14,14 @@ import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.config.*
 import io.netty.handler.codec.http.HttpHeaders.addHeader
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
+import java.util.*
 
 class ApplicationTest {
 
@@ -392,19 +399,55 @@ class ApplicationTest {
 
     //login
     @Test
-    fun testPostLogin()= testApplication {
+    fun testPostLogin() = testApplication {
         val config = HoconApplicationConfig(ConfigFactory.load())
         val secret = config.property("ktor.jwt.secret").getString()
         val issuer = config.property("ktor.jwt.issuer").getString()
         val audience = config.property("ktor.jwt.audience").getString()
-        val myRealm= config.property("ktor.jwt.myRealm").getString()
-        val loginNameMinLength=System.getenv("loginNameMinLength").toIntOrNull()
-        val loginNameMaxLength=System.getenv("loginNameMaxLength").toIntOrNull()
-        val loginPasswordMinLength=System.getenv("loginPasswordMinLength").toIntOrNull()
-        val loginPasswordMaxLength=System.getenv("loginPasswordMaxLength").toIntOrNull()
+        val loginNameMinLength = System.getenv("loginNameMinLength")?.toIntOrNull()
+        val loginNameMaxLength = System.getenv("loginNameMaxLength")?.toIntOrNull()
+        val loginPasswordMinLength = System.getenv("loginPasswordMinLength")?.toIntOrNull()
+        val loginPasswordMaxLength = System.getenv("loginPasswordMaxLength")?.toIntOrNull()
 
-
+        if (loginNameMinLength != null && loginNameMaxLength != null &&
+            loginPasswordMinLength != null && loginPasswordMaxLength != null) {
+            val user = Login("Divya", "div@123")
+            if (user.username.length in loginNameMinLength..loginNameMaxLength &&
+                user.password.length in loginPasswordMinLength..loginPasswordMaxLength) {
+                val serializedUser=Json.encodeToString(user)
+                val token = JWT.create()
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .withClaim("username", user.username)
+                    .withExpiresAt(Date(System.currentTimeMillis() + ApiEndPoint.TOKEN_EXPIRATION))
+                    .sign(Algorithm.HMAC256(secret))
+                val response = client.post("/userLogin/login") {
+                    headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+                    setBody(serializedUser)
+                }
+                assertEquals(HttpStatusCode.OK, response.status)
+            }
+        }
     }
+
+    @Test
+    fun testGetUserLogin()= testApplication {
+        val response=client.get("/userLogin/hello")
+        assertEquals(HttpStatusCode.Unauthorized,response.status)
+    }
+
+    //userSession
+    @Test
+    fun testGetLogin()= testApplication {
+        val response=client.get("/session/login")
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+    @Test
+    fun testGetSession()= testApplication {
+        val response=client.get("/session/userSession")
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+
 
 
 
