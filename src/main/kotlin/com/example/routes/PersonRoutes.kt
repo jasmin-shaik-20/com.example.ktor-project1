@@ -26,7 +26,7 @@ fun Application.configurePersonRoutes(){
                 val post = call.receive<Person>()
                 val person = personInterfaceImpl.createPersonData(post.id, post.name)
                 if (person != null) {
-                    call.respond(person)
+                    call.respond(HttpStatusCode.OK,person)
                 }
             }
 

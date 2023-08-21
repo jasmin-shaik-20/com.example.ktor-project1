@@ -448,6 +448,19 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.OK,response.status)
     }
 
+    //person
+    @Test
+    fun testPostPerson()= testApplication {
+        val person=Person(1,"Jasmin")
+        val serializedPerson=Json.encodeToString(person)
+        val response=client.post("/person/post details"){
+            headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
+            setBody(serializedPerson)
+        }
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
+
+
 
 
 
