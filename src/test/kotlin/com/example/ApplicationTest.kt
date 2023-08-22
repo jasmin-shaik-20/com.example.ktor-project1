@@ -2,25 +2,20 @@ package com.example
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.auth0.jwt.interfaces.JWTVerifier
-import com.auth0.jwt.interfaces.Payload
 import com.example.dao.*
 import com.example.endpoints.ApiEndPoint
 import com.typesafe.config.ConfigFactory
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.config.*
-import io.netty.handler.codec.http.HttpHeaders.addHeader
-import kotlinx.serialization.decodeFromString
+import io.ktor.util.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.koin.dsl.module
+import java.io.ByteArrayInputStream
 import java.util.*
 
 class ApplicationTest {
@@ -38,7 +33,7 @@ class ApplicationTest {
         val nameMinLength = System.getenv("nameMinLength")?.toIntOrNull()
         val nameMaxLength = System.getenv("nameMaxLength")?.toIntOrNull()
         if (nameMinLength != null && nameMaxLength != null) {
-            val user = User(11, "Aafiya")
+            val user = User(14, "Mahima")
             if (user.name.length in (nameMinLength..nameMaxLength)) {
                 val serializedUser = Json.encodeToString(user)
                 val response = client.post("/user") {
@@ -73,10 +68,10 @@ class ApplicationTest {
         val nameMinLength = System.getenv("nameMinLength")?.toIntOrNull()
         val nameMaxLength = System.getenv("nameMaxLength")?.toIntOrNull()
         if (nameMinLength != null && nameMaxLength != null) {
-            val editUser = User(1, "Jas")
+            val editUser = User(2, "Divya")
             if (editUser.name.length in nameMinLength..nameMaxLength) {
                 val serializedUser = Json.encodeToString(editUser)
-                val response = client.put("/user/1") {
+                val response = client.put("/user/2") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
                     setBody(serializedUser)
                 }
@@ -98,7 +93,7 @@ class ApplicationTest {
         val emailMinLength=System.getenv("emailMinLength").toIntOrNull()
         val emailMaxLength=System.getenv("emailMaxLength").toIntOrNull()
         if(emailMinLength!=null&& emailMaxLength!=null) {
-            val profile= UserProfile(6,6, "ammi@gmail.com",21)
+            val profile= UserProfile(7,7, "yasmin@gmail.com",21)
             if(profile.email.length in emailMinLength..emailMaxLength) {
                 val serializedProfile = Json.encodeToString(profile)
                 val response = client.post("/userProfile") {
@@ -134,7 +129,7 @@ class ApplicationTest {
         val emailMinLength=System.getenv("emailMinLength").toIntOrNull()
         val emailMaxLength=System.getenv("emailMaxLength").toIntOrNull()
         if(emailMinLength!=null && emailMaxLength!=null) {
-            val editProfile = UserProfile(5, 5, "defg@gmail.com", 22)
+            val editProfile = UserProfile(1, 1, "jasminshaikg@gmail.com", 22)
             if(editProfile.email.length in emailMinLength..emailMaxLength) {
                 val serializedUserProfile = Json.encodeToString(editProfile)
                 val response = client.put("/userProfile/5") {
@@ -159,7 +154,7 @@ class ApplicationTest {
         val productNameMinLength=System.getenv("productNameMinLength").toIntOrNull()
         val productNameMaxLength=System.getenv("productNameMaxLength").toIntOrNull()
         if(productNameMinLength!=null && productNameMaxLength!=null) {
-            val product = Product(8, 1, "biscuit", 80)
+            val product = Product(9, 3, "icecream", 90)
             if(product.name.length in productNameMinLength..productNameMaxLength) {
                 val serializedProduct = Json.encodeToString(product)
                 val response = client.post("/product") {
@@ -194,7 +189,7 @@ class ApplicationTest {
         val productNameMinLength=System.getenv("productNameMinLength").toIntOrNull()
         val productNameMaxLength=System.getenv("productNameMaxLength").toIntOrNull()
         if(productNameMinLength!=null && productNameMaxLength!=null) {
-            val editProduct = Product(7, 2, "apple", 40)
+            val editProduct = Product(4, 2, "banana", 40)
             if(editProduct.name.length in productNameMinLength..productNameMaxLength) {
                 val serializedProduct = Json.encodeToString(editProduct)
                 val response = client.put("/product/7") {
@@ -219,7 +214,7 @@ class ApplicationTest {
         val studentNameMinLength=System.getenv("studentNameMinLength").toIntOrNull()
         val studentNameMaxLength=System.getenv("studentNameMaxLength").toIntOrNull()
         if(studentNameMinLength!=null && studentNameMaxLength!=null) {
-            val student = Student(4, "Sumayia")
+            val student = Student(6, "Aafiya")
             if(student.name.length in studentNameMinLength..studentNameMaxLength) {
                 val serializedStudent = Json.encodeToString(student)
                 val response = client.post("/student") {
@@ -254,7 +249,7 @@ class ApplicationTest {
         val studentNameMinLength=System.getenv("studentNameMinLength").toIntOrNull()
         val studentNameMaxLength=System.getenv("studentNameMaxLength").toIntOrNull()
         if(studentNameMinLength!=null && studentNameMaxLength!=null) {
-            val editStudent = Student(1, "Jas")
+            val editStudent = Student(1, "Jasmin")
             if(editStudent.name.length in studentNameMinLength..studentNameMaxLength) {
                 val serializedStudent = Json.encodeToString(editStudent)
                 val response = client.put("/student/1") {
@@ -279,7 +274,7 @@ class ApplicationTest {
         val courseNameMinLength=System.getenv("courseNameMinLength").toIntOrNull()
         val courseNameMaxLength=System.getenv("courseNameMaxLength").toIntOrNull()
         if(courseNameMinLength!=null && courseNameMaxLength!=null) {
-            val course = Course(10, 3, "ktor")
+            val course = Course(11, 3, "kotlin")
             if(course.name.length in courseNameMinLength..courseNameMaxLength) {
                 val serializedCourse = Json.encodeToString(course)
                 val response = client.post("/course") {
@@ -314,10 +309,10 @@ class ApplicationTest {
         val courseNameMinLength=System.getenv("courseNameMinLength").toIntOrNull()
         val courseNameMaxLength=System.getenv("courseNameMaxLength").toIntOrNull()
         if(courseNameMinLength!=null && courseNameMaxLength!=null) {
-            val editCourse = Course(4, 2, "Social")
+            val editCourse = Course(7, 1, "Telugu")
             if (editCourse.name.length in courseNameMinLength..courseNameMaxLength) {
                 val serializedCourse = Json.encodeToString(editCourse)
-                val response = client.put("/course/4") {
+                val response = client.put("/course/7") {
                     headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
                     setBody(serializedCourse)
                 }
@@ -355,7 +350,7 @@ class ApplicationTest {
         val customerNameMinLength=System.getenv("customerNameMinLength").toIntOrNull()
         val customerNameMaxLength=System.getenv("customerNameMaxLength").toIntOrNull()
         if(customerNameMinLength!=null && customerNameMaxLength!=null) {
-            val customer = Customer("3", "Sumayia", "sum@gmail.com")
+            val customer = Customer("4", "Yasmin", "yasmin@gmail.com")
             if(customer.name.length in customerNameMaxLength..customerNameMinLength) {
                 val serializedCustomer = Json.encodeToString(customer)
                 val response = client.post("/customer") {
@@ -385,7 +380,7 @@ class ApplicationTest {
         val customerNameMinLength=System.getenv("customerNameMinLength").toIntOrNull()
         val customerNameMaxLength=System.getenv("customerNameMaxLength").toIntOrNull()
         if(customerNameMinLength!=null && customerNameMaxLength!=null) {
-            val editCustomer = Customer("2", "Div", "div@gmail.com")
+            val editCustomer = Customer("3", "DivyaDeepika", "divya@gmail.com")
             if(editCustomer.name.length in customerNameMinLength..customerNameMaxLength) {
                 val serializedCustomer = Json.encodeToString(editCustomer)
                 val response = client.put("/customer/4") {
@@ -415,7 +410,7 @@ class ApplicationTest {
             if (user.username.length in loginNameMinLength..loginNameMaxLength &&
                 user.password.length in loginPasswordMinLength..loginPasswordMaxLength) {
                 val serializedUser=Json.encodeToString(user)
-                val token = JWT.create()
+                JWT.create()
                     .withAudience(audience)
                     .withIssuer(issuer)
                     .withClaim("username", user.username)
@@ -451,7 +446,7 @@ class ApplicationTest {
     //person
     @Test
     fun testPostPerson()= testApplication {
-        val person=Person(1,"Jasmin")
+        val person=Person(2,"Divya")
         val serializedPerson=Json.encodeToString(person)
         val response=client.post("/person/post details"){
             headers[HttpHeaders.ContentType] = ContentType.Application.Json.toString()
@@ -460,9 +455,32 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.OK,response.status)
     }
 
+    //image
+    @OptIn(InternalAPI::class)
+    @Test
+    fun testPostImage()= testApplication {
+        val imageUrl="https://random.dog/1f1447c8-0eda-4a0e-8e02-d8194243737c.png"
+        val imageByteArray = "dummyImageData".toByteArray()
 
+        // Mock the downloadImage function
+        ImageRequest.downloadImage = { _ ->
+            ByteArrayInputStream(imageByteArray)
+        }
 
+        client.post("/postural/getBase64FromImageUrl") {
+            headers[HttpHeaders.ContentType] = ContentType.Application.FormUrlEncoded.toString()
+            body = MultiPartFormDataContent(
+                formData {
+                    append("imageUrl", imageUrl)
+                }
+            )
+        }
+        Base64.getEncoder().encodeToString(imageByteArray)
 
+    }
+    object ImageRequest {
+        var downloadImage: (String) -> ByteArrayInputStream = { _ -> TODO() }
+    }
 
 
 }
