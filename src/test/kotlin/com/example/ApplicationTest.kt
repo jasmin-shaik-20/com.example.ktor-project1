@@ -442,6 +442,11 @@ class ApplicationTest {
         val response=client.get("/session/userSession")
         assertEquals(HttpStatusCode.OK,response.status)
     }
+    @Test
+    fun testGetLogout()= testApplication {
+        val response=client.get("/session/logout")
+        assertEquals(HttpStatusCode.OK,response.status)
+    }
 
     //person
     @Test
