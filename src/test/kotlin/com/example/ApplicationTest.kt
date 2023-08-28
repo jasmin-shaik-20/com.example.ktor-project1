@@ -467,7 +467,6 @@ class ApplicationTest {
         val imageUrl="https://random.dog/1f1447c8-0eda-4a0e-8e02-d8194243737c.png"
         val imageByteArray = "dummyImageData".toByteArray()
 
-        // Mock the downloadImage function
         ImageRequest.downloadImage = { _ ->
             ByteArrayInputStream(imageByteArray)
         }
