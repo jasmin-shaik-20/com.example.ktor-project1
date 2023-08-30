@@ -2,16 +2,15 @@ package com.example.services
 
 import com.example.dao.Student
 import com.example.plugins.StudentNotFoundException
-import com.example.repository.StudentInterfaceImpl
+import com.example.repository.StudentRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
 
 class StudentServices {
-    suspend fun handleGetStudents(call: ApplicationCall,studentInterfaceImpl: StudentInterfaceImpl) {
-        val students = studentInterfaceImpl.getAllStudents()
+    suspend fun handleGetStudents(call: ApplicationCall, studentRepository: StudentRepository) {
+        val students = studentRepository.getAllStudents()
         if (students.isEmpty()) {
             throw StudentNotFoundException()
         } else {
@@ -22,13 +21,13 @@ class StudentServices {
 
     suspend fun handlePostStudent(
         call: ApplicationCall,
-        studentInterfaceImpl: StudentInterfaceImpl,
+        studentRepository: StudentRepository,
         studentNameMinLength: Int?,
         studentNameMaxLength: Int?
     ) {
         val students = call.receive<Student>()
         if (students.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
-            val student = studentInterfaceImpl.insertStudent(students.id, students.name)
+            val student = studentRepository.insertStudent(students.id, students.name)
             if (student != null) {
                 call.application.environment.log.info("Student is created $student")
                 call.respond(HttpStatusCode.Created, student)
@@ -42,10 +41,10 @@ class StudentServices {
 
     suspend fun handleGetStudentById(
         call: ApplicationCall,
-        studentInterfaceImpl: StudentInterfaceImpl
+        studentRepository: StudentRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
-        val fetid = studentInterfaceImpl.getStudentById(id!!.toInt())
+        val fetid = studentRepository.getStudentById(id!!.toInt())
         if (fetid != null) {
             call.application.environment.log.info("Student is found")
             call.respond(fetid)
@@ -56,11 +55,11 @@ class StudentServices {
 
     suspend fun handleDeleteStudent(
         call: ApplicationCall,
-        studentInterfaceImpl: StudentInterfaceImpl
+        studentRepository: StudentRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
         if (id != null) {
-            val delStudent = studentInterfaceImpl.deleteStudent(id)
+            val delStudent = studentRepository.deleteStudent(id)
             if (delStudent) {
                 call.application.environment.log.info("Student is deleted")
                 call.respond(HttpStatusCode.OK)
@@ -75,12 +74,12 @@ class StudentServices {
 
     suspend fun handlePutStudent(
         call: ApplicationCall,
-        studentInterfaceImpl: StudentInterfaceImpl
+        studentRepository: StudentRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
         if (id != null) {
             val student = call.receive<Student>()
-            val editStudent = studentInterfaceImpl.editStudent(student.id, student.name)
+            val editStudent = studentRepository.editStudent(student.id, student.name)
             if (editStudent) {
                 call.application.environment.log.info("Student is updated")
                 call.respond(HttpStatusCode.OK)

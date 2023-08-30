@@ -1,26 +1,18 @@
 package com.example.routes
 
-import com.example.dao.Course
 import com.example.endpoints.ApiEndPoint
-import com.example.repository.CourseInterfaceImpl
-import com.example.plugins.CourseNotFoundException
+import com.example.repository.CourseRepository
 import com.example.services.CourseServices
 import com.typesafe.config.ConfigFactory
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.application.application
-import io.ktor.server.application.ApplicationCall
 import io.ktor.server.config.HoconApplicationConfig
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.get
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.put
-import io.ktor.util.pipeline.PipelineContext
 import org.koin.ktor.ext.inject
 
 fun Application.configureCourseRoutes() {
@@ -30,27 +22,27 @@ fun Application.configureCourseRoutes() {
 
     routing {
         route(ApiEndPoint.COURSE) {
-            val courseInterfaceImpl: CourseInterfaceImpl by inject()
+            val courseRepository: CourseRepository by inject()
             val courseServices: CourseServices by inject()
 
             get {
-                courseServices.handleGetCourses(call,courseInterfaceImpl)
+                courseServices.handleGetCourses(call,courseRepository)
             }
 
             post {
-                courseServices.handlePostCourse(call, courseInterfaceImpl,courseNameMinLength,courseNameMaxLength)
+                courseServices.handlePostCourse(call, courseRepository,courseNameMinLength,courseNameMaxLength)
             }
 
             get("/{id?}") {
-                courseServices.handleGetCourseById(call, courseInterfaceImpl)
+                courseServices.handleGetCourseById(call, courseRepository)
             }
 
             delete("/{id?}") {
-                courseServices.handleDeleteCourse(call, courseInterfaceImpl)
+                courseServices.handleDeleteCourse(call, courseRepository)
             }
 
             put("/{id?}") {
-                courseServices.handlePutCourse(call, courseInterfaceImpl)
+                courseServices.handlePutCourse(call, courseRepository)
             }
         }
     }

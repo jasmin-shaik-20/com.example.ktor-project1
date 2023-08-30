@@ -1,11 +1,10 @@
 package com.example.routes
 
 import com.example.endpoints.ApiEndPoint
-import com.example.repository.StudentCourseInterfaceImpl
+import com.example.repository.StudentCourseRepository
 import com.example.services.StudentCourseServices
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.route
 import io.ktor.server.routing.get
@@ -14,14 +13,14 @@ import org.koin.ktor.ext.inject
 fun Application.configureStudentCourseRoutes(){
     routing{
         route(ApiEndPoint.STUDENTCOURSES){
-            val studentCourseInterfaceImpl : StudentCourseInterfaceImpl by inject()
+            val studentCourseRepository : StudentCourseRepository by inject()
             val studentCourseServices: StudentCourseServices by inject()
             get("/student/{id?}"){
-                studentCourseServices.handleGetStudentsByCourseId(call,studentCourseInterfaceImpl)
+                studentCourseServices.handleGetStudentsByCourseId(call,studentCourseRepository)
             }
 
             get("/course/{id?}"){
-                studentCourseServices.handleGetCoursesByStudentId(call,studentCourseInterfaceImpl)
+                studentCourseServices.handleGetCoursesByStudentId(call,studentCourseRepository)
             }
         }
     }

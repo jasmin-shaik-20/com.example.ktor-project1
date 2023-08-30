@@ -1,13 +1,13 @@
 package com.example.services
 
-import com.example.repository.StudentCourseInterfaceImpl
+import com.example.repository.StudentCourseRepository
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 
 class StudentCourseServices {
-    suspend fun handleGetCoursesByStudentId(call: ApplicationCall,studentCourseInterfaceImpl: StudentCourseInterfaceImpl) {
+    suspend fun handleGetCoursesByStudentId(call: ApplicationCall, studentCourseRepository: StudentCourseRepository) {
         val id = call.parameters["id"]?.toIntOrNull()
-        val courses = studentCourseInterfaceImpl.getCoursesStudentId(id!!.toInt())
+        val courses = studentCourseRepository.getCoursesStudentId(id!!.toInt())
         if (courses.isNotEmpty()) {
             call.application.environment.log.info("Courses found")
             call.respond(courses)
@@ -16,9 +16,9 @@ class StudentCourseServices {
         }
     }
 
-    suspend fun handleGetStudentsByCourseId(call: ApplicationCall,studentCourseInterfaceImpl: StudentCourseInterfaceImpl) {
+    suspend fun handleGetStudentsByCourseId(call: ApplicationCall, studentCourseRepository: StudentCourseRepository) {
         val id = call.parameters["id"] ?: return call.respond("Invalid id")
-        val students = studentCourseInterfaceImpl.getStudentsCourseId(id.toInt())
+        val students = studentCourseRepository.getStudentsCourseId(id.toInt())
         if (students.isNotEmpty()) {
             call.application.environment.log.info("Students found")
             call.respond(students)

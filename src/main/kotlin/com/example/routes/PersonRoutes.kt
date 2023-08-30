@@ -1,15 +1,10 @@
 package com.example.routes
 
-import com.example.dao.Person
 import com.example.endpoints.ApiEndPoint
-import com.example.endpoints.ApiEndPoint.TIME
-import com.example.repository.PersonInterfaceImpl
+import com.example.repository.PersonRepository
 import com.example.services.PersonServices
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.route
 import io.ktor.server.routing.post
@@ -22,14 +17,14 @@ fun Application.configurePersonRoutes(){
     jedis.connect()
     routing{
         route(ApiEndPoint.PERSON){
-            val personInterfaceImpl : PersonInterfaceImpl by inject()
+            val personRepository : PersonRepository by inject()
             val personServices: PersonServices by inject()
             post("/post details") {
-                personServices.handlePostPersonDetails(call,personInterfaceImpl)
+                personServices.handlePostPersonDetails(call,personRepository)
             }
 
             get("/data") {
-                personServices.handleGetDataFromCacheOrSource(call,personInterfaceImpl,jedis)
+                personServices.handleGetDataFromCacheOrSource(call,personRepository,jedis)
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.example.routes
 
 import com.example.endpoints.ApiEndPoint
-import com.example.repository.UsersInterfaceImpl
+import com.example.repository.UsersRepository
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -23,27 +23,27 @@ fun Application.configureUserRoutes() {
 
     routing {
         route(ApiEndPoint.USER) {
-            val usersInterfaceImpl: UsersInterfaceImpl by inject()
+            val usersRepository: UsersRepository by inject()
             val userServices: UserServices by inject()
 
             get {
-                userServices.handleGetUsers(call, usersInterfaceImpl)
+                userServices.handleGetUsers(call, usersRepository)
             }
 
             post {
-                userServices.handlePostUser(call, usersInterfaceImpl, nameMinLength, nameMaxLength)
+                userServices.handlePostUser(call, usersRepository, nameMinLength, nameMaxLength)
             }
 
             get("/{id?}") {
-                userServices.handleGetUserById(call, usersInterfaceImpl)
+                userServices.handleGetUserById(call, usersRepository)
             }
 
             delete("/{id?}") {
-                userServices.handleDeleteUser(call, usersInterfaceImpl)
+                userServices.handleDeleteUser(call, usersRepository)
             }
 
             put("/{id?}") {
-                userServices.handlePutUser(call, usersInterfaceImpl)
+                userServices.handlePutUser(call, usersRepository)
             }
         }
     }

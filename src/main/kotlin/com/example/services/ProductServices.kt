@@ -3,17 +3,16 @@ package com.example.services
 import com.example.dao.Product
 import com.example.plugins.InvalidIDException
 import com.example.plugins.ProductNotFoundException
-import com.example.repository.ProductInterfaceImpl
+import com.example.repository.ProductRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
 
 class ProductServices {
     suspend fun handleGetProducts
-                (call:ApplicationCall,productInterfaceImpl: ProductInterfaceImpl) {
-        val getProducts = productInterfaceImpl.getAllProducts()
+                (call:ApplicationCall, productRepository: ProductRepository) {
+        val getProducts = productRepository.getAllProducts()
         if (getProducts.isEmpty()) {
             throw ProductNotFoundException()
         } else {
@@ -24,13 +23,13 @@ class ProductServices {
 
     suspend fun handlePostProduct(
         call: ApplicationCall,
-        productInterfaceImpl: ProductInterfaceImpl,
+        productRepository: ProductRepository,
         productNameMinLength: Int?,
         productNameMaxLength: Int?
     ) {
         val insert = call.receive<Product>()
         if (insert.name.length in productNameMinLength!!..productNameMaxLength!!) {
-            val postProduct = productInterfaceImpl.insertProduct(insert.productId, insert.userId, insert.name, insert.price)
+            val postProduct = productRepository.insertProduct(insert.productId, insert.userId, insert.name, insert.price)
             if (postProduct != null) {
                 call.application.environment.log.info("Product is created")
                 call.respond(HttpStatusCode.Created, postProduct)
@@ -44,10 +43,10 @@ class ProductServices {
 
     suspend fun handleGetProductsByUserId(
         call: ApplicationCall,
-        productInterfaceImpl: ProductInterfaceImpl
+        productRepository: ProductRepository
     ) {
         val id = call.parameters["id"] ?: throw InvalidIDException()
-        val getProduct = productInterfaceImpl.getProductsById(id.toInt())
+        val getProduct = productRepository.getProductsById(id.toInt())
         if (getProduct.isEmpty()) {
             call.application.environment.log.error("No product found with given id")
             throw ProductNotFoundException()
@@ -59,10 +58,10 @@ class ProductServices {
 
     suspend fun handleGetProductById(
         call: ApplicationCall,
-        productInterfaceImpl: ProductInterfaceImpl
+        productRepository: ProductRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
-        val fetid = productInterfaceImpl.getProduct(id!!.toInt())
+        val fetid = productRepository.getProduct(id!!.toInt())
         if (fetid != null) {
             call.application.environment.log.info("Product is found")
             call.respond(fetid)
@@ -73,11 +72,11 @@ class ProductServices {
 
     suspend fun handleDeleteProduct(
         call: ApplicationCall,
-        productInterfaceImpl: ProductInterfaceImpl
+        productRepository: ProductRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
         if (id != null) {
-            val delProduct = productInterfaceImpl.deleteProduct(id)
+            val delProduct = productRepository.deleteProduct(id)
             if (delProduct) {
                 call.application.environment.log.info("Product is deleted")
                 call.respond(HttpStatusCode.OK)
@@ -92,12 +91,12 @@ class ProductServices {
 
     suspend fun handlePutProduct(
         call: ApplicationCall,
-        productInterfaceImpl: ProductInterfaceImpl
+        productRepository: ProductRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
         if (id != null) {
             val product = call.receive<Product>()
-            val editProduct = productInterfaceImpl.editProduct(product.productId, product.name, product.price)
+            val editProduct = productRepository.editProduct(product.productId, product.name, product.price)
             if (editProduct) {
                 call.application.environment.log.info("Product is updated")
                 call.respond(HttpStatusCode.OK)

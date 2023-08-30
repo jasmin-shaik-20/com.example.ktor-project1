@@ -2,16 +2,15 @@ package com.example.services
 
 import com.example.dao.UserProfile
 import com.example.plugins.UserProfileNotFoundException
-import com.example.repository.ProfileInterfaceImpl
+import com.example.repository.ProfileRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
 
 class UserProfileServices {
-    suspend fun handleGetUserProfiles(call:ApplicationCall,profileInterfaceImpl: ProfileInterfaceImpl) {
-        val profiles = profileInterfaceImpl.getAllUserProfile()
+    suspend fun handleGetUserProfiles(call:ApplicationCall, profileRepository: ProfileRepository) {
+        val profiles = profileRepository.getAllUserProfile()
         if (profiles.isEmpty()) {
             throw UserProfileNotFoundException()
         } else {
@@ -22,17 +21,17 @@ class UserProfileServices {
 
     suspend fun handlePostUserProfile(
         call: ApplicationCall,
-        profileInterfaceImpl: ProfileInterfaceImpl,
+        profileRepository: ProfileRepository,
         emailMinLength: Int?,
         emailMaxLength: Int?
     ) {
         val details = call.receive<UserProfile>()
         if (details.email.length in emailMinLength!!..emailMaxLength!!) {
-            val user = profileInterfaceImpl.getProfileByUserId(details.userId)
+            val user = profileRepository.getProfileByUserId(details.userId)
             if (user != null) {
                 call.respond("user exist")
             } else {
-                val profile = profileInterfaceImpl.createUserProfile(
+                val profile = profileRepository.createUserProfile(
                     details.userId,
                     details.email,
                     details.age
@@ -51,10 +50,10 @@ class UserProfileServices {
 
     suspend fun handleGetUserProfileById(
         call: ApplicationCall,
-        profileInterfaceImpl: ProfileInterfaceImpl
+        profileRepository: ProfileRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
-        val profile = profileInterfaceImpl.getUserProfile(id!!.toInt())
+        val profile = profileRepository.getUserProfile(id!!.toInt())
         if (profile != null) {
             call.application.environment.log.info("Profile is found")
             call.respond(profile)
@@ -65,11 +64,11 @@ class UserProfileServices {
 
     suspend fun handleDeleteUserProfile(
         call: ApplicationCall,
-        profileInterfaceImpl: ProfileInterfaceImpl
+        profileRepository: ProfileRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
         if (id != null) {
-            val delProfile = profileInterfaceImpl.deleteUserProfile(id)
+            val delProfile = profileRepository.deleteUserProfile(id)
             if (delProfile) {
                 call.application.environment.log.info("userprofile is deleted")
                 call.respond(HttpStatusCode.OK, "Profile deleted")
@@ -84,12 +83,12 @@ class UserProfileServices {
 
     suspend fun handlePutUserProfile(
         call: ApplicationCall,
-        profileInterfaceImpl: ProfileInterfaceImpl
+        profileRepository: ProfileRepository
     ) {
         val id = call.parameters["id"]?.toIntOrNull()
         if (id != null) {
             val profile = call.receive<UserProfile>()
-            val editProfile = profileInterfaceImpl.editUserProfile(profile.profileId, profile.email, profile.age)
+            val editProfile = profileRepository.editUserProfile(profile.profileId, profile.email, profile.age)
             if (editProfile) {
                 call.application.environment.log.info("Profile is updated")
                 call.respond(HttpStatusCode.OK)
