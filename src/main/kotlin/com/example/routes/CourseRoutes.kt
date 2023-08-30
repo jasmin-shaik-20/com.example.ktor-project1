@@ -2,8 +2,9 @@ package com.example.routes
 
 import com.example.dao.Course
 import com.example.endpoints.ApiEndPoint
-import com.example.interfaceimpl.CourseInterfaceImpl
+import com.example.repository.CourseInterfaceImpl
 import com.example.plugins.CourseNotFoundException
+import com.example.services.CourseServices
 import com.typesafe.config.ConfigFactory
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -30,116 +31,28 @@ fun Application.configureCourseRoutes() {
     routing {
         route(ApiEndPoint.COURSE) {
             val courseInterfaceImpl: CourseInterfaceImpl by inject()
+            val courseServices: CourseServices by inject()
 
             get {
-                handleGetCourses(courseInterfaceImpl)
+                courseServices.handleGetCourses(call,courseInterfaceImpl)
             }
 
             post {
-                handlePostCourse(call, courseInterfaceImpl,courseNameMinLength,courseNameMaxLength)
+                courseServices.handlePostCourse(call, courseInterfaceImpl,courseNameMinLength,courseNameMaxLength)
             }
 
             get("/{id?}") {
-                handleGetCourseById(call, courseInterfaceImpl)
+                courseServices.handleGetCourseById(call, courseInterfaceImpl)
             }
 
             delete("/{id?}") {
-                handleDeleteCourse(call, courseInterfaceImpl)
+                courseServices.handleDeleteCourse(call, courseInterfaceImpl)
             }
 
             put("/{id?}") {
-                handlePutCourse(call, courseInterfaceImpl)
+                courseServices.handlePutCourse(call, courseInterfaceImpl)
             }
         }
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.handleGetCourses(courseInterfaceImpl: CourseInterfaceImpl) {
-    val courses = courseInterfaceImpl.getAllCourses()
-    if (courses.isEmpty()) {
-        throw CourseNotFoundException()
-    } else {
-        application.environment.log.info("All course details")
-        call.respond(courses)
-    }
-}
-
-private suspend fun PipelineContext<Unit, ApplicationCall>.handlePostCourse(
-    call: ApplicationCall,
-    courseInterfaceImpl: CourseInterfaceImpl,
-    courseNameMinLength: Int?,
-    courseNameMaxLength: Int?
-) {
-    val courses = call.receive<Course>()
-
-    if (courseNameMinLength != null && courseNameMaxLength != null) {
-        if (courses.name.length in courseNameMinLength..courseNameMaxLength) {
-            val insert = courseInterfaceImpl.insertCourse(courses.studentId, courses.name)
-            if (insert != null) {
-                application.environment.log.info("Course is created")
-                call.respond(HttpStatusCode.Created, insert)
-            } else {
-                call.respond(HttpStatusCode.InternalServerError)
-            }
-        } else {
-            call.respond("Invalid Length")
-        }
-    } else {
-        call.respond(HttpStatusCode.InternalServerError, "Course name validation configuration is missing")
-    }
-}
-
-private suspend fun PipelineContext<Unit, ApplicationCall>.handleDeleteCourse(
-    call: ApplicationCall,
-    courseInterfaceImpl: CourseInterfaceImpl
-) {
-    val id = call.parameters["id"]?.toIntOrNull()
-    if (id != null) {
-        val delCourse = courseInterfaceImpl.deleteCourse(id)
-        if (delCourse) {
-            application.environment.log.info("Course is deleted")
-            call.respond(HttpStatusCode.OK)
-        } else {
-            application.environment.log.error("No course is found with given id")
-            throw CourseNotFoundException()
-        }
-    } else {
-        call.respond(HttpStatusCode.BadRequest)
-    }
-}
-
-private suspend fun PipelineContext<Unit, ApplicationCall>.handlePutCourse(
-    call: ApplicationCall,
-    courseInterfaceImpl: CourseInterfaceImpl
-) {
-    val id = call.parameters["id"]?.toIntOrNull()
-    if (id != null) {
-        val course = call.receive<Course>()
-        val editCourse = courseInterfaceImpl.editCourse(course.id, course.name)
-        if (editCourse) {
-            application.environment.log.info("Course is updated")
-            call.respond(HttpStatusCode.OK)
-        } else {
-            throw CourseNotFoundException()
-        }
-    } else {
-        call.respond(HttpStatusCode.BadRequest)
-    }
-}
-private suspend fun PipelineContext<Unit, ApplicationCall>.handleGetCourseById(
-    call: ApplicationCall,
-    courseInterfaceImpl: CourseInterfaceImpl
-) {
-    val id = call.parameters["id"]?.toIntOrNull()
-    if (id != null) {
-        val fetchedCourse = courseInterfaceImpl.getCourseById(id)
-        if (fetchedCourse != null) {
-            application.environment.log.info("Course is found with given id")
-            call.respond(fetchedCourse)
-        } else {
-            throw CourseNotFoundException()
-        }
-    } else {
-        call.respond(HttpStatusCode.BadRequest)
-    }
-}

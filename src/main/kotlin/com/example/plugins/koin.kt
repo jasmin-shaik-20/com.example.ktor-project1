@@ -1,13 +1,12 @@
 package com.example.plugins
 
-import UsersInterface
-import com.example.interfaceimpl.UsersInterfaceImpl
-import com.example.interfaceimpl.ProfileInterfaceImpl
-import com.example.interfaceimpl.ProductInterfaceImpl
-import com.example.interfaceimpl.StudentInterfaceImpl
-import com.example.interfaceimpl.CourseInterfaceImpl
-import com.example.interfaceimpl.StudentCourseInterfaceImpl
-import com.example.interfaceimpl.PersonInterfaceImpl
+import com.example.repository.UsersInterfaceImpl
+import com.example.repository.ProfileInterfaceImpl
+import com.example.repository.ProductInterfaceImpl
+import com.example.repository.StudentInterfaceImpl
+import com.example.repository.CourseInterfaceImpl
+import com.example.repository.StudentCourseInterfaceImpl
+import com.example.repository.PersonInterfaceImpl
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import org.koin.dsl.module

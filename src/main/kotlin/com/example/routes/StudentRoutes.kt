@@ -2,8 +2,9 @@ package com.example.routes
 
 import com.example.dao.Student
 import com.example.endpoints.ApiEndPoint
-import com.example.interfaceimpl.StudentInterfaceImpl
+import com.example.repository.StudentInterfaceImpl
 import com.example.plugins.StudentNotFoundException
+import com.example.services.StudentServices
 import com.typesafe.config.ConfigFactory
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -30,110 +31,30 @@ fun Application.configureStudentRoutes() {
     routing {
         route(ApiEndPoint.STUDENT) {
             val studentInterfaceImpl: StudentInterfaceImpl by inject()
+            val studentServices: StudentServices by inject()
 
             get {
-                handleGetStudents(studentInterfaceImpl)
+                studentServices.handleGetStudents(call,studentInterfaceImpl)
             }
 
             post {
-                handlePostStudent(call, studentInterfaceImpl, studentNameMinLength, studentNameMaxLength)
+                studentServices.handlePostStudent(call, studentInterfaceImpl, studentNameMinLength, studentNameMaxLength)
             }
 
             get("/{id?}") {
-                handleGetStudentById(call, studentInterfaceImpl)
+                studentServices.handleGetStudentById(call, studentInterfaceImpl)
             }
 
             delete("/{id?}") {
-                handleDeleteStudent(call, studentInterfaceImpl)
+                studentServices.handleDeleteStudent(call, studentInterfaceImpl)
             }
 
             put("/{id?}") {
-                handlePutStudent(call, studentInterfaceImpl)
+                studentServices.handlePutStudent(call, studentInterfaceImpl)
             }
         }
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.
-        handleGetStudents(studentInterfaceImpl: StudentInterfaceImpl) {
-    val students = studentInterfaceImpl.getAllStudents()
-    if (students.isEmpty()) {
-        throw StudentNotFoundException()
-    } else {
-        application.environment.log.info("All student details")
-        call.respond(students)
-    }
-}
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.handlePostStudent(
-    call: ApplicationCall,
-    studentInterfaceImpl: StudentInterfaceImpl,
-    studentNameMinLength: Int?,
-    studentNameMaxLength: Int?
-) {
-    val students = call.receive<Student>()
-    if (students.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
-        val student = studentInterfaceImpl.insertStudent(students.id, students.name)
-        if (student != null) {
-            application.environment.log.info("Student is created $student")
-            call.respond(HttpStatusCode.Created, student)
-        } else {
-            call.respond(HttpStatusCode.InternalServerError)
-        }
-    } else {
-        call.respond("Invalid Length")
-    }
-}
-
-private suspend fun PipelineContext<Unit, ApplicationCall>.handleGetStudentById(
-    call: ApplicationCall,
-    studentInterfaceImpl: StudentInterfaceImpl
-) {
-    val id = call.parameters["id"]?.toIntOrNull()
-    val fetid = studentInterfaceImpl.getStudentById(id!!.toInt())
-    if (fetid != null) {
-        application.environment.log.info("Student is found")
-        call.respond(fetid)
-    } else {
-        throw StudentNotFoundException()
-    }
-}
-
-private suspend fun PipelineContext<Unit, ApplicationCall>.handleDeleteStudent(
-    call: ApplicationCall,
-    studentInterfaceImpl: StudentInterfaceImpl
-) {
-    val id = call.parameters["id"]?.toIntOrNull()
-    if (id != null) {
-        val delStudent = studentInterfaceImpl.deleteStudent(id)
-        if (delStudent) {
-            application.environment.log.info("Student is deleted")
-            call.respond(HttpStatusCode.OK)
-        } else {
-            application.environment.log.error("No student found with given id")
-            throw StudentNotFoundException()
-        }
-    } else {
-        call.respond(HttpStatusCode.BadRequest)
-    }
-}
-
-private suspend fun PipelineContext<Unit, ApplicationCall>.handlePutStudent(
-    call: ApplicationCall,
-    studentInterfaceImpl: StudentInterfaceImpl
-) {
-    val id = call.parameters["id"]?.toIntOrNull()
-    if (id != null) {
-        val student = call.receive<Student>()
-        val editStudent = studentInterfaceImpl.editStudent(student.id, student.name)
-        if (editStudent) {
-            application.environment.log.info("Student is updated")
-            call.respond(HttpStatusCode.OK)
-        } else {
-            throw StudentNotFoundException()
-        }
-    } else {
-        call.respond(HttpStatusCode.BadRequest)
-    }
-}
 

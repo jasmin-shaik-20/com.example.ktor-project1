@@ -1,4 +1,4 @@
-package com.example.interfaceimpl
+package com.example.repository
 
 import com.example.dao.Course
 import com.example.dao.Courses
@@ -53,7 +53,6 @@ class CourseInterfaceImpl : CourseInterface {
     }
 
 }
-
 
 private fun rowToCourse(row: ResultRow) =
     Course(row[Courses.id], row[Courses.studentId], row[Courses.name])

@@ -4,6 +4,7 @@ import com.example.dao.RedisUtils
 import com.example.dao.UserSession
 import com.example.endpoints.ApiEndPoint
 import com.example.endpoints.ApiEndPoint.EXPIRE_TIME
+import com.example.services.UserSessionServices
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -17,6 +18,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.sessions.sessions
 import io.ktor.server.sessions.get
 import io.ktor.server.sessions.set
+import org.koin.ktor.ext.inject
 
 fun Application.configureUserSession() {
     val config = HoconApplicationConfig(ConfigFactory.load())
@@ -29,35 +31,17 @@ fun Application.configureUserSession() {
 
     routing {
         route(ApiEndPoint.SESSION) {
+            val userSessionServices:UserSessionServices by inject()
 
             get("/login") {
-                val userSession = UserSession(id = "2", username = "Jasmin", password = "Jas@20")
-                if(userSession.username.length in sessionNameMinLength!!..sessionNameMaxLength!! &&
-                    userSession.password.length in sessionPasswordMinLength!!..sessionPasswordMaxLength!!) {
-                    call.sessions.set(userSession)
-                    RedisUtils.setWithExpiration(userSession.id, EXPIRE_TIME, userSession.toJson())
-                    call.respond("login Successfully")
-                    call.respondRedirect("/user-session")
-                }
-                else{
-                    call.respond("Invalid length of username and password")
-                }
+                userSessionServices.handleLogin(call,sessionNameMinLength,sessionNameMaxLength,sessionPasswordMinLength,sessionPasswordMaxLength)
             }
 
             get("/userSession") {
-                val sessionId = call.sessions.get<UserSession>()?.id ?: ""
-                val userSessionJson = RedisUtils.get(sessionId)
-                if (userSessionJson != null) {
-                    val userSession = UserSession.fromJson(userSessionJson)
-                    call.respondText("Username is ${userSession.username}")
-                } else {
-                    call.respondText("Session doesn't exist or has expired.")
-                }
+                userSessionServices.handleUserSession(call)
             }
             get("/logout") {
-                val sessionId = call.sessions.get<UserSession>()?.id ?: ""
-                RedisUtils.delete(sessionId)
-                call.respondText("Logout successful!")
+                userSessionServices.handleLogout(call)
             }
         }
     }

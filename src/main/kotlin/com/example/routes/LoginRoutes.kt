@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.example.dao.Login
 import com.example.endpoints.ApiEndPoint
 import com.example.endpoints.ApiEndPoint.TOKEN_EXPIRATION
+import com.example.services.LoginServices
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -19,6 +20,7 @@ import io.ktor.server.routing.routing
 import io.ktor.server.routing.route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.get
+import org.koin.ktor.ext.inject
 import java.util.Date
 
 fun Application.configureLoginRoutes(){
@@ -36,33 +38,14 @@ fun Application.configureLoginRoutes(){
 
     routing{
         route(ApiEndPoint.LOGIN){
+            val loginServices:LoginServices by inject()
             post("/login"){
-                val user = call.receive<Login>()
-                if(user.username.length in loginNameMinLength!!..loginNameMaxLength!! &&
-                    user.password.length in loginPasswordMinLength!!..loginPasswordMaxLength!!) {
-                    if (user.username.isNotEmpty() && user.password.isNotEmpty()) {
-                        val token = JWT.create()
-                            .withAudience(audience)
-                            .withIssuer(issuer)
-                            .withClaim("username", user.username)
-                            .withExpiresAt(Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
-                            .sign(Algorithm.HMAC256(secret))
-                        call.respond(hashMapOf("token" to token))
-                    } else {
-                        call.respond("Missing Parameters")
-                    }
-                }
-                else{
-                    call.respond("Invalid length of username and password")
-                }
+               loginServices.handleUserLogin(call,secret, issuer, audience, loginNameMinLength, loginNameMaxLength, loginPasswordMinLength, loginPasswordMaxLength)
             }
 
             authenticate("auth-jwt") {
                 get("/hello") {
-                    val principal = call.principal<JWTPrincipal>()
-                    val username = principal!!.payload.getClaim("username").asString()
-                    val expiresAt = principal.expiresAt?.time?.minus(System.currentTimeMillis())
-                    call.respondText("Hello, $username! Token is expired at $expiresAt ms.")
+                    loginServices.handleAuthenticatedHello(call)
                 }
             }
         }

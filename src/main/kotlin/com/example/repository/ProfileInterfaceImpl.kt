@@ -1,4 +1,4 @@
-package com.example.interfaceimpl
+package com.example.repository
 
 import com.example.dao.Profile
 import com.example.dao.UserProfile
