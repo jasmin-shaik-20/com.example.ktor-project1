@@ -32,7 +32,7 @@ fun Application.configureCustomerRoutes() {
 
     routing {
         route(ApiEndPoint.CUSTOMER) {
-            val customerServices:CustomerServices by inject()
+            val customerServices=CustomerServices()
             get {
                 customerServices.handleGetCustomers(call)
             }

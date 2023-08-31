@@ -14,7 +14,7 @@ fun Application.configureStudentCourseRoutes(){
     routing{
         route(ApiEndPoint.STUDENTCOURSES){
             val studentCourseRepository : StudentCourseRepository by inject()
-            val studentCourseServices: StudentCourseServices by inject()
+            val studentCourseServices=StudentCourseServices()
             get("/student/{id?}"){
                 studentCourseServices.handleGetStudentsByCourseId(call,studentCourseRepository)
             }

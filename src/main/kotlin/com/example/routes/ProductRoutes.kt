@@ -23,7 +23,7 @@ fun Application.configureProductRoutes() {
     routing {
         route(ApiEndPoint.PRODUCT) {
             val productRepository: ProductRepository by inject()
-            val productServices: ProductServices by inject()
+            val productServices=ProductServices()
 
             get {
                 productServices.handleGetProducts(call,productRepository)

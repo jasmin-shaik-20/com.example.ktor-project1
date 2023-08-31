@@ -23,7 +23,7 @@ fun Application.configureStudentRoutes() {
     routing {
         route(ApiEndPoint.STUDENT) {
             val studentRepository: StudentRepository by inject()
-            val studentServices: StudentServices by inject()
+            val studentServices=StudentServices()
 
             get {
                 studentServices.handleGetStudents(call,studentRepository)

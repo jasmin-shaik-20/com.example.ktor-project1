@@ -23,7 +23,7 @@ fun Application.configureCourseRoutes() {
     routing {
         route(ApiEndPoint.COURSE) {
             val courseRepository: CourseRepository by inject()
-            val courseServices: CourseServices by inject()
+            val courseServices=CourseServices()
 
             get {
                 courseServices.handleGetCourses(call,courseRepository)

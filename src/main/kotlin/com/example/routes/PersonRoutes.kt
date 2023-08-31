@@ -18,7 +18,7 @@ fun Application.configurePersonRoutes(){
     routing{
         route(ApiEndPoint.PERSON){
             val personRepository : PersonRepository by inject()
-            val personServices: PersonServices by inject()
+            val personServices=PersonServices()
             post("/post details") {
                 personServices.handlePostPersonDetails(call,personRepository)
             }

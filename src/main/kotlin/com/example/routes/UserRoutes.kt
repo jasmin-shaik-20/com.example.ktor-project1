@@ -24,7 +24,7 @@ fun Application.configureUserRoutes() {
     routing {
         route(ApiEndPoint.USER) {
             val usersRepository: UsersRepository by inject()
-            val userServices: UserServices by inject()
+            val userServices=UserServices()
 
             get {
                 userServices.handleGetUsers(call, usersRepository)

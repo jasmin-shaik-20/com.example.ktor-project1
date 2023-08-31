@@ -31,7 +31,7 @@ fun Application.configureUserSession() {
 
     routing {
         route(ApiEndPoint.SESSION) {
-            val userSessionServices:UserSessionServices by inject()
+            val userSessionServices=UserSessionServices()
 
             get("/login") {
                 userSessionServices.handleLogin(call,sessionNameMinLength,sessionNameMaxLength,sessionPasswordMinLength,sessionPasswordMaxLength)

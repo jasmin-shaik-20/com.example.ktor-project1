@@ -38,7 +38,7 @@ fun Application.configureLoginRoutes(){
 
     routing{
         route(ApiEndPoint.LOGIN){
-            val loginServices:LoginServices by inject()
+            val loginServices=LoginServices()
             post("/login"){
                loginServices.handleUserLogin(call,secret, issuer, audience, loginNameMinLength, loginNameMaxLength, loginPasswordMinLength, loginPasswordMaxLength)
             }

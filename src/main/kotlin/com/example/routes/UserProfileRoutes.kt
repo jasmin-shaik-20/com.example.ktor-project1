@@ -24,7 +24,7 @@ fun Application.configureUserProfile() {
     routing {
         route(ApiEndPoint.USERPROFILE) {
             val profileRepository: ProfileRepository by inject()
-            val userProfileServices: UserProfileServices by inject()
+            val userProfileServices=UserProfileServices()
 
             get {
                 userProfileServices.handleGetUserProfiles(call,profileRepository)
