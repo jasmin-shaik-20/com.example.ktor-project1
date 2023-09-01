@@ -56,11 +56,8 @@ class UserProfileRepositoryTest {
         profileRepository.createUserProfile(1, "jasmin@123", 21)
         profileRepository.createUserProfile(2, "john@456", 25)
         profileRepository.createUserProfile(3, "susan@789", 30)
-
         val allProfiles = profileRepository.getAllUserProfile()
-
         assertEquals(3, allProfiles.size)
-        // You can add more assertions here to validate the profiles in the list
     }
 
     @Test
@@ -68,10 +65,7 @@ class UserProfileRepositoryTest {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
         val profileRepository = ProfileRepository()
-
-        // Insert a test profile
         val newProfile = profileRepository.createUserProfile(1, "jasmin@123", 21)
-
         val retrievedProfile = profileRepository.getUserProfile(newProfile!!.profileId)
         assertEquals(newProfile, retrievedProfile)
     }
@@ -79,7 +73,6 @@ class UserProfileRepositoryTest {
     @Test
     fun testGetUserProfileNotFound() = runBlocking {
         val profileRepository = ProfileRepository()
-
         val retrievedProfile = profileRepository.getUserProfile(1)
         assertNull(retrievedProfile)
     }
@@ -89,13 +82,9 @@ class UserProfileRepositoryTest {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
         val profileRepository = ProfileRepository()
-
-        // Insert a test profile
         val newProfile = profileRepository.createUserProfile(1, "jasmin@123", 21)
-
         val editResult = profileRepository.editUserProfile(newProfile!!.profileId, "jasmin@example.com", 22)
         assertTrue(editResult)
-
         val updatedProfile = profileRepository.getUserProfile(newProfile.profileId)
         assertEquals("jasmin@example.com", updatedProfile?.email)
         assertEquals(22, updatedProfile?.age)
@@ -104,7 +93,6 @@ class UserProfileRepositoryTest {
     @Test
     fun testEditUserProfileNotFound() = runBlocking {
         val profileRepository = ProfileRepository()
-
         val editResult = profileRepository.editUserProfile(1, "jasmin@example.com", 22)
         assertFalse(editResult)
     }
@@ -114,13 +102,9 @@ class UserProfileRepositoryTest {
         val profileRepository = ProfileRepository()
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
-        // Insert a test profile
         val newProfile = profileRepository.createUserProfile(1, "jasmin@123", 21)
-
         val deleteResult = profileRepository.deleteUserProfile(newProfile!!.profileId)
         assertTrue(deleteResult)
-
         val deletedProfile = profileRepository.getUserProfile(newProfile.profileId)
         assertNull(deletedProfile)
     }
@@ -137,10 +121,7 @@ class UserProfileRepositoryTest {
         val profileRepository = ProfileRepository()
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
-        // Insert a test profile
         val newProfile = profileRepository.createUserProfile(1, "jasmin@123", 21)
-
         val retrievedProfile = profileRepository.getProfileByUserId(newProfile!!.userId)
         assertEquals(newProfile, retrievedProfile)
     }
@@ -148,8 +129,6 @@ class UserProfileRepositoryTest {
     @Test
     fun testGetProfileByUserIdNotFound() = runBlocking {
         val profileRepository = ProfileRepository()
-
-        // Attempt to retrieve a profile for a user ID that doesn't exist
         val retrievedProfile = profileRepository.getProfileByUserId(1)
         assertNull(retrievedProfile)
     }

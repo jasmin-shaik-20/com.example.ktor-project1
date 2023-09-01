@@ -43,7 +43,6 @@ class UserServicesTest {
     @Test
     fun testHandleGetUsers() {
         runBlocking {
-            // Assuming you have added users to the repository for testing
             val user1 = User(1, "Alice")
             val user2 = User(2, "Bob")
             usersRepository.createUser(user1.id, user1.name)
@@ -60,8 +59,6 @@ class UserServicesTest {
             usersRepository.createUser(user1.id, user1.name)
             val userDetails = User(3, "Bob")
             userServices.handlePostUser(userDetails, 3, 10)
-
-            // Assuming user creation was successful
             assertEquals(userDetails.id, user1.id)
             assertEquals(userDetails.name, user1.name)
         }
@@ -90,7 +87,7 @@ class UserServicesTest {
     @Test
     fun testHandleGetUserByIdUserNotFound() {
         runBlocking {
-            val userId = 9999 // Assuming this user ID does not exist in the repository
+            val userId = 9999
             assertFailsWith<UserNotFoundException>("User not found") {
                 userServices.handleGetUserById(userId)
             }
@@ -103,7 +100,7 @@ class UserServicesTest {
             val user1 = User(2, "Charlie")
             usersRepository.createUser(user1.id, user1.name)
             val userDetails = User(2, "Charlie")
-            userServices.handlePostUser(userDetails, 3, 10) // Assuming this user ID exists in the repository
+            userServices.handlePostUser(userDetails, 3, 10)
             val isDeleted = userServices.handleDeleteUser(2)
             assertEquals(true, isDeleted)
         }
@@ -112,7 +109,7 @@ class UserServicesTest {
     @Test
     fun testHandleDeleteUserNotFound() {
         runBlocking {
-            val userIdToDelete = 9999 // Assuming this user ID does not exist in the repository
+            val userIdToDelete = 9999
             assertFailsWith<UserNotFoundException>("User not found") {
                 userServices.handleDeleteUser(userIdToDelete)
             }
@@ -124,7 +121,6 @@ class UserServicesTest {
         runBlocking {
             val user1 = User(1, "Charlie")
             usersRepository.createUser(user1.id, user1.name)
-             // Assuming this user ID exists in the repository
             val userDetails = User(1, "UpdatedName")
             val isUpdated = userServices.handleUpdateUser(1, userDetails)
             assertEquals(true, isUpdated)
@@ -134,7 +130,7 @@ class UserServicesTest {
     @Test
     fun testHandleUpdateUserNotFound() {
         runBlocking {
-            val userIdToUpdate = 9999 // Assuming this user ID does not exist in the repository
+            val userIdToUpdate = 9999
             val userDetails = User(userIdToUpdate, "UpdatedName")
             assertFailsWith<UserNotFoundException>("User not found") {
                 userServices.handleUpdateUser(userIdToUpdate, userDetails)

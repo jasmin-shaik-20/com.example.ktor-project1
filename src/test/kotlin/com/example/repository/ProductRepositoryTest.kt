@@ -41,7 +41,6 @@ class ProductRepositoryTest {
     fun testInsertProductSuccess() = runBlocking {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
         val productRepository = ProductRepository()
         val newProduct = productRepository.insertProduct(1, 1, "Product1", 100)
         assertEquals(1, newProduct?.userId)
@@ -54,11 +53,9 @@ class ProductRepositoryTest {
     fun testGetAllProducts() = runBlocking {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
         val productRepository = ProductRepository()
         productRepository.insertProduct(1, 1, "Product1", 100)
         productRepository.insertProduct(2, 1, "Product2", 200)
-
         val allProducts = productRepository.getAllProducts()
         assertEquals(2, allProducts.size)
     }
@@ -67,11 +64,9 @@ class ProductRepositoryTest {
     fun testGetProductsById() = runBlocking {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
         val productRepository = ProductRepository()
         productRepository.insertProduct(1, 1, "Product1", 100)
         productRepository.insertProduct(2, 1, "Product2", 200)
-
         val userProducts = productRepository.getProductsById(1)
         assertEquals(2, userProducts.size)
     }
@@ -80,10 +75,8 @@ class ProductRepositoryTest {
     fun testGetProductSuccess() = runBlocking {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
         val productRepository = ProductRepository()
         productRepository.insertProduct(1, 1, "Product1", 100)
-
         val product = productRepository.getProduct(1)
         assertNotNull(product)
         assertEquals("Product1", product?.name)
@@ -93,7 +86,6 @@ class ProductRepositoryTest {
     @Test
     fun testGetProductNotFound() = runBlocking {
         val productRepository = ProductRepository()
-
         val product = productRepository.getProduct(1)
         assertNull(product)
     }
@@ -102,13 +94,10 @@ class ProductRepositoryTest {
     fun testDeleteProductSuccess() = runBlocking {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
         val productRepository = ProductRepository()
         productRepository.insertProduct(1, 1, "Product1", 100)
-
         val deleteResult = productRepository.deleteProduct(1)
         assertTrue(deleteResult)
-
         val product = productRepository.getProduct(1)
         assertNull(product)
     }
@@ -117,13 +106,10 @@ class ProductRepositoryTest {
     fun testEditProductSuccess() = runBlocking {
         val usersRepository = UsersRepository()
         usersRepository.createUser(1,"Jasmin")
-
         val productRepository = ProductRepository()
         productRepository.insertProduct(1, 1, "Product1", 100)
-
         val editResult = productRepository.editProduct(1, "NewProduct", 200)
         assertTrue(editResult)
-
         val updatedProduct = productRepository.getProduct(1)
         assertEquals("NewProduct", updatedProduct?.name)
         assertEquals(200, updatedProduct?.price)
@@ -132,7 +118,6 @@ class ProductRepositoryTest {
     @Test
     fun testEditProductNotFound() = runBlocking {
         val productRepository = ProductRepository()
-
         val editResult = productRepository.editProduct(1, "NewProduct", 200)
         assertFalse(editResult)
     }
@@ -140,7 +125,6 @@ class ProductRepositoryTest {
     @Test
     fun testDeleteProductNotFound() = runBlocking {
         val productRepository = ProductRepository()
-
         val deleteResult = productRepository.deleteProduct(1)
         assertFalse(deleteResult)
     }

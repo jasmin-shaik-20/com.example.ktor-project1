@@ -51,9 +51,7 @@ class PersonRepositoryTest {
     @Test
     fun testFetchDataNonExistingPerson() = runBlocking {
         val personRepository = PersonRepository()
-
         val fetchedData = personRepository.fetchData(1)
-
         assertEquals("Person not found", fetchedData)
     }
 }

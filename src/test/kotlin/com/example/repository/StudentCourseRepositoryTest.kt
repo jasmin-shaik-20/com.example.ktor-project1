@@ -49,15 +49,9 @@ class StudentCourseRepositoryTest {
         val studentRepository = StudentRepository()
         val courseRepository = CourseRepository()
         val studentCourseRepository = StudentCourseRepository()
-
-        // Insert a student and a course
         studentRepository.insertStudent(1, "jasmin")
         courseRepository.insertCourse(1, "Maths")
-
-        // Get the list of students for the course
         val studentsForCourse = studentCourseRepository.getStudentsCourseId(1)
-
-        // Extract the student name from the list and compare with the expected value
         val studentName = studentsForCourse.firstOrNull()?.name
         assertEquals("jasmin", studentName)
     }

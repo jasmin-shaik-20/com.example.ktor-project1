@@ -68,16 +68,10 @@ class CourseRepositoryTest {
     fun testDeleteCourseSuccess() = runBlocking {
         val courseRepository = CourseRepository()
         val studentRepository = StudentRepository()
-
-        // Insert a test student using a coroutine
         studentRepository.insertStudent(1, "Jasmin")
-
-        // Insert a test course using a coroutine
         val course = courseRepository.insertCourse(1, "Math")
-
         val deleteResult = courseRepository.deleteCourse(course!!.id)
         assertTrue(deleteResult)
-
         val deletedCourse = courseRepository.getCourseById(course.id)
         assertNull(deletedCourse)
     }
@@ -86,7 +80,6 @@ class CourseRepositoryTest {
     @Test
     fun testDeleteCourseNotFound() = runBlocking {
         val courseRepository = CourseRepository()
-
         val deleteResult = courseRepository.deleteCourse(1)
         assertFalse(deleteResult)
     }
@@ -96,13 +89,9 @@ class CourseRepositoryTest {
         val courseRepository = CourseRepository()
         val studentRepository=StudentRepository()
         studentRepository.insertStudent(1,"jasmin")
-
-        // Insert a test course
         courseRepository.insertCourse(1, "Math")
-
         val editResult = courseRepository.editCourse(1, "Science")
         assertTrue(editResult)
-
         val updatedCourse = courseRepository.getCourseById(1)
         assertEquals("Science", updatedCourse?.name)
     }
@@ -110,7 +99,6 @@ class CourseRepositoryTest {
     @Test
     fun testEditCourseNotFound() = runBlocking {
         val courseRepository = CourseRepository()
-
         val editResult = courseRepository.editCourse(1, "Science")
         assertFalse(editResult)
     }
@@ -120,10 +108,7 @@ class CourseRepositoryTest {
         val courseRepository = CourseRepository()
         val studentRepository=StudentRepository()
         studentRepository.insertStudent(1,"jasmin")
-
-        // Insert a test course
         courseRepository.insertCourse(1, "Math")
-
         val retrievedCourse = courseRepository.getCourseById(1)
         assertEquals("Math", retrievedCourse?.name)
     }
@@ -131,7 +116,6 @@ class CourseRepositoryTest {
     @Test
     fun testGetCourseByIdNotFound() = runBlocking {
         val courseRepository = CourseRepository()
-
         val retrievedCourse = courseRepository.getCourseById(1)
         assertNull(retrievedCourse)
     }
