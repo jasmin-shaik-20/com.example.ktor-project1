@@ -33,6 +33,7 @@ class StudentRepositoryTest {
         }
     }
 
+    //sucess
     @Test
     fun testInsertStudentSuccess() = runBlocking {
         val studentRepository = StudentRepository()
@@ -62,13 +63,6 @@ class StudentRepositoryTest {
     }
 
     @Test
-    fun testDeleteStudentNotFound() = runBlocking {
-        val studentRepository = StudentRepository()
-        val deleteResult = studentRepository.deleteStudent(1)
-        assertFalse(deleteResult)
-    }
-
-    @Test
     fun testEditStudentSuccess() = runBlocking {
         val studentRepository = StudentRepository()
         studentRepository.insertStudent(1, "John Doe")
@@ -79,18 +73,27 @@ class StudentRepositoryTest {
     }
 
     @Test
-    fun testEditStudentNotFound() = runBlocking {
-        val studentRepository = StudentRepository()
-        val editResult = studentRepository.editStudent(1, "Jane Smith")
-        assertFalse(editResult)
-    }
-
-    @Test
     fun testGetStudentByIdSuccess() = runBlocking {
         val studentRepository = StudentRepository()
         studentRepository.insertStudent(1, "John Doe")
         val retrievedStudent = studentRepository.getStudentById(1)
         assertEquals("John Doe", retrievedStudent?.name)
+    }
+
+    //failure
+
+    @Test
+    fun testDeleteStudentNotFound() = runBlocking {
+        val studentRepository = StudentRepository()
+        val deleteResult = studentRepository.deleteStudent(1)
+        assertFalse(deleteResult)
+    }
+
+    @Test
+    fun testEditStudentNotFound() = runBlocking {
+        val studentRepository = StudentRepository()
+        val editResult = studentRepository.editStudent(1, "Jane Smith")
+        assertFalse(editResult)
     }
 
     @Test

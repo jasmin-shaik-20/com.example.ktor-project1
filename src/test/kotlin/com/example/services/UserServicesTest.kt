@@ -39,7 +39,7 @@ class UserServicesTest {
         }
     }
 
-
+    //Sucess
     @Test
     fun testHandleGetUsers() {
         runBlocking {
@@ -65,32 +65,12 @@ class UserServicesTest {
     }
 
     @Test
-    fun testHandlePostUserInvalidNameLength() {
-        runBlocking {
-            val userDetails = User(4, "David")
-            assertFailsWith<Exception>("Invalid name length") {
-                userServices.handlePostUser(userDetails, 6, 10)
-            }
-        }
-    }
-
-    @Test
     fun testHandleGetUserById() {
         runBlocking {
             val user1 = User(1, "Alice")
             usersRepository.createUser(user1.id, user1.name)
             val user = userServices.handleGetUserById(1)
             assertEquals(user.id, user1.id)
-        }
-    }
-
-    @Test
-    fun testHandleGetUserByIdUserNotFound() {
-        runBlocking {
-            val userId = 9999
-            assertFailsWith<UserNotFoundException>("User not found") {
-                userServices.handleGetUserById(userId)
-            }
         }
     }
 
@@ -107,16 +87,6 @@ class UserServicesTest {
     }
 
     @Test
-    fun testHandleDeleteUserNotFound() {
-        runBlocking {
-            val userIdToDelete = 9999
-            assertFailsWith<UserNotFoundException>("User not found") {
-                userServices.handleDeleteUser(userIdToDelete)
-            }
-        }
-    }
-
-    @Test
     fun testHandleUpdateUser() {
         runBlocking {
             val user1 = User(1, "Charlie")
@@ -124,6 +94,38 @@ class UserServicesTest {
             val userDetails = User(1, "UpdatedName")
             val isUpdated = userServices.handleUpdateUser(1, userDetails)
             assertEquals(true, isUpdated)
+        }
+    }
+
+    //Failure
+
+    @Test
+    fun testHandlePostUserInvalidNameLength() {
+        runBlocking {
+            val userDetails = User(4, "David")
+            assertFailsWith<Exception>("Invalid name length") {
+                userServices.handlePostUser(userDetails, 6, 10)
+            }
+        }
+    }
+
+    @Test
+    fun testHandleGetUserByIdUserNotFound() {
+        runBlocking {
+            val userId = 9999
+            assertFailsWith<UserNotFoundException>("User not found") {
+                userServices.handleGetUserById(userId)
+            }
+        }
+    }
+
+    @Test
+    fun testHandleDeleteUserNotFound() {
+        runBlocking {
+            val userIdToDelete = 9999
+            assertFailsWith<UserNotFoundException>("User not found") {
+                userServices.handleDeleteUser(userIdToDelete)
+            }
         }
     }
 
