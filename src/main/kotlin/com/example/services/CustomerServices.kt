@@ -1,106 +1,90 @@
-package com.example.services
-
 import com.example.dao.Customer
 import com.example.dao.customerStorage
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.request.*
 
 class CustomerServices {
-    suspend fun handleGetCustomers(call: ApplicationCall) {
-        if (customerStorage.isNotEmpty()) {
-            call.respond(HttpStatusCode.OK, customerStorage)
+    fun handleGetCustomers():List<Customer> {
+        return if (customerStorage.isNotEmpty()) {
+            customerStorage
         } else {
-            call.respond("No customers found")
+            emptyList()
+        }
+    }
+    fun handleGetCustomerById(id: String?): Any {
+        return if (id == null) {
+            "Missing id"
+        } else {
+            customerStorage.find { it.id == id } ?: "No customer with id $id"
         }
     }
 
-    suspend fun handleGetCustomerById(call: ApplicationCall) {
-        val id = call.parameters["id"]
-        if (id == null) {
-            call.respondText("Missing id")
-        } else {
-            val customer = customerStorage.find { it.id == id }
-            if (customer == null) {
-                call.respondText("No customer with id $id")
-            } else {
-                call.respond(customer)
-            }
-        }
-    }
-
-    suspend fun handlePostCustomer(call: ApplicationCall,
+     fun handlePostCustomer(customer: Customer,
         customerNameMinLength: Int?,
         customerNameMaxLength: Int?
-    ) {
-        val customer = call.receive<Customer>()
-        if (customer.name.length in customerNameMinLength!!..customerNameMaxLength!!) {
+    ): Any {
+        return if (customer.name.length in customerNameMinLength!!..customerNameMaxLength!!) {
             customerStorage.add(customer)
-            call.respond(HttpStatusCode.OK, "Customer stored correctly")
+            "Customer stored correctly"
         } else {
-            call.respond("Invalid Length")
+            "Invalid Length"
         }
     }
 
-    suspend fun handleDeleteCustomer(call: ApplicationCall) {
-        val id = call.parameters["id"]
+    fun handleDeleteCustomer(id: String?): Any {
         if (id == null) {
-            call.respondText("Missing id")
+            return "Missing id"
         } else {
-            if (customerStorage.removeIf { it.id == id }) {
-                call.respondText("Customer removed correctly")
+            return if (customerStorage.removeIf { it.id == id }) {
+                "Customer removed correctly"
             } else {
-                call.respondText("No customer to delete with given id $id")
+                "No customer to delete with given id $id"
             }
         }
     }
 
-    suspend fun handlePutCustomer(call: ApplicationCall,
+    fun handlePutCustomer(id: String?,updatedCustomer: Customer,
         customerNameMinLength: Int?,
         customerNameMaxLength: Int?
-    ) {
-        val id = call.parameters["id"]
-        if (id == null) {
-            call.respondText("Missing id")
+    ): Any {
+        return if (id == null) {
+            "Missing id"
         } else {
             val existingCustomer = customerStorage.find { it.id == id }
             if (existingCustomer == null) {
-                call.respondText("No customer with id $id")
+                "No customer with id $id"
             } else {
-                val updatedCustomer = call.receive<Customer>()
                 if (updatedCustomer.name.length in (customerNameMinLength ?: 0)..(customerNameMaxLength ?: Int.MAX_VALUE)) {
                     customerStorage.remove(existingCustomer)
                     customerStorage.add(updatedCustomer)
-                    call.respondText("Customer updated correctly")
+                    "Customer updated correctly"
                 } else {
-                    call.respond("Invalid Length")
+                    "Invalid Length"
                 }
             }
         }
     }
 
-    suspend fun handlePatchCustomer(call: ApplicationCall,
-        customerNameMinLength: Int?,
-        customerNameMaxLength: Int?
-    ) {
-        val id = call.parameters["id"]
-        if (id == null) {
-            call.respondText("Missing id")
+    fun handlePatchCustomer(id: String?, name: String?,
+                                    customerNameMinLength: Int?, customerNameMaxLength: Int?): Any {
+        return if (id == null) {
+            "Missing id"
         } else {
-            val name = call.receive<Map<String, String>>()["name"]
             val existingCustomer = customerStorage.find { it.id == id }
             if (existingCustomer != null) {
-                if (name != null && name.length in (customerNameMinLength ?: 0)..(customerNameMaxLength ?: Int.MAX_VALUE)) {
+                if (name != null && name.length in (customerNameMinLength ?: 0)
+                    ..(customerNameMaxLength ?: Int.MAX_VALUE)) {
                     existingCustomer.name = name
-                    call.respond(existingCustomer)
+                    existingCustomer
                 } else {
-                    call.respond("Invalid Length")
+                    "Invalid Length"
                 }
             } else {
-                call.respondText("Customer not found with the given id")
+                "Customer not found with the given id"
             }
         }
     }
+
 }

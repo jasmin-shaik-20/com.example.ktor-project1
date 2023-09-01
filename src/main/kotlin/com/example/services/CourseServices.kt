@@ -5,98 +5,54 @@ import com.example.plugins.CourseNotFoundException
 import com.example.repository.CourseRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 
 class CourseServices {
-    suspend fun handleGetCourses(call: ApplicationCall, courseRepository: CourseRepository) {
+
+    private val courseRepository = CourseRepository()
+
+    suspend fun handleGetCourses(): List<Course> {
         val courses = courseRepository.getAllCourses()
-        if (courses.isEmpty()) {
-            throw CourseNotFoundException()
+        return if (courses.isEmpty()) {
+            emptyList()
         } else {
-            call.application.environment.log.info("All course details")
-            call.respond(courses)
+            courses
         }
     }
 
     suspend fun handlePostCourse(
-        call: ApplicationCall,
-        courseRepository: CourseRepository,
+        courseDetails: Course,
         courseNameMinLength: Int?,
         courseNameMaxLength: Int?
-    ) {
-        val courses = call.receive<Course>()
-
-        if (courseNameMinLength != null && courseNameMaxLength != null) {
-            if (courses.name.length in courseNameMinLength..courseNameMaxLength) {
-                val insert = courseRepository.insertCourse(courses.studentId, courses.name)
-                if (insert != null) {
-                    call.application.environment.log.info("Course is created")
-                    call.respond(HttpStatusCode.Created, insert)
-                } else {
-                    call.respond(HttpStatusCode.InternalServerError)
-                }
-            } else {
-                call.respond("Invalid Length")
-            }
+    ): Course {
+        if (courseDetails.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
+            val insert = courseRepository.insertCourse(courseDetails.studentId, courseDetails.name)
+            return insert ?: throw Exception("Course creation failed")
         } else {
-            call.respond(HttpStatusCode.InternalServerError, "Course name validation configuration is missing")
+            throw Exception("Invalid Length")
         }
     }
 
-    suspend fun handleDeleteCourse(
-        call: ApplicationCall,
-        courseRepository: CourseRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id != null) {
-            val delCourse = courseRepository.deleteCourse(id)
-            if (delCourse) {
-                call.application.environment.log.info("Course is deleted")
-                call.respond(HttpStatusCode.OK)
-            } else {
-                call.application.environment.log.error("No course is found with given id")
-                throw CourseNotFoundException()
-            }
+    suspend fun handleDeleteCourse(id: Int): Boolean {
+        val delCourse = courseRepository.deleteCourse(id)
+        return if (delCourse) {
+            delCourse
         } else {
-            call.respond(HttpStatusCode.BadRequest)
+            throw CourseNotFoundException()
         }
     }
 
-    suspend fun handlePutCourse(
-        call: ApplicationCall,
-        courseRepository: CourseRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id != null) {
-            val course = call.receive<Course>()
-            val editCourse = courseRepository.editCourse(course.id, course.name)
-            if (editCourse) {
-                call.application.environment.log.info("Course is updated")
-                call.respond(HttpStatusCode.OK)
-            } else {
-                throw CourseNotFoundException()
-            }
+    suspend fun handlePutCourse(id:Int,courseDetails: Course): Boolean {
+        val editCourse = courseRepository.editCourse(id, courseDetails.name)
+        return if (editCourse) {
+            editCourse
         } else {
-            call.respond(HttpStatusCode.BadRequest)
-        }
-    }
-    suspend fun handleGetCourseById(
-        call: ApplicationCall,
-        courseRepository: CourseRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id != null) {
-            val fetchedCourse = courseRepository.getCourseById(id)
-            if (fetchedCourse != null) {
-                call.application.environment.log.info("Course is found with given id")
-                call.respond(fetchedCourse)
-            } else {
-                throw CourseNotFoundException()
-            }
-        } else {
-            call.respond(HttpStatusCode.BadRequest)
+            throw CourseNotFoundException()
         }
     }
 
+    suspend fun handleGetCourseById(id: Int): Course {
+        val fetchedCourse = courseRepository.getCourseById(id)
+        return fetchedCourse ?: throw CourseNotFoundException()
+    }
 }

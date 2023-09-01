@@ -10,30 +10,28 @@ import io.ktor.server.response.*
 import redis.clients.jedis.Jedis
 
 class PersonServices {
-    suspend fun handlePostPersonDetails(call: ApplicationCall, personRepository: PersonRepository) {
-        val post = call.receive<Person>()
+
+    private val personRepository=PersonRepository()
+    suspend fun handlePostPersonDetails(post: Person): Any? {
         val person = personRepository.createPersonData(post.id, post.name)
-        if (person != null) {
-            call.respond(HttpStatusCode.OK, person)
-        }
+        return person
     }
 
-    suspend fun handleGetDataFromCacheOrSource(call: ApplicationCall,
-                                               personRepository: PersonRepository,
-                                               jedis: Jedis
-    ) {
+    suspend fun handleGetDataFromCacheOrSource(
+        personRepository: PersonRepository,
+        jedis: Jedis,
+        id: Int?
+    ): Any {
         val cachedData = jedis.get("my_cached_data")
         if (cachedData != null) {
-            call.respond(HttpStatusCode.OK, "Cached data: $cachedData")
+            return "Cached data: $cachedData"
         } else {
-            val id = call.request.queryParameters["id"]?.toIntOrNull()
             if (id == null) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid 'id' parameter")
-                return
+                return HttpStatusCode.BadRequest to "Invalid 'id' parameter"
             }
             val dataFromSource = personRepository.fetchData(id)
             jedis.setex("my_cached_data", TIME, dataFromSource)
-            call.respond(HttpStatusCode.OK, "Data from source: $dataFromSource")
+            return "Data from source: $dataFromSource"
         }
     }
 }

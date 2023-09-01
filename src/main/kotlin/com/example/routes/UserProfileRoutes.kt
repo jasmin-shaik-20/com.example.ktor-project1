@@ -1,20 +1,19 @@
 package com.example.routes
 
+import com.example.dao.UserProfile
 import com.example.endpoints.ApiEndPoint
+import com.example.plugins.UserProfileAlreadyExistFoundException
+import com.example.plugins.UserProfileNotFoundException
 import com.example.repository.ProfileRepository
 import com.example.services.UserProfileServices
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.application.Application
-import io.ktor.server.application.call
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.*
 import io.ktor.server.config.HoconApplicationConfig
-import io.ktor.server.routing.routing
-import io.ktor.server.routing.route
-import io.ktor.server.routing.post
-import io.ktor.server.routing.get
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.put
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-
 
 fun Application.configureUserProfile() {
     val config = HoconApplicationConfig(ConfigFactory.load())
@@ -23,31 +22,43 @@ fun Application.configureUserProfile() {
 
     routing {
         route(ApiEndPoint.USERPROFILE) {
-            val profileRepository: ProfileRepository by inject()
-            val userProfileServices=UserProfileServices()
+            val userProfileServices: UserProfileServices by inject()
 
             get {
-                userProfileServices.handleGetUserProfiles(call,profileRepository)
+                val profile = userProfileServices.handleGetUserProfiles()
+                call.respond(profile)
+                call.application.log.info("Returned a list of user profiles")
             }
 
             post {
-                userProfileServices.handlePostUserProfile(call, profileRepository, emailMinLength, emailMaxLength)
+                val userProfileDetails = call.receive<UserProfile>()
+                val profile = userProfileServices.handlePostUserProfile(
+                    userProfileDetails, emailMinLength, emailMaxLength)
+                call.respond(profile)
+                call.application.log.info("Created a new user profile")
             }
 
             get("/{id?}") {
-                userProfileServices.handleGetUserProfileById(call, profileRepository)
+                val id = call.parameters["id"]?.toIntOrNull()?:return@get call.respond("Missing id")
+                val userProfile = userProfileServices.handleGetUserProfileById(id)
+                call.application.log.info("User profile found by ID")
+                call.respond(userProfile)
             }
 
             delete("/{id?}") {
-                userProfileServices.handleDeleteUserProfile(call, profileRepository)
+                val id = call.parameters["id"]?.toIntOrNull()?:return@delete call.respond("Missing id")
+                userProfileServices.handleDeleteUserProfile(id)
+                call.application.log.info("User profile deleted by ID")
+                call.respond(HttpStatusCode.OK, "User profile deleted")
             }
 
             put("/{id?}") {
-                userProfileServices.handlePutUserProfile(call, profileRepository)
+                val id = call.parameters["id"]?.toIntOrNull()?:return@put call.respond("Missing id")
+                val userProfileDetails = call.receive<UserProfile>()
+                userProfileServices.handlePutUserProfile(id, userProfileDetails)
+                call.application.log.info("User profile updated by ID")
+                call.respond(HttpStatusCode.OK, "User profile updated")
             }
         }
     }
 }
-
-
-

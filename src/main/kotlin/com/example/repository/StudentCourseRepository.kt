@@ -7,6 +7,7 @@ import com.example.dao.Student
 import com.example.dao.Students
 import com.example.plugins.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -25,6 +26,7 @@ class StudentCourseRepository {
             }.map(::rowToStudent)
         }
     }
+
 }
 
 private fun rowToStudent(row: ResultRow) =

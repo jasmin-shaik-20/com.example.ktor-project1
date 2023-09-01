@@ -3,91 +3,53 @@ package com.example.services
 import com.example.dao.Student
 import com.example.plugins.StudentNotFoundException
 import com.example.repository.StudentRepository
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 
 class StudentServices {
-    suspend fun handleGetStudents(call: ApplicationCall, studentRepository: StudentRepository) {
+
+    private val studentRepository = StudentRepository()
+
+    suspend fun handleGetStudents(): List<Student> {
         val students = studentRepository.getAllStudents()
-        if (students.isEmpty()) {
-            throw StudentNotFoundException()
+        return if (students.isEmpty()) {
+            emptyList()
         } else {
-            call.application.environment.log.info("All student details")
-            call.respond(students)
+            students
         }
     }
 
     suspend fun handlePostStudent(
-        call: ApplicationCall,
-        studentRepository: StudentRepository,
+        studentDetails: Student,
         studentNameMinLength: Int?,
         studentNameMaxLength: Int?
-    ) {
-        val students = call.receive<Student>()
-        if (students.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
-            val student = studentRepository.insertStudent(students.id, students.name)
-            if (student != null) {
-                call.application.environment.log.info("Student is created $student")
-                call.respond(HttpStatusCode.Created, student)
-            } else {
-                call.respond(HttpStatusCode.InternalServerError)
-            }
+    ): Student {
+        if (studentDetails.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
+            val student = studentRepository.insertStudent(studentDetails.id, studentDetails.name)
+                ?: throw Exception("Student creation failed")
+            return student
         } else {
-            call.respond("Invalid Length")
+            throw Exception("Invalid name length")
         }
     }
 
-    suspend fun handleGetStudentById(
-        call: ApplicationCall,
-        studentRepository: StudentRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        val fetid = studentRepository.getStudentById(id!!.toInt())
-        if (fetid != null) {
-            call.application.environment.log.info("Student is found")
-            call.respond(fetid)
+    suspend fun handleGetStudentById(id: Int?): Student {
+        return studentRepository.getStudentById(id!!) ?: throw StudentNotFoundException()
+    }
+
+    suspend fun handleDeleteStudent(id: Int): Boolean {
+        val deleted = studentRepository.deleteStudent(id)
+        return if (deleted) {
+            deleted
         } else {
             throw StudentNotFoundException()
         }
     }
 
-    suspend fun handleDeleteStudent(
-        call: ApplicationCall,
-        studentRepository: StudentRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id != null) {
-            val delStudent = studentRepository.deleteStudent(id)
-            if (delStudent) {
-                call.application.environment.log.info("Student is deleted")
-                call.respond(HttpStatusCode.OK)
-            } else {
-                call.application.environment.log.error("No student found with given id")
-                throw StudentNotFoundException()
-            }
+    suspend fun handleUpdateStudent(id: Int, studentDetails: Student): Boolean {
+        val isUpdated = studentRepository.editStudent(id, studentDetails.name)
+        return if (isUpdated) {
+            isUpdated
         } else {
-            call.respond(HttpStatusCode.BadRequest)
-        }
-    }
-
-    suspend fun handlePutStudent(
-        call: ApplicationCall,
-        studentRepository: StudentRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id != null) {
-            val student = call.receive<Student>()
-            val editStudent = studentRepository.editStudent(student.id, student.name)
-            if (editStudent) {
-                call.application.environment.log.info("Student is updated")
-                call.respond(HttpStatusCode.OK)
-            } else {
-                throw StudentNotFoundException()
-            }
-        } else {
-            call.respond(HttpStatusCode.BadRequest)
+            throw StudentNotFoundException()
         }
     }
 }

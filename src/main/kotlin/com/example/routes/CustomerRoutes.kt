@@ -1,66 +1,57 @@
-package com.example.routes
-
 import com.example.dao.Customer
-import com.example.dao.customerStorage
-import com.example.endpoints.ApiEndPoint
-import com.example.services.CustomerServices
 import com.typesafe.config.ConfigFactory
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.config.HoconApplicationConfig
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.routing
-import io.ktor.server.routing.route
-import io.ktor.server.routing.post
-import io.ktor.server.routing.get
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.put
-import io.ktor.server.routing.patch
-import io.ktor.util.pipeline.PipelineContext
-import org.koin.ktor.ext.inject
+import io.ktor.server.config.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 fun Application.configureCustomerRoutes() {
     val config = HoconApplicationConfig(ConfigFactory.load())
-    val customerNameMinLength = config.property("ktor.CustomerValidation.customerNameMinLength").
-    getString().toIntOrNull()
-    val customerNameMaxLength = config.property("ktor.CustomerValidation.customerNameMaxLength").
-    getString().toIntOrNull()
+    val customerNameMinLength = config.property("ktor.CustomerValidation.customerNameMinLength").getString()?.toIntOrNull()
+    val customerNameMaxLength = config.property("ktor.CustomerValidation.customerNameMaxLength").getString()?.toIntOrNull()
+
+    val customerServices = CustomerServices()
 
     routing {
-        route(ApiEndPoint.CUSTOMER) {
-            val customerServices=CustomerServices()
+        route("/customers") {
+
             get {
-                customerServices.handleGetCustomers(call)
+                val customers = customerServices.handleGetCustomers()
+                call.respond(customers)
             }
 
             get("/{id?}") {
-                customerServices.handleGetCustomerById(call)
+                val id = call.parameters["id"]
+                val customer = customerServices.handleGetCustomerById(id)
+                call.respond(customer)
             }
 
             post {
-                customerServices.handlePostCustomer(call,customerNameMinLength, customerNameMaxLength)
+                val customer = call.receive<Customer>()
+                val result = customerServices.handlePostCustomer(customer,customerNameMinLength, customerNameMaxLength)
+                call.respond(result)
             }
 
             delete("/{id?}") {
-                customerServices.handleDeleteCustomer(call)
+                val id = call.parameters["id"]
+                val result = customerServices.handleDeleteCustomer(id)
+                call.respond(result)
             }
 
             put("/{id?}") {
-                customerServices.handlePutCustomer(call,customerNameMinLength, customerNameMaxLength)
+                val id = call.parameters["id"]
+                val updatedCustomer = call.receive<Customer>()
+                val result = customerServices.handlePutCustomer(id,updatedCustomer,customerNameMinLength, customerNameMaxLength)
+                call.respond(result)
             }
 
             patch("/{id?}") {
-                customerServices.handlePatchCustomer(call,customerNameMinLength, customerNameMaxLength)
+                val id = call.parameters["id"]
+                val name = call.receive<Map<String, String>>().get("name")
+                call.respond(customerServices.handlePatchCustomer(id, name, customerNameMinLength, customerNameMaxLength))
             }
         }
     }
 }
-
-
-
-
-

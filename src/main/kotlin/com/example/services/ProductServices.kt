@@ -10,101 +10,68 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 
 class ProductServices {
-    suspend fun handleGetProducts
-                (call:ApplicationCall, productRepository: ProductRepository) {
+
+    private val productRepository = ProductRepository()
+
+    suspend fun handleGetProducts(): List<Product> {
         val getProducts = productRepository.getAllProducts()
-        if (getProducts.isEmpty()) {
-            throw ProductNotFoundException()
+        return if (getProducts.isEmpty()) {
+            emptyList()
         } else {
-            call.application.environment.log.info("All product details")
-            call.respond(getProducts)
+            getProducts
         }
     }
 
     suspend fun handlePostProduct(
-        call: ApplicationCall,
-        productRepository: ProductRepository,
+        productDetails: Product,
         productNameMinLength: Int?,
         productNameMaxLength: Int?
-    ) {
-        val insert = call.receive<Product>()
-        if (insert.name.length in productNameMinLength!!..productNameMaxLength!!) {
-            val postProduct = productRepository.insertProduct(insert.productId, insert.userId, insert.name, insert.price)
-            if (postProduct != null) {
-                call.application.environment.log.info("Product is created")
-                call.respond(HttpStatusCode.Created, postProduct)
-            } else {
-                call.respond(HttpStatusCode.InternalServerError)
-            }
+    ): Product {
+        if (productDetails.name.length in productNameMinLength!!..productNameMaxLength!!) {
+            val postProduct = productRepository.insertProduct(
+                productDetails.productId,
+                productDetails.userId,
+                productDetails.name,
+                productDetails.price
+            )
+            return postProduct ?: throw Exception("Product creation failed")
         } else {
-            call.respond("Invalid Length")
+            throw Exception("Invalid name length")
         }
     }
 
-    suspend fun handleGetProductsByUserId(
-        call: ApplicationCall,
-        productRepository: ProductRepository
-    ) {
-        val id = call.parameters["id"] ?: throw InvalidIDException()
-        val getProduct = productRepository.getProductsById(id.toInt())
+    suspend fun handleGetProductsByUserId(userId: Int): List<Product> {
+        val getProduct = productRepository.getProductsById(userId)
         if (getProduct.isEmpty()) {
-            call.application.environment.log.error("No product found with given id")
             throw ProductNotFoundException()
         } else {
-            call.application.environment.log.info("Product list with given id is found")
-            call.respond(getProduct)
+            return getProduct
         }
     }
 
-    suspend fun handleGetProductById(
-        call: ApplicationCall,
-        productRepository: ProductRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        val fetid = productRepository.getProduct(id!!.toInt())
-        if (fetid != null) {
-            call.application.environment.log.info("Product is found")
-            call.respond(fetid)
+    suspend fun handleGetProductById(id: Int): Product {
+        val fetchedProduct = productRepository.getProduct(id) ?: throw ProductNotFoundException()
+        return fetchedProduct
+    }
+
+    suspend fun handleDeleteProduct(id: Int): Boolean {
+        val deleted = productRepository.deleteProduct(id)
+        if (deleted) {
+            return true
         } else {
             throw ProductNotFoundException()
         }
     }
 
-    suspend fun handleDeleteProduct(
-        call: ApplicationCall,
-        productRepository: ProductRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id != null) {
-            val delProduct = productRepository.deleteProduct(id)
-            if (delProduct) {
-                call.application.environment.log.info("Product is deleted")
-                call.respond(HttpStatusCode.OK)
-            } else {
-                call.application.environment.log.error("No product found with given id")
-                throw ProductNotFoundException()
-            }
+    suspend fun handleUpdateProduct(id:Int,productDetails: Product): Boolean {
+        val editProduct = productRepository.editProduct(id,
+            productDetails.name,
+            productDetails.price
+        )
+        if (editProduct) {
+            return true
         } else {
-            call.respond(HttpStatusCode.BadRequest)
-        }
-    }
-
-    suspend fun handlePutProduct(
-        call: ApplicationCall,
-        productRepository: ProductRepository
-    ) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id != null) {
-            val product = call.receive<Product>()
-            val editProduct = productRepository.editProduct(product.productId, product.name, product.price)
-            if (editProduct) {
-                call.application.environment.log.info("Product is updated")
-                call.respond(HttpStatusCode.OK)
-            } else {
-                throw ProductNotFoundException()
-            }
-        } else {
-            call.respond(HttpStatusCode.BadRequest)
+            throw ProductNotFoundException()
         }
     }
 }

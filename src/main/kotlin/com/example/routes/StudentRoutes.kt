@@ -1,18 +1,14 @@
-package com.example.routes
-
+import com.example.dao.Student
 import com.example.endpoints.ApiEndPoint
-import com.example.repository.StudentRepository
-import com.example.services.StudentServices
 import com.typesafe.config.ConfigFactory
+import io.ktor.http.*
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.config.HoconApplicationConfig
-import io.ktor.server.routing.routing
-import io.ktor.server.routing.route
-import io.ktor.server.routing.post
-import io.ktor.server.routing.get
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.put
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.*
+import com.example.services.StudentServices
+import io.ktor.server.config.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureStudentRoutes() {
@@ -20,33 +16,45 @@ fun Application.configureStudentRoutes() {
     val studentNameMinLength = config.property("ktor.StudentValidation.studentNameMinLength").getString()?.toIntOrNull()
     val studentNameMaxLength = config.property("ktor.StudentValidation.studentNameMaxLength").getString()?.toIntOrNull()
 
+    val studentServices: StudentServices by inject()
+
     routing {
         route(ApiEndPoint.STUDENT) {
-            val studentRepository: StudentRepository by inject()
-            val studentServices=StudentServices()
-
             get {
-                studentServices.handleGetStudents(call,studentRepository)
+                val students = studentServices.handleGetStudents()
+                call.respond(students)
+                call.application.environment.log.info("Returned a list of students")
             }
 
             post {
-                studentServices.handlePostStudent(call, studentRepository, studentNameMinLength, studentNameMaxLength)
+                val studentDetails = call.receive<Student>()
+                val student = studentServices.handlePostStudent(
+                    studentDetails, studentNameMinLength, studentNameMaxLength)
+                call.respond(HttpStatusCode.Created, student)
+                call.application.environment.log.info("Created a new student: $student")
             }
 
             get("/{id?}") {
-                studentServices.handleGetStudentById(call, studentRepository)
+                val id = call.parameters["id"]?.toIntOrNull()?:return@get call.respond("Missing id")
+                val student = studentServices.handleGetStudentById(id)
+                call.respond(student)
+                call.application.environment.log.info("Returned student with ID: $id")
             }
 
             delete("/{id?}") {
-                studentServices.handleDeleteStudent(call, studentRepository)
+                val id = call.parameters["id"]?.toIntOrNull()?:return@delete call.respond("Missing id")
+                studentServices.handleDeleteStudent(id!!)
+                call.respond(HttpStatusCode.OK, "Student deleted successfully")
+                call.application.environment.log.info("Deleted student with ID: $id")
             }
 
             put("/{id?}") {
-                studentServices.handlePutStudent(call, studentRepository)
+                val id = call.parameters["id"]?.toIntOrNull()?:return@put call.respond("Missing id")
+                val studentDetails = call.receive<Student>()
+                studentServices.handleUpdateStudent(id!!, studentDetails)
+                call.respond(HttpStatusCode.OK, "Student updated successfully")
+                call.application.environment.log.info("Updated student with ID: $id")
             }
         }
     }
 }
-
-
-

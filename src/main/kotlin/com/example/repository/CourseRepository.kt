@@ -37,8 +37,12 @@ class CourseRepository  {
     }
 
     suspend fun deleteCourse(id: Int): Boolean = dbQuery {
-        val delCourse=Courses.deleteWhere { Courses.id eq id }
-        delCourse>0
+        // Delete the corresponding records from STUDENTCOURSES first
+        StudentCourses.deleteWhere { StudentCourses.courseId eq id }
+
+        // Then, delete the course from COURSES
+        val delCourse = Courses.deleteWhere { Courses.id eq id }
+        delCourse > 0
     }
 
     suspend fun editCourse(id: Int, newName: String): Boolean = dbQuery{

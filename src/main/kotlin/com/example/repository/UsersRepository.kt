@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UsersRepository {
-    suspend fun createUser(id: Int, name: String): User? = dbQuery {
+    suspend fun createUser(id:Int,name: String): User? = dbQuery {
 
         val insertStatement = Users.insert {
             it[Users.name] = name

@@ -13,7 +13,9 @@ fun Application.configureStatusPages() {
             when(cause){
                 is InvalidIDException -> call.respond("Missing id")
                 is UserNotFoundException -> call.respond("user not found")
+                is UserAlreadyExistFoundException -> call.respond("user already exist")
                 is UserProfileNotFoundException -> call.respond("profile not found")
+                is UserProfileAlreadyExistFoundException -> call.respond("UserProfile alreday exist")
                 is ProductNotFoundException -> call.respond("product not found")
                 is StudentNotFoundException -> call.respond("student not found")
                 is CourseNotFoundException -> call.respond("course not found")
@@ -24,6 +26,8 @@ fun Application.configureStatusPages() {
     }
 }
 
+class UserProfileAlreadyExistFoundException:Exception()
+class UserAlreadyExistFoundException:Exception()
 class InvalidIDException:Exception()
 class UserNotFoundException:Exception()
 class UserProfileNotFoundException:Exception()

@@ -1,29 +1,28 @@
 package com.example.services
 
+import com.example.dao.Course
+import com.example.dao.Student
 import com.example.repository.StudentCourseRepository
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 
 class StudentCourseServices {
-    suspend fun handleGetCoursesByStudentId(call: ApplicationCall, studentCourseRepository: StudentCourseRepository) {
-        val id = call.parameters["id"]?.toIntOrNull()
-        val courses = studentCourseRepository.getCoursesStudentId(id!!.toInt())
+    private val studentCourseRepository=StudentCourseRepository()
+    suspend fun handleGetCoursesByStudentId(studentId: Int): List<Course> {
+        val courses = studentCourseRepository.getCoursesStudentId(studentId)
         if (courses.isNotEmpty()) {
-            call.application.environment.log.info("Courses found")
-            call.respond(courses)
+            return courses
         } else {
-            call.respond("No courses found with the given id")
+            throw NoSuchElementException("No courses found with the given student id")
         }
     }
 
-    suspend fun handleGetStudentsByCourseId(call: ApplicationCall, studentCourseRepository: StudentCourseRepository) {
-        val id = call.parameters["id"] ?: return call.respond("Invalid id")
-        val students = studentCourseRepository.getStudentsCourseId(id.toInt())
+    suspend fun handleGetStudentsByCourseId(courseId: Int): List<Student> {
+        val students = studentCourseRepository.getStudentsCourseId(courseId)
         if (students.isNotEmpty()) {
-            call.application.environment.log.info("Students found")
-            call.respond(students)
+            return students
         } else {
-            call.respond("No students found with the given courseId")
+            throw NoSuchElementException("No students found with the given course id")
         }
     }
 

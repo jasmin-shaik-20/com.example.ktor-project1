@@ -1,31 +1,44 @@
 package com.example.routes
 
-import com.example.endpoints.ApiEndPoint
+import com.example.dao.Person
 import com.example.repository.PersonRepository
 import com.example.services.PersonServices
-import io.ktor.server.application.Application
-import io.ktor.server.application.call
-import io.ktor.server.routing.routing
-import io.ktor.server.routing.route
-import io.ktor.server.routing.post
-import io.ktor.server.routing.get
-import org.koin.ktor.ext.inject
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.util.reflect.*
 import redis.clients.jedis.Jedis
+import org.koin.ktor.ext.inject
 
-fun Application.configurePersonRoutes(){
-    val jedis = Jedis("localhost")
-    jedis.connect()
-    routing{
-        route(ApiEndPoint.PERSON){
-            val personRepository : PersonRepository by inject()
-            val personServices=PersonServices()
-            post("/post details") {
-                personServices.handlePostPersonDetails(call,personRepository)
-            }
+fun Application.configurePersonRoutes() {
+    val personRepository: PersonRepository by inject()
+    val personServices = PersonServices()
+    val jedis: Jedis by inject()
 
-            get("/data") {
-                personServices.handleGetDataFromCacheOrSource(call,personRepository,jedis)
+routing {
+    route("/persons") {
+        post {
+            val post = call.receive<Person>()
+            val person = personServices.handlePostPersonDetails(post)
+            if (person != null) {
+                call.respond(HttpStatusCode.OK, person)
+            } else {
+                call.respond(HttpStatusCode.InternalServerError)
             }
         }
+
+        get("/data-from-cache-or-source") {
+            val id = call.request.queryParameters["id"]?.toIntOrNull()
+            val result = personServices.handleGetDataFromCacheOrSource(personRepository, jedis, id)
+            if (result is Pair<*, *>) {
+                call.respond(result.first, result.second as TypeInfo)
+            } else {
+                call.respond(HttpStatusCode.OK, result)
+            }
+        }
+    }
+
     }
 }
