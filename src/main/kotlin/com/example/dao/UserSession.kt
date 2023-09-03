@@ -19,7 +19,7 @@ object RedisUtils {
     private val host = config.property("ktor.redis.host").getString()
     private val port = config.property("ktor.redis.port").getString().toInt()
     private val jedisPool = JedisPool(host, port)
-    fun set(key: String, value: String) {
+    fun set(key: String, value: String, expireTime: Int) {
         jedisPool.resource.use { jedis ->
             jedis.set(key, value)
         }

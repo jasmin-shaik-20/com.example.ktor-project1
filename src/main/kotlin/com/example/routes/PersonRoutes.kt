@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.dao.Person
+import com.example.endpoints.ApiEndPoint
 import com.example.repository.PersonRepository
 import com.example.services.PersonServices
 import io.ktor.http.HttpStatusCode
@@ -18,7 +19,7 @@ fun Application.configurePersonRoutes() {
     val jedis: Jedis by inject()
 
 routing {
-    route("/persons") {
+    route(ApiEndPoint.PERSON) {
         post {
             val post = call.receive<Person>()
             val person = personServices.handlePostPersonDetails(post)

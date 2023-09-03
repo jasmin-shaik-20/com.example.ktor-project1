@@ -1,4 +1,5 @@
 import com.example.dao.Customer
+import com.example.endpoints.ApiEndPoint
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -15,7 +16,7 @@ fun Application.configureCustomerRoutes() {
     val customerServices = CustomerServices()
 
     routing {
-        route("/customers") {
+        route(ApiEndPoint.CUSTOMER) {
 
             get {
                 val customers = customerServices.handleGetCustomers()

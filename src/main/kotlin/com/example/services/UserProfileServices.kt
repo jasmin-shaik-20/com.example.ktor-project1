@@ -27,10 +27,6 @@ class UserProfileServices {
         emailMaxLength: Int?
     ): UserProfile {
         if (userDetails.email.length in emailMinLength!!..emailMaxLength!!) {
-            val existingProfile = profileRepository.getProfileByUserId(userDetails.userId)
-            if (existingProfile != null) {
-                throw UserProfileAlreadyExistFoundException()
-            }
             val profile = profileRepository.createUserProfile(
                 userDetails.userId,
                 userDetails.email,
