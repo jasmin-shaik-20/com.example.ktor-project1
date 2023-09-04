@@ -1,6 +1,6 @@
 package com.example.routes
 
-import com.example.dao.Customer
+import com.example.database.table.Customer
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
