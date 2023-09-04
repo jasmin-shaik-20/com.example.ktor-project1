@@ -1,7 +1,9 @@
 package com.example.services
 
 import com.example.database.table.Product
-import com.example.plugins.ProductNotFoundException
+import com.example.exceptions.ProductCreationFailedException
+import com.example.exceptions.ProductNameInvalidLengthException
+import com.example.exceptions.ProductNotFoundException
 import com.example.repository.ProductRepositoryImpl
 
 class ProductServices {
@@ -29,9 +31,9 @@ class ProductServices {
                 productDetails.name,
                 productDetails.price
             )
-            return postProduct ?: throw Exception("Product creation failed")
+            return postProduct ?: throw ProductCreationFailedException()
         } else {
-            throw Exception("Invalid name length")
+            throw ProductNameInvalidLengthException()
         }
     }
 
@@ -45,8 +47,7 @@ class ProductServices {
     }
 
     suspend fun handleGetProductById(id: Int): Product {
-        val fetchedProduct = productRepositoryImpl.getProduct(id) ?: throw ProductNotFoundException()
-        return fetchedProduct
+        return productRepositoryImpl.getProduct(id) ?: throw ProductNotFoundException()
     }
 
     suspend fun handleDeleteProduct(id: Int): Boolean {

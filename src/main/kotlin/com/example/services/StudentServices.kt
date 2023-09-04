@@ -1,7 +1,9 @@
 package com.example.services
 
 import com.example.database.table.Student
-import com.example.plugins.StudentNotFoundException
+import com.example.exceptions.StudentCreationFailedException
+import com.example.exceptions.StudentNameInvalidLengthException
+import com.example.exceptions.StudentNotFoundException
 import com.example.repository.StudentRepositoryImpl
 
 class StudentServices {
@@ -23,11 +25,10 @@ class StudentServices {
         studentNameMaxLength: Int?
     ): Student {
         if (studentDetails.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
-            val student = studentRepositoryImpl.insertStudent(studentDetails.id, studentDetails.name)
-                ?: throw Exception("Student creation failed")
-            return student
+            return studentRepositoryImpl.insertStudent(studentDetails.id, studentDetails.name)
+                ?: throw StudentCreationFailedException()
         } else {
-            throw Exception("Invalid name length")
+            throw StudentNameInvalidLengthException()
         }
     }
 
@@ -38,7 +39,7 @@ class StudentServices {
     suspend fun handleDeleteStudent(id: Int): Boolean {
         val deleted = studentRepositoryImpl.deleteStudent(id)
         return if (deleted) {
-            deleted
+            true
         } else {
             throw StudentNotFoundException()
         }
@@ -47,7 +48,7 @@ class StudentServices {
     suspend fun handleUpdateStudent(id: Int, studentDetails: Student): Boolean {
         val isUpdated = studentRepositoryImpl.editStudent(id, studentDetails.name)
         return if (isUpdated) {
-            isUpdated
+            true
         } else {
             throw StudentNotFoundException()
         }

@@ -1,7 +1,9 @@
 package com.example.services
 
 import com.example.database.table.User
-import com.example.plugins.UserNotFoundException
+import com.example.exceptions.UserCreationFailedException
+import com.example.exceptions.UserInvalidNameLengthException
+import com.example.exceptions.UserNotFoundException
 import com.example.repository.UsersRepositoryImpl
 
 class UserServices {
@@ -23,10 +25,10 @@ class UserServices {
         if (userDetails.name.length in nameMinLength!!..nameMaxLength!!) {
             val user = usersRepository.createUser(userDetails.id,
                 userDetails.name
-            )?: throw Exception("User creation failed")
+            )?: throw UserCreationFailedException()
             return user
         } else {
-            throw Exception("Invalid name length")
+            throw UserInvalidNameLengthException()
         }
     }
 
@@ -37,7 +39,7 @@ class UserServices {
     suspend fun handleDeleteUser(id: Int):Boolean{
         val delUser= usersRepository.deleteUser(id)
         return if(delUser)
-             delUser
+             true
         else {
             throw UserNotFoundException()
         }
@@ -46,7 +48,7 @@ class UserServices {
     suspend fun handleUpdateUser(id: Int, userDetails: User): Boolean {
             val isUpdated = usersRepository.editUser(id,userDetails.name)
         return if(isUpdated){
-            isUpdated
+            true
         }else {
             throw UserNotFoundException()
         }

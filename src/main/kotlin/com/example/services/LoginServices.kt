@@ -3,6 +3,7 @@ package com.example.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.database.table.Login
+import com.example.exceptions.LoginInvalidLengthException
 import com.example.utils.appConstants.GlobalConstants.TOKEN_EXPIRATION
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -36,7 +37,7 @@ class LoginServices {
                 "Missing Parameters"
             }
         } else {
-            return "Invalid length of username and password"
+            throw LoginInvalidLengthException()
         }
     }
 

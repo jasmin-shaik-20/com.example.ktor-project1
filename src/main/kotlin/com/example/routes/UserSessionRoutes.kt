@@ -35,9 +35,7 @@ fun Application.configureUserSession() {
                         call.respond("Login Successfully")
                         call.respondRedirect("/user-session")
                     }
-                    is LoginResult.Error -> {
-                        call.respond(loginResult.message)
-                    }
+
                 }
             }
             get("/user-session") {
@@ -57,5 +55,4 @@ fun Application.configureUserSession() {
 }
 sealed class LoginResult {
     data class Success(val userSession: UserSession) : LoginResult()
-    data class Error(val message: String) : LoginResult()
 }

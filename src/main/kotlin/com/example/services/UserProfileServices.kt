@@ -1,7 +1,9 @@
 package com.example.services
 
 import com.example.database.table.UserProfile
-import com.example.plugins.UserProfileNotFoundException
+import com.example.exceptions.UserProfileCreationFailedException
+import com.example.exceptions.UserProfileInvalidEmailLengthException
+import com.example.exceptions.UserProfileNotFoundException
 import com.example.repository.ProfileRepositoryImpl
 
 class UserProfileServices {
@@ -10,10 +12,10 @@ class UserProfileServices {
 
     suspend fun handleGetUserProfiles(): List<UserProfile> {
         val profiles = profileRepositoryImpl.getAllUserProfile()
-        if (profiles.isEmpty()) {
-            return emptyList()
+        return if (profiles.isEmpty()) {
+            emptyList()
         } else {
-            return profiles
+            profiles
         }
     }
 
@@ -23,21 +25,19 @@ class UserProfileServices {
         emailMaxLength: Int?
     ): UserProfile {
         if (userDetails.email.length in emailMinLength!!..emailMaxLength!!) {
-            val profile = profileRepositoryImpl.createUserProfile(
+            return profileRepositoryImpl.createUserProfile(
                 userDetails.userId,
                 userDetails.email,
                 userDetails.age
-            ) ?: throw Exception("User profile creation failed")
-            return profile
+            ) ?: throw UserProfileCreationFailedException()
         } else {
-            throw Exception("Invalid email length")
+            throw UserProfileInvalidEmailLengthException()
         }
     }
 
     suspend fun handleGetUserProfileById(id: Int?): UserProfile {
-        val profile = profileRepositoryImpl.getUserProfile(id!!)
+        return profileRepositoryImpl.getUserProfile(id!!)
             ?: throw UserProfileNotFoundException()
-        return profile
     }
 
     suspend fun handleDeleteUserProfile(id: Int): Boolean {
@@ -45,7 +45,7 @@ class UserProfileServices {
         if (!deleted) {
             throw UserProfileNotFoundException()
         }
-        return deleted
+        return true
     }
 
     suspend fun handlePutUserProfile(id: Int, updatedProfile: UserProfile): Boolean {
@@ -53,6 +53,6 @@ class UserProfileServices {
         if (!updated) {
             throw UserProfileNotFoundException()
         }
-        return updated
+        return true
     }
 }

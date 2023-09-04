@@ -1,6 +1,7 @@
 package com.example.services
 
 import com.example.database.table.UserSession
+import com.example.exceptions.UserSessionsInvalidLengthException
 import com.example.redis.RedisUtils
 import com.example.routes.LoginResult
 
@@ -17,7 +18,7 @@ class UserSessionServices {
         ) {
             LoginResult.Success(userSession)
         } else {
-            LoginResult.Error("Invalid length of username and password")
+            throw UserSessionsInvalidLengthException()
         }
     }
     fun handleUserSession(sessionId: String): String {
@@ -34,11 +35,6 @@ class UserSessionServices {
         RedisUtils.delete(sessionId)
         return "Logout successful!"
     }
-
-
-
-
-
 
 
 }
