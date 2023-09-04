@@ -1,10 +1,6 @@
 package com.example.plugins
 
-import com.example.dao.User
-import com.example.dao.UserProfile
-import com.example.dao.Product
-import com.example.dao.Student
-import com.example.dao.Course
+import com.example.database.table.*
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.requestvalidation.RequestValidation

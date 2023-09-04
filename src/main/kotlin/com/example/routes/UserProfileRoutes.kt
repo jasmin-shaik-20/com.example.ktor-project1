@@ -1,27 +1,21 @@
 package com.example.routes
 
-import com.example.dao.UserProfile
-import com.example.endpoints.ApiEndPoint
-import com.example.plugins.UserProfileAlreadyExistFoundException
-import com.example.plugins.UserProfileNotFoundException
-import com.example.repository.ProfileRepository
+import com.example.config.UserProfileConfig.emailMaxLength
+import com.example.config.UserProfileConfig.emailMinLength
+import com.example.database.table.UserProfile
 import com.example.services.UserProfileServices
-import com.typesafe.config.ConfigFactory
+import com.example.utils.appConstants.ApiEndPoints
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
-import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureUserProfile() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val emailMinLength = config.property("ktor.ProfileValidation.emailMinLength").getString()?.toIntOrNull()
-    val emailMaxLength = config.property("ktor.ProfileValidation.emailMaxLength").getString()?.toIntOrNull()
 
     routing {
-        route(ApiEndPoint.USERPROFILE) {
+        route(ApiEndPoints.USERPROFILE) {
             val userProfileServices: UserProfileServices by inject()
 
             get {

@@ -1,20 +1,16 @@
 package com.example.services
 
-import com.example.dao.Person
-import com.example.endpoints.ApiEndPoint.TIME
+import com.example.database.table.Person
 import com.example.repository.PersonRepository
+import com.example.utils.appConstants.GlobalConstants.TIME
 import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import redis.clients.jedis.Jedis
 
 class PersonServices {
 
     private val personRepository=PersonRepository()
     suspend fun handlePostPersonDetails(post: Person): Any? {
-        val person = personRepository.createPersonData(post.id, post.name)
-        return person
+        return personRepository.createPersonData(post.id, post.name)
     }
 
     suspend fun handleGetDataFromCacheOrSource(

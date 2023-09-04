@@ -1,19 +1,15 @@
 package com.example.services
 
-import com.example.dao.UserProfile
-import com.example.plugins.UserProfileAlreadyExistFoundException
+import com.example.database.table.UserProfile
 import com.example.plugins.UserProfileNotFoundException
-import com.example.repository.ProfileRepository
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
+import com.example.repository.ProfileRepositoryImpl
+
 class UserProfileServices {
 
-    private val profileRepository = ProfileRepository()
+    private val profileRepositoryImpl = ProfileRepositoryImpl()
 
     suspend fun handleGetUserProfiles(): List<UserProfile> {
-        val profiles = profileRepository.getAllUserProfile()
+        val profiles = profileRepositoryImpl.getAllUserProfile()
         if (profiles.isEmpty()) {
             return emptyList()
         } else {
@@ -27,7 +23,7 @@ class UserProfileServices {
         emailMaxLength: Int?
     ): UserProfile {
         if (userDetails.email.length in emailMinLength!!..emailMaxLength!!) {
-            val profile = profileRepository.createUserProfile(
+            val profile = profileRepositoryImpl.createUserProfile(
                 userDetails.userId,
                 userDetails.email,
                 userDetails.age
@@ -39,13 +35,13 @@ class UserProfileServices {
     }
 
     suspend fun handleGetUserProfileById(id: Int?): UserProfile {
-        val profile = profileRepository.getUserProfile(id!!)
+        val profile = profileRepositoryImpl.getUserProfile(id!!)
             ?: throw UserProfileNotFoundException()
         return profile
     }
 
     suspend fun handleDeleteUserProfile(id: Int): Boolean {
-        val deleted = profileRepository.deleteUserProfile(id)
+        val deleted = profileRepositoryImpl.deleteUserProfile(id)
         if (!deleted) {
             throw UserProfileNotFoundException()
         }
@@ -53,7 +49,7 @@ class UserProfileServices {
     }
 
     suspend fun handlePutUserProfile(id: Int, updatedProfile: UserProfile): Boolean {
-        val updated = profileRepository.editUserProfile(id, updatedProfile.email, updatedProfile.age)
+        val updated = profileRepositoryImpl.editUserProfile(id, updatedProfile.email, updatedProfile.age)
         if (!updated) {
             throw UserProfileNotFoundException()
         }

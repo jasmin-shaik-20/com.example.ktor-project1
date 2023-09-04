@@ -1,6 +1,6 @@
 package com.example.repository
 
-import com.example.dao.Users
+import com.example.database.table.Users
 import com.example.utils.H2Database
 import junit.framework.TestCase.*
 import kotlinx.coroutines.runBlocking
@@ -38,7 +38,7 @@ class UserRepositoryTest {
     @Test
     fun testCreateUserSuccess()=
         runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
             val newUser = usersRepository.createUser(1,"John Doe")
             assertEquals(1, newUser?.id)
             assertEquals("John Doe", newUser?.name)
@@ -46,7 +46,7 @@ class UserRepositoryTest {
 
     @Test
     fun testGetAllUsersSuccess() = runBlocking{
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"John Doe")
         val allUsers = usersRepository.getAllUsers()
         assertEquals(1, allUsers.size)
@@ -55,7 +55,7 @@ class UserRepositoryTest {
 
     @Test
     fun testSelectUserSuccess()= runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"John Doe")
         val selectedUser = usersRepository.selectUser(1)
         assertEquals("John Doe", selectedUser?.name)
@@ -63,7 +63,7 @@ class UserRepositoryTest {
 
     @Test
     fun testEditUserSuccess()= runBlocking{
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"John Doe")
         val editResult = usersRepository.editUser(1, "Jane Doe")
         assertTrue(editResult)
@@ -73,7 +73,7 @@ class UserRepositoryTest {
 
     @Test
     fun testDeleteUserSuccess()= runBlocking{
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"John Doe")
         val deleteResult = usersRepository.deleteUser(1)
         assertTrue(deleteResult)
@@ -84,21 +84,21 @@ class UserRepositoryTest {
     //failure
     @Test
     fun testSelectUserNotFound()= runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         val selectedUser = usersRepository.selectUser(1)
         assertNull(selectedUser)
     }
 
     @Test
     fun testEditUserNotFound()= runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         val editResult = usersRepository.editUser(1, "Jane Doe")
         assertFalse(editResult)
     }
 
     @Test
     fun testDeleteUserNotFound()= runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         val deleteResult = usersRepository.deleteUser(1)
         assertFalse(deleteResult)
     }

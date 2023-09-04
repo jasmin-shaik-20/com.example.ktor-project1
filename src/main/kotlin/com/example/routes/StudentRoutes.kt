@@ -1,5 +1,7 @@
-import com.example.dao.Student
-import com.example.endpoints.ApiEndPoint
+
+import com.example.config.StudentConfig.studentNameMaxLength
+import com.example.config.StudentConfig.studentNameMinLength
+import com.example.database.table.Student
 import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.Application
@@ -8,18 +10,16 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import com.example.services.StudentServices
+import com.example.utils.appConstants.ApiEndPoints
 import io.ktor.server.config.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureStudentRoutes() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val studentNameMinLength = config.property("ktor.StudentValidation.studentNameMinLength").getString()?.toIntOrNull()
-    val studentNameMaxLength = config.property("ktor.StudentValidation.studentNameMaxLength").getString()?.toIntOrNull()
 
     val studentServices: StudentServices by inject()
 
     routing {
-        route(ApiEndPoint.STUDENT) {
+        route(ApiEndPoints.STUDENT) {
             get {
                 val students = studentServices.handleGetStudents()
                 call.respond(students)

@@ -1,8 +1,11 @@
 package com.example.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.dao.Login
-import com.example.endpoints.ApiEndPoint
+import com.example.config.LoginConfig.audience
+import com.example.config.LoginConfig.issuer
+import com.example.config.LoginConfig.secret
+import com.example.database.table.Login
+import com.example.utils.appConstants.GlobalConstants
 import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.server.auth.jwt.*
@@ -11,15 +14,11 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
 
 class LoginServicesTest {
 
-    private val secret = "secret"
-    private val issuer = "http://0.0.0.0:8080/"
-    private val audience = "http://0.0.0.0:8080/hello"
     private val loginServices = LoginServices()
 
     @Test
@@ -49,7 +48,7 @@ class LoginServicesTest {
             val username = "Jasmin"
             val token = JWT.create()
                 .withClaim("username", username)
-                .withExpiresAt(Date(System.currentTimeMillis() + ApiEndPoint.TOKEN_EXPIRATION))
+                .withExpiresAt(Date(System.currentTimeMillis() + GlobalConstants.TOKEN_EXPIRATION))
                 .sign(Algorithm.HMAC256(secret))
             val principal = JWTPrincipal(JWT.decode(token))
             val greeting = loginServices.handleAuthenticatedHello(principal)

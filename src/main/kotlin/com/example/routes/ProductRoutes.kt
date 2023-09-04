@@ -1,9 +1,11 @@
 package com.example.routes
 
-import com.example.dao.Product
-import com.example.endpoints.ApiEndPoint
-import com.example.repository.ProductRepository
+
+import com.example.config.ProductConfig.productNameMaxLength
+import com.example.config.ProductConfig.productNameMinLength
+import com.example.database.table.Product
 import com.example.services.ProductServices
+import com.example.utils.appConstants.ApiEndPoints
 import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.Application
@@ -20,12 +22,9 @@ import io.ktor.server.routing.put
 import org.koin.ktor.ext.inject
 
 fun Application.configureProductRoutes() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val productNameMinLength = config.property("ktor.ProductValidation.productNameMinLength").getString()?.toIntOrNull()
-    val productNameMaxLength = config.property("ktor.ProductValidation.productNameMaxLength").getString()?.toIntOrNull()
 
     routing {
-        route(ApiEndPoint.PRODUCT) {
+        route(ApiEndPoints.PRODUCT) {
 
             val productServices: ProductServices by inject()
 

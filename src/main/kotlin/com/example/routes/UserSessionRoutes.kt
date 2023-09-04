@@ -1,14 +1,16 @@
 package com.example.routes
 
-import com.example.dao.RedisUtils
-import com.example.dao.UserSession
-import com.example.endpoints.ApiEndPoint
-import com.example.endpoints.ApiEndPoint.EXPIRE_TIME
+import com.example.config.SessionsConfig.sessionNameMaxLength
+import com.example.config.SessionsConfig.sessionNameMinLength
+import com.example.config.SessionsConfig.sessionPasswordMaxLength
+import com.example.config.SessionsConfig.sessionPasswordMinLength
+import com.example.database.table.RedisUtils
+import com.example.database.table.UserSession
 import com.example.services.UserSessionServices
-import com.typesafe.config.ConfigFactory
+import com.example.utils.appConstants.ApiEndPoints
+import com.example.utils.appConstants.GlobalConstants.EXPIRE_TIME
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.route
@@ -16,16 +18,10 @@ import io.ktor.server.routing.get
 import io.ktor.server.sessions.*
 
 fun Application.configureUserSession() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val sessionNameMinLength= config.property("ktor.SessionValidation.sessionNameMinLength").getString().toIntOrNull()
-    val sessionNameMaxLength= config.property("ktor.SessionValidation.sessionNameMaxLength").getString().toIntOrNull()
-    val sessionPasswordMinLength= config.property("ktor.SessionValidation.sessionPasswordMinLength").
-    getString().toIntOrNull()
-    val sessionPasswordMaxLength= config.property("ktor.SessionValidation.sessionPasswordMaxLength").
-    getString().toIntOrNull()
 
     routing {
-        route(ApiEndPoint.SESSION) {
+        route(ApiEndPoints.SESSION) {
+
             val userSessionServices=UserSessionServices()
 
             get("/login") {

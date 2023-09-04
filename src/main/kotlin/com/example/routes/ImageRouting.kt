@@ -1,7 +1,7 @@
 package com.example.routes
 
-import com.example.dao.ImageRequest
-import com.example.endpoints.ApiEndPoint
+import com.example.database.table.ImageRequest
+import com.example.utils.appConstants.ApiEndPoints
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.forEachPart
 import io.ktor.http.content.PartData
@@ -15,9 +15,12 @@ import io.ktor.server.routing.post
 import java.util.Base64
 
 fun Application.configureImageRoutes(){
+
     routing{
-        route(ApiEndPoint.IMAGE){
-            val imageRequest=ImageRequest()
+
+        route(ApiEndPoints.IMAGE){
+
+            val imageRequest= ImageRequest()
             post("/getBase64FromImageUrl") {
                 val multipart = call.receiveMultipart()
                 var imageUrl: String? = null

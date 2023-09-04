@@ -1,9 +1,10 @@
 package com.example.services
 
 import com.example.dao.*
+import com.example.database.table.*
 import com.example.plugins.CourseNotFoundException
 import com.example.repository.CourseRepository
-import com.example.repository.StudentRepository
+import com.example.repository.StudentRepositoryImpl
 import com.example.utils.H2Database
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -22,7 +23,7 @@ class CourseServicesTest {
 
     private val courseRepository=CourseRepository()
     private val courseServices=CourseServices()
-    private val studentRepository=StudentRepository()
+    private val studentRepositoryImpl=StudentRepositoryImpl()
     private lateinit var database: Database
 
     @Before
@@ -31,7 +32,7 @@ class CourseServicesTest {
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_REPEATABLE_READ
 
         transaction(database) {
-            SchemaUtils.create(Students,Courses,StudentCourses)
+            SchemaUtils.create(Students, Courses, StudentCourses)
         }
     }
 
@@ -48,8 +49,8 @@ class CourseServicesTest {
         runBlocking {
             val student1 = Student(1, "Jasmin")
             val student2 = Student(2, "Divya")
-            studentRepository.insertStudent(student1.id, student1.name)
-            studentRepository.insertStudent(student2.id, student2.name)
+            studentRepositoryImpl.insertStudent(student1.id, student1.name)
+            studentRepositoryImpl.insertStudent(student2.id, student2.name)
             val course1 = Course(1, student1.id, "Ktor")
             val course2 = Course(2, student1.id, "Kotlin")
             val course3 = Course(3, student2.id, "Java")
@@ -67,7 +68,7 @@ class CourseServicesTest {
     fun testHandlePostCourse() {
         runBlocking {
             val student = Student(1, "Jasmin")
-            studentRepository.insertStudent(student.id, student.name)
+            studentRepositoryImpl.insertStudent(student.id, student.name)
             val courseDetails = Course(1, student.id, "Ktor")
             val createdCourse = courseServices.handlePostCourse(courseDetails,3, 10)
             assertEquals(courseDetails, createdCourse)
@@ -78,7 +79,7 @@ class CourseServicesTest {
     fun testHandleGetCourseById(){
         runBlocking {
             val student = Student(1, "Jasmin")
-            studentRepository.insertStudent(student.id, student.name)
+            studentRepositoryImpl.insertStudent(student.id, student.name)
             val course1 = Course(1, student.id, "Ktor")
             courseRepository.insertCourse(course1.studentId, course1.name)
             val getCourse=courseServices.handleGetCourseById(course1.id)
@@ -90,7 +91,7 @@ class CourseServicesTest {
     fun testHandleDeleteCourse(){
         runBlocking {
             val student = Student(1, "Jasmin")
-            studentRepository.insertStudent(student.id, student.name)
+            studentRepositoryImpl.insertStudent(student.id, student.name)
             val course1 = Course(1, student.id, "Ktor")
             courseRepository.insertCourse(course1.studentId, course1.name)
             val delCourse=courseServices.handleDeleteCourse(course1.id)
@@ -102,7 +103,7 @@ class CourseServicesTest {
     fun testHandleEditCourse(){
         runBlocking {
             val student = Student(1, "Jasmin")
-            studentRepository.insertStudent(student.id, student.name)
+            studentRepositoryImpl.insertStudent(student.id, student.name)
             val course1 = Course(1, student.id, "Ktor")
             courseRepository.insertCourse(course1.studentId, course1.name)
             val updatedCourse=Course(course1.id,course1.studentId,"Ktolin")

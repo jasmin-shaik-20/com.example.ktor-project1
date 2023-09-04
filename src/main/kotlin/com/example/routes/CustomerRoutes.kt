@@ -1,5 +1,8 @@
-import com.example.dao.Customer
-import com.example.endpoints.ApiEndPoint
+
+import com.example.config.CustomerConfig.customerNameMaxLength
+import com.example.config.CustomerConfig.customerNameMinLength
+import com.example.database.table.Customer
+import com.example.utils.appConstants.ApiEndPoints
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -9,14 +12,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureCustomerRoutes() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val customerNameMinLength = config.property("ktor.CustomerValidation.customerNameMinLength").getString()?.toIntOrNull()
-    val customerNameMaxLength = config.property("ktor.CustomerValidation.customerNameMaxLength").getString()?.toIntOrNull()
 
     val customerServices = CustomerServices()
 
     routing {
-        route(ApiEndPoint.CUSTOMER) {
+        route(ApiEndPoints.CUSTOMER) {
 
             get {
                 val customers = customerServices.handleGetCustomers()

@@ -1,10 +1,8 @@
 package com.example.services
 
-import com.example.dao.Course
-import com.example.dao.Student
+import com.example.database.table.Course
+import com.example.database.table.Student
 import com.example.repository.StudentCourseRepository
-import io.ktor.server.application.*
-import io.ktor.server.response.*
 
 class StudentCourseServices {
     private val studentCourseRepository=StudentCourseRepository()

@@ -1,15 +1,15 @@
 package com.example.services
 
-import com.example.dao.Student
+import com.example.database.table.Student
 import com.example.plugins.StudentNotFoundException
-import com.example.repository.StudentRepository
+import com.example.repository.StudentRepositoryImpl
 
 class StudentServices {
 
-    private val studentRepository = StudentRepository()
+    private val studentRepositoryImpl = StudentRepositoryImpl()
 
     suspend fun handleGetStudents(): List<Student> {
-        val students = studentRepository.getAllStudents()
+        val students = studentRepositoryImpl.getAllStudents()
         return if (students.isEmpty()) {
             emptyList()
         } else {
@@ -23,7 +23,7 @@ class StudentServices {
         studentNameMaxLength: Int?
     ): Student {
         if (studentDetails.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
-            val student = studentRepository.insertStudent(studentDetails.id, studentDetails.name)
+            val student = studentRepositoryImpl.insertStudent(studentDetails.id, studentDetails.name)
                 ?: throw Exception("Student creation failed")
             return student
         } else {
@@ -32,11 +32,11 @@ class StudentServices {
     }
 
     suspend fun handleGetStudentById(id: Int?): Student {
-        return studentRepository.getStudentById(id!!) ?: throw StudentNotFoundException()
+        return studentRepositoryImpl.getStudentById(id!!) ?: throw StudentNotFoundException()
     }
 
     suspend fun handleDeleteStudent(id: Int): Boolean {
-        val deleted = studentRepository.deleteStudent(id)
+        val deleted = studentRepositoryImpl.deleteStudent(id)
         return if (deleted) {
             deleted
         } else {
@@ -45,7 +45,7 @@ class StudentServices {
     }
 
     suspend fun handleUpdateStudent(id: Int, studentDetails: Student): Boolean {
-        val isUpdated = studentRepository.editStudent(id, studentDetails.name)
+        val isUpdated = studentRepositoryImpl.editStudent(id, studentDetails.name)
         return if (isUpdated) {
             isUpdated
         } else {

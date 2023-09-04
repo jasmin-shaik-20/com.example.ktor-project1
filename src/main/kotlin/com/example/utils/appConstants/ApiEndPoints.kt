@@ -1,6 +1,6 @@
-package com.example.endpoints
+package com.example.utils.appConstants
 
-object ApiEndPoint {
+object ApiEndPoints {
     const val USER ="/user"
     const val USERPROFILE="/userProfile"
     const val STUDENT="/student"
@@ -12,8 +12,6 @@ object ApiEndPoint {
     const val PERSON="/person"
     const val IMAGE="/postural"
     const val SESSION="/session"
-    const val SECONDS=300L
-    const val TOKEN_EXPIRATION=6000L
-    const val TIME=300
-    const val EXPIRE_TIME=300
+
+
 }

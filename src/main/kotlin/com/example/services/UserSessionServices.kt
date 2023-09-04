@@ -1,13 +1,8 @@
 package com.example.services
 
-import com.example.dao.RedisUtils
-import com.example.dao.RedisUtils.set
-import com.example.dao.UserSession
-import com.example.endpoints.ApiEndPoint.EXPIRE_TIME
+import com.example.database.table.RedisUtils
+import com.example.database.table.UserSession
 import com.example.routes.LoginResult
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.sessions.*
 
 class UserSessionServices {
     fun handleLogin(

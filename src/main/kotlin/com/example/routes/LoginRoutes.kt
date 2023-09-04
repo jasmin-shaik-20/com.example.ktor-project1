@@ -1,6 +1,13 @@
-import com.example.dao.Login
-import com.example.endpoints.ApiEndPoint
+import com.example.config.LoginConfig.audience
+import com.example.config.LoginConfig.issuer
+import com.example.config.LoginConfig.loginNameMaxLength
+import com.example.config.LoginConfig.loginNameMinLength
+import com.example.config.LoginConfig.loginPasswordMaxLength
+import com.example.config.LoginConfig.loginPasswordMinLength
+import com.example.config.LoginConfig.secret
+import com.example.database.table.Login
 import com.example.services.LoginServices
+import com.example.utils.appConstants.ApiEndPoints
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -12,21 +19,11 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureLoginRoutes() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val secret = config.property("ktor.jwt.secret").getString()
-    val issuer = config.property("ktor.jwt.issuer").getString()
-    val audience = config.property("ktor.jwt.audience").getString()
-    val loginNameMinLength = config.property("ktor.LoginValidation.loginNameMinLength").getString().toIntOrNull()
-    val loginNameMaxLength = config.property("ktor.LoginValidation.loginNameMaxLength").getString().toIntOrNull()
-    val loginPasswordMinLength = config.property("ktor.LoginValidation.loginPasswordMinLength")
-        .getString()?.toIntOrNull()
-    val loginPasswordMaxLength = config.property("ktor.LoginValidation.loginPasswordMaxLength").
-    getString()?.toIntOrNull()
 
     val loginServices: LoginServices by inject()
 
     routing {
-        route(ApiEndPoint.LOGIN) {
+        route(ApiEndPoints.LOGIN) {
             post("/login") {
                 val user = call.receive<Login>()
                 val result = loginServices.handleUserLogin(

@@ -1,13 +1,12 @@
 package com.example.services
 
-import com.example.dao.Profile
-import com.example.dao.User
-import com.example.dao.UserProfile
-import com.example.dao.Users
-import com.example.plugins.UserNotFoundException
+import com.example.database.table.Profile
+import com.example.database.table.User
+import com.example.database.table.UserProfile
+import com.example.database.table.Users
 import com.example.plugins.UserProfileNotFoundException
-import com.example.repository.ProfileRepository
-import com.example.repository.UsersRepository
+import com.example.repository.ProfileRepositoryImpl
+import com.example.repository.UsersRepositoryImpl
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -23,9 +22,9 @@ import kotlin.test.assertFailsWith
 
 class UserProfileServicesTest {
 
-    private val profileRepository=ProfileRepository()
+    private val profileRepositoryImpl=ProfileRepositoryImpl()
     private val userProfileServices=UserProfileServices()
-    private val usersRepository=UsersRepository()
+    private val usersRepository= UsersRepositoryImpl()
     private lateinit var database: Database
 
     @Before
@@ -34,7 +33,7 @@ class UserProfileServicesTest {
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_REPEATABLE_READ
 
         transaction(database) {
-            SchemaUtils.create(Users,Profile)
+            SchemaUtils.create(Users, Profile)
         }
     }
 
@@ -55,8 +54,8 @@ class UserProfileServicesTest {
             usersRepository.createUser(user2.id,user2.name)
             val profile1 = UserProfile(1, user1.id, "jasmin@gmail.com", 21) // Use user1.id
             val profile2 = UserProfile(2, user2.id, "divya@gmail.com", 21) // Use user2.id
-            profileRepository.createUserProfile(profile1.userId, profile1.email, profile1.age)
-            profileRepository.createUserProfile(profile2.userId, profile2.email, profile2.age)
+            profileRepositoryImpl.createUserProfile(profile1.userId, profile1.email, profile1.age)
+            profileRepositoryImpl.createUserProfile(profile2.userId, profile2.email, profile2.age)
             val profiles = userProfileServices.handleGetUserProfiles()
             assertEquals(listOf(profile1, profile2), profiles)
         }
@@ -70,7 +69,7 @@ class UserProfileServicesTest {
             val user2 = User(2,"Divya")
             usersRepository.createUser(user2.id,user2.name)
             val profile = UserProfile(1, user1.id, "jasmin@gmail.com", 21)
-            profileRepository.createUserProfile(profile.userId, profile.email, profile.age)
+            profileRepositoryImpl.createUserProfile(profile.userId, profile.email, profile.age)
             val details = UserProfile(2, user2.id, "newemail@gmail.com", 30)
             val createdProfile = userProfileServices.handlePostUserProfile(details, 7, 20)
             assertEquals(details, createdProfile)
@@ -83,7 +82,7 @@ class UserProfileServicesTest {
             val user1 =User(1,"jasmin")
             usersRepository.createUser(user1.id,user1.name)
             val profile=UserProfile(1,1,"jasmin@gmail.com",21)
-            profileRepository.createUserProfile(profile.userId,profile.email,profile.age)
+            profileRepositoryImpl.createUserProfile(profile.userId,profile.email,profile.age)
             val getProfile=userProfileServices.handleGetUserProfileById(profile.profileId)
             assertEquals(profile,getProfile)
         }
@@ -95,7 +94,7 @@ class UserProfileServicesTest {
             val user1 =User(1,"jasmin")
             usersRepository.createUser(user1.id,user1.name)
             val profile=UserProfile(1,1,"jasmin@gmail.com",21)
-            profileRepository.createUserProfile(profile.userId,profile.email,profile.age)
+            profileRepositoryImpl.createUserProfile(profile.userId,profile.email,profile.age)
             val deleteProfile=userProfileServices.handleDeleteUserProfile(profile.profileId)
             assertEquals(true,deleteProfile)
 
@@ -108,7 +107,7 @@ class UserProfileServicesTest {
             val user1 =User(1,"jasmin")
             usersRepository.createUser(user1.id,user1.name)
             val profile=UserProfile(1,1,"jasmin@gmail.com",21)
-            profileRepository.createUserProfile(profile.userId,profile.email,profile.age)
+            profileRepositoryImpl.createUserProfile(profile.userId,profile.email,profile.age)
             val updatedProfile=UserProfile(1,1,"jasmin123@gmail.com",23)
             val editProfile=userProfileServices.handlePutUserProfile(updatedProfile.profileId,updatedProfile)
             assertEquals(true,editProfile)

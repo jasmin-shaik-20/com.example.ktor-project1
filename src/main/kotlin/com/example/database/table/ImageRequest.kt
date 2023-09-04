@@ -1,4 +1,4 @@
-package com.example.dao
+package com.example.database.table
 import java.io.ByteArrayOutputStream
 import java.net.URL
 class ImageRequest {

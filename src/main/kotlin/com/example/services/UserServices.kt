@@ -1,12 +1,12 @@
 package com.example.services
 
-import com.example.repository.UsersRepository
-import com.example.dao.User
+import com.example.database.table.User
 import com.example.plugins.UserNotFoundException
+import com.example.repository.UsersRepositoryImpl
 
 class UserServices {
 
-    var usersRepository=UsersRepository()
+    private var usersRepository= UsersRepositoryImpl()
     suspend fun handleGetUsers():List<User> {
         val getUsers = usersRepository.getAllUsers()
         return if (getUsers.isEmpty()) {
@@ -16,9 +16,9 @@ class UserServices {
         }
     }
 
-    suspend fun handlePostUser(userDetails:User,
-        nameMinLength: Int?,
-        nameMaxLength: Int?
+    suspend fun handlePostUser(userDetails: User,
+                               nameMinLength: Int?,
+                               nameMaxLength: Int?
     ):User {
         if (userDetails.name.length in nameMinLength!!..nameMaxLength!!) {
             val user = usersRepository.createUser(userDetails.id,

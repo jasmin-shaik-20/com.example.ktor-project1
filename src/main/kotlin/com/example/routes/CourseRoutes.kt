@@ -1,9 +1,10 @@
 package com.example.routes
 
-import com.example.dao.Course
-import com.example.endpoints.ApiEndPoint
-import com.example.repository.CourseRepository
+import com.example.config.CourseConfig.courseNameMaxLength
+import com.example.config.CourseConfig.courseNameMinLength
+import com.example.database.table.Course
 import com.example.services.CourseServices
+import com.example.utils.appConstants.ApiEndPoints
 import com.typesafe.config.ConfigFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,15 +17,11 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.put
-import org.koin.ktor.ext.inject
 
 fun Application.configureCourseRoutes() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val courseNameMinLength = config.property("ktor.CourseValidation.courseNameMinLength").getString()?.toIntOrNull()
-    val courseNameMaxLength = config.property("ktor.CourseValidation.courseNameMaxLength").getString()?.toIntOrNull()
 
     routing {
-        route(ApiEndPoint.COURSE) {
+        route(ApiEndPoints.COURSE) {
 
             val courseServices = CourseServices()
 

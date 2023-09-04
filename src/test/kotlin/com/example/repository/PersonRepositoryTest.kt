@@ -1,6 +1,6 @@
 package com.example.repository
 
-import com.example.dao.Persons
+import com.example.database.table.Persons
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database

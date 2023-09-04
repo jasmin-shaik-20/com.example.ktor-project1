@@ -1,6 +1,7 @@
-import com.example.dao.User
-import com.example.endpoints.ApiEndPoint
-import com.typesafe.config.ConfigFactory
+
+import com.example.config.UserConfig.nameMaxLength
+import com.example.config.UserConfig.nameMinLength
+import com.example.database.table.User
 import io.ktor.http.*
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -8,18 +9,15 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import com.example.services.UserServices
-import io.ktor.server.config.*
+import com.example.utils.appConstants.ApiEndPoints
 import org.koin.ktor.ext.inject
 
 fun Application.configureUserRoutes() {
-    val config = HoconApplicationConfig(ConfigFactory.load())
-    val nameMinLength = config.property("ktor.UserValidation.nameMinLength").getString()?.toIntOrNull()
-    val nameMaxLength = config.property("ktor.UserValidation.nameMaxLength").getString()?.toIntOrNull()
 
     val userServices: UserServices by inject()
 
     routing {
-        route(ApiEndPoint.USER) {
+        route(ApiEndPoints.USER) {
             get {
                 val users = userServices.handleGetUsers()
                 call.respond(users)

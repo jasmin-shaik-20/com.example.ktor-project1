@@ -1,11 +1,9 @@
 package com.example.services
 
-import com.example.dao.Products
-import com.example.dao.Student
-import com.example.dao.Students
-import com.example.dao.Users
+import com.example.database.table.Student
+import com.example.database.table.Students
 import com.example.plugins.StudentNotFoundException
-import com.example.repository.StudentRepository
+import com.example.repository.StudentRepositoryImpl
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -22,7 +20,7 @@ import kotlin.test.assertFailsWith
 class StudentServicesTest {
 
     private val studentServices=StudentServices()
-    private val studentRepository=StudentRepository()
+    private val studentRepositoryImpl=StudentRepositoryImpl()
     private lateinit var database:Database
 
     @Before
@@ -46,10 +44,10 @@ class StudentServicesTest {
     @Test
     fun testHandleGetAllStudents(){
         runBlocking {
-            val student1=Student(1,"Jasmin")
+            val student1= Student(1,"Jasmin")
             val student2=Student(2,"Divya")
-            studentRepository.insertStudent(student1.id,student1.name)
-            studentRepository.insertStudent(student2.id,student2.name)
+            studentRepositoryImpl.insertStudent(student1.id,student1.name)
+            studentRepositoryImpl.insertStudent(student2.id,student2.name)
             val getStudents=studentServices.handleGetStudents()
             assertEquals(listOf(student1,student2),getStudents)
         }
@@ -59,7 +57,7 @@ class StudentServicesTest {
     fun testHandlePostStudent(){
         runBlocking {
             val student1=Student(1,"Jasmin")
-            studentRepository.insertStudent(student1.id,student1.name)
+            studentRepositoryImpl.insertStudent(student1.id,student1.name)
             val studentDetails=Student(1,"Jasmin")
             studentServices.handlePostStudent(studentDetails,4,10)
             assertEquals(studentDetails.id,student1.id)
@@ -71,7 +69,7 @@ class StudentServicesTest {
     fun testHandleGetStudentById(){
         runBlocking {
             val student1=Student(1,"Jasmin")
-            studentRepository.insertStudent(student1.id,student1.name)
+            studentRepositoryImpl.insertStudent(student1.id,student1.name)
             val getStudent=studentServices.handleGetStudentById(student1.id)
             assertEquals(student1.id,getStudent.id)
         }
@@ -81,7 +79,7 @@ class StudentServicesTest {
     fun testHandleDeleteStudentById(){
         runBlocking {
             val student1=Student(1,"Jasmin")
-            studentRepository.insertStudent(student1.id,student1.name)
+            studentRepositoryImpl.insertStudent(student1.id,student1.name)
             val getStudent=studentServices.handleDeleteStudent(student1.id)
             assertEquals(true,getStudent)
         }
@@ -91,7 +89,7 @@ class StudentServicesTest {
     fun testHandleEditStudent(){
         runBlocking {
             val student1=Student(1,"Jasmin")
-            studentRepository.insertStudent(student1.id,student1.name)
+            studentRepositoryImpl.insertStudent(student1.id,student1.name)
             val editStudent=Student(1,"jas")
             val isUpdated=studentServices.handleUpdateStudent(editStudent.id,editStudent)
             assertEquals(true,isUpdated)

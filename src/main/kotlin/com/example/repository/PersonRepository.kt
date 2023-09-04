@@ -1,23 +1,24 @@
 package com.example.repository
 
-import com.example.dao.Person
-import com.example.dao.Persons
+import com.example.dao.PersonDao
+import com.example.database.table.Person
+import com.example.database.table.Persons
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.sql.ResultRow
+import com.example.utils.helperFunctions.rowToPerson
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class PersonRepository{
+class PersonRepository : PersonDao{
 
-    suspend fun createPersonData(id: Int, name: String): Person? = dbQuery {
+    override suspend fun createPersonData(id: Int, name: String): Person? = dbQuery {
         val insert= Persons.insert {
             it[Persons.name]=name
         }
         insert.resultedValues?.singleOrNull()?.let(::rowToPerson)
     }
 
-    suspend fun fetchData(id: Int):String {
+    override suspend fun fetchData(id: Int):String {
         val data= transaction {
             Persons.select { Persons.id eq id }.singleOrNull()
         }?.get(Persons.name) ?: "Person not found"
@@ -25,5 +26,4 @@ class PersonRepository{
     }
 }
 
-private fun rowToPerson(row: ResultRow) =
-    Person(row[Persons.id], row[Persons.name])
+

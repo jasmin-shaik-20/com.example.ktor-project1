@@ -1,4 +1,4 @@
-package com.example.dao
+package com.example.database.table
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.HoconApplicationConfig

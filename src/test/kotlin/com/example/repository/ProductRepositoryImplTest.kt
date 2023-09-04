@@ -1,6 +1,6 @@
 package com.example.repository
 
-import com.example.dao.Products
+import com.example.database.table.Products
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -17,7 +17,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class ProductRepositoryTest {
+class ProductRepositoryImplTest {
     private lateinit var database: Database
 
     @Before
@@ -40,10 +40,10 @@ class ProductRepositoryTest {
     //sucess
     @Test
     fun testInsertProductSuccess() = runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"Jasmin")
-        val productRepository = ProductRepository()
-        val newProduct = productRepository.insertProduct(1, 1, "Product1", 100)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        val newProduct = productRepositoryImpl.insertProduct(1, 1, "Product1", 100)
         assertEquals(1, newProduct?.userId)
         assertEquals("Product1", newProduct?.name)
         assertEquals(100, newProduct?.price)
@@ -52,33 +52,33 @@ class ProductRepositoryTest {
 
     @Test
     fun testGetAllProducts() = runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"Jasmin")
-        val productRepository = ProductRepository()
-        productRepository.insertProduct(1, 1, "Product1", 100)
-        productRepository.insertProduct(2, 1, "Product2", 200)
-        val allProducts = productRepository.getAllProducts()
+        val productRepositoryImpl = ProductRepositoryImpl()
+        productRepositoryImpl.insertProduct(1, 1, "Product1", 100)
+        productRepositoryImpl.insertProduct(2, 1, "Product2", 200)
+        val allProducts = productRepositoryImpl.getAllProducts()
         assertEquals(2, allProducts.size)
     }
 
     @Test
     fun testGetProductsById() = runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"Jasmin")
-        val productRepository = ProductRepository()
-        productRepository.insertProduct(1, 1, "Product1", 100)
-        productRepository.insertProduct(2, 1, "Product2", 200)
-        val userProducts = productRepository.getProductsById(1)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        productRepositoryImpl.insertProduct(1, 1, "Product1", 100)
+        productRepositoryImpl.insertProduct(2, 1, "Product2", 200)
+        val userProducts = productRepositoryImpl.getProductsById(1)
         assertEquals(2, userProducts.size)
     }
 
     @Test
     fun testGetProductSuccess() = runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"Jasmin")
-        val productRepository = ProductRepository()
-        productRepository.insertProduct(1, 1, "Product1", 100)
-        val product = productRepository.getProduct(1)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        productRepositoryImpl.insertProduct(1, 1, "Product1", 100)
+        val product = productRepositoryImpl.getProduct(1)
         assertNotNull(product)
         assertEquals("Product1", product?.name)
         assertEquals(100, product?.price)
@@ -86,24 +86,24 @@ class ProductRepositoryTest {
 
     @Test
     fun testDeleteProductSuccess() = runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"Jasmin")
-        val productRepository = ProductRepository()
-        productRepository.insertProduct(1, 1, "Product1", 100)
-        val deleteResult = productRepository.deleteProduct(1)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        productRepositoryImpl.insertProduct(1, 1, "Product1", 100)
+        val deleteResult = productRepositoryImpl.deleteProduct(1)
         assertTrue(deleteResult)
-        val product = productRepository.getProduct(1)
+        val product = productRepositoryImpl.getProduct(1)
         assertNull(product)
     }
     @Test
     fun testEditProductSuccess() = runBlocking {
-        val usersRepository = UsersRepository()
+        val usersRepository = UsersRepositoryImpl()
         usersRepository.createUser(1,"Jasmin")
-        val productRepository = ProductRepository()
-        productRepository.insertProduct(1, 1, "Product1", 100)
-        val editResult = productRepository.editProduct(1, "NewProduct", 200)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        productRepositoryImpl.insertProduct(1, 1, "Product1", 100)
+        val editResult = productRepositoryImpl.editProduct(1, "NewProduct", 200)
         assertTrue(editResult)
-        val updatedProduct = productRepository.getProduct(1)
+        val updatedProduct = productRepositoryImpl.getProduct(1)
         assertEquals("NewProduct", updatedProduct?.name)
         assertEquals(200, updatedProduct?.price)
     }
@@ -111,22 +111,22 @@ class ProductRepositoryTest {
     //failure
     @Test
     fun testGetProductNotFound() = runBlocking {
-        val productRepository = ProductRepository()
-        val product = productRepository.getProduct(1)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        val product = productRepositoryImpl.getProduct(1)
         assertNull(product)
     }
 
     @Test
     fun testEditProductNotFound() = runBlocking {
-        val productRepository = ProductRepository()
-        val editResult = productRepository.editProduct(1, "NewProduct", 200)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        val editResult = productRepositoryImpl.editProduct(1, "NewProduct", 200)
         assertFalse(editResult)
     }
 
     @Test
     fun testDeleteProductNotFound() = runBlocking {
-        val productRepository = ProductRepository()
-        val deleteResult = productRepository.deleteProduct(1)
+        val productRepositoryImpl = ProductRepositoryImpl()
+        val deleteResult = productRepositoryImpl.deleteProduct(1)
         assertFalse(deleteResult)
     }
 

@@ -1,9 +1,6 @@
-import com.example.dao.Customer
-import com.example.dao.customerStorage
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.request.*
+
+import com.example.database.table.Customer
+import com.example.database.table.customerStorage
 
 class CustomerServices {
     fun handleGetCustomers():List<Customer> {

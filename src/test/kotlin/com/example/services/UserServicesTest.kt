@@ -1,7 +1,8 @@
-import com.example.repository.UsersRepository
-import com.example.dao.User
-import com.example.dao.Users
+
+import com.example.database.table.User
+import com.example.database.table.Users
 import com.example.plugins.UserNotFoundException
+import com.example.repository.UsersRepositoryImpl
 import com.example.services.UserServices
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
@@ -18,7 +19,7 @@ import kotlin.test.assertFailsWith
 
 class UserServicesTest {
 
-    private val usersRepository = UsersRepository()
+    private val usersRepository = UsersRepositoryImpl()
     private val userServices = UserServices()
     private lateinit var database: Database
 

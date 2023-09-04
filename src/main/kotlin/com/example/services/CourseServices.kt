@@ -1,11 +1,8 @@
 package com.example.services
 
-import com.example.dao.Course
+import com.example.database.table.Course
 import com.example.plugins.CourseNotFoundException
 import com.example.repository.CourseRepository
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
 
 class CourseServices {
 

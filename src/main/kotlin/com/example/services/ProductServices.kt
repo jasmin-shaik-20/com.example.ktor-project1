@@ -1,20 +1,15 @@
 package com.example.services
 
-import com.example.dao.Product
-import com.example.plugins.InvalidIDException
+import com.example.database.table.Product
 import com.example.plugins.ProductNotFoundException
-import com.example.repository.ProductRepository
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
+import com.example.repository.ProductRepositoryImpl
 
 class ProductServices {
 
-    private val productRepository = ProductRepository()
+    private val productRepositoryImpl = ProductRepositoryImpl()
 
     suspend fun handleGetProducts(): List<Product> {
-        val getProducts = productRepository.getAllProducts()
+        val getProducts = productRepositoryImpl.getAllProducts()
         return if (getProducts.isEmpty()) {
             emptyList()
         } else {
@@ -28,7 +23,7 @@ class ProductServices {
         productNameMaxLength: Int?
     ): Product {
         if (productDetails.name.length in productNameMinLength!!..productNameMaxLength!!) {
-            val postProduct = productRepository.insertProduct(
+            val postProduct = productRepositoryImpl.insertProduct(
                 productDetails.productId,
                 productDetails.userId,
                 productDetails.name,
@@ -41,7 +36,7 @@ class ProductServices {
     }
 
     suspend fun handleGetProductsByUserId(userId: Int): List<Product> {
-        val getProduct = productRepository.getProductsById(userId)
+        val getProduct = productRepositoryImpl.getProductsById(userId)
         if (getProduct.isEmpty()) {
             throw ProductNotFoundException()
         } else {
@@ -50,12 +45,12 @@ class ProductServices {
     }
 
     suspend fun handleGetProductById(id: Int): Product {
-        val fetchedProduct = productRepository.getProduct(id) ?: throw ProductNotFoundException()
+        val fetchedProduct = productRepositoryImpl.getProduct(id) ?: throw ProductNotFoundException()
         return fetchedProduct
     }
 
     suspend fun handleDeleteProduct(id: Int): Boolean {
-        val deleted = productRepository.deleteProduct(id)
+        val deleted = productRepositoryImpl.deleteProduct(id)
         if (deleted) {
             return true
         } else {
@@ -64,7 +59,7 @@ class ProductServices {
     }
 
     suspend fun handleUpdateProduct(id:Int,productDetails: Product): Boolean {
-        val editProduct = productRepository.editProduct(id,
+        val editProduct = productRepositoryImpl.editProduct(id,
             productDetails.name,
             productDetails.price
         )

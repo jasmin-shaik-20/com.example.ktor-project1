@@ -1,7 +1,7 @@
 package com.example.services
 
-import com.example.dao.Person
-import com.example.dao.Persons
+import com.example.database.table.Person
+import com.example.database.table.Persons
 import com.example.repository.PersonRepository
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
@@ -56,7 +56,7 @@ class PersonServicesTest {
     @Test
     fun testHandleGetDataFromCacheOrSourceWithDataFromSource() {
         runBlocking {
-            val person1=Person(1,"Jasmin")
+            val person1= Person(1,"Jasmin")
             personRepository.createPersonData(person1.id,person1.name)
             val jedis = Jedis()
             val id = 1

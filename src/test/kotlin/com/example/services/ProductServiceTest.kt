@@ -1,9 +1,12 @@
 package com.example.services
 
-import com.example.dao.*
+import com.example.database.table.Product
+import com.example.database.table.Products
+import com.example.database.table.User
+import com.example.database.table.Users
 import com.example.plugins.ProductNotFoundException
-import com.example.repository.ProductRepository
-import com.example.repository.UsersRepository
+import com.example.repository.ProductRepositoryImpl
+import com.example.repository.UsersRepositoryImpl
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -19,9 +22,9 @@ import kotlin.test.assertFailsWith
 
 class ProductServiceTest {
 
-    private val productRepository = ProductRepository()
+    private val productRepositoryImpl = ProductRepositoryImpl()
     private val productServices = ProductServices()
-    private val usersRepository = UsersRepository()
+    private val usersRepository = UsersRepositoryImpl()
     private lateinit var database: Database
 
     @Before
@@ -49,8 +52,8 @@ class ProductServiceTest {
             usersRepository.createUser(user1.id, user1.name)
             val product1 = Product(1, user1.id, "cake", 40)
             val product2 = Product(2, user1.id, "chocolate", 50)
-            productRepository.insertProduct(product1.productId, product1.userId, product1.name, product1.price)
-            productRepository.insertProduct(product2.productId, product2.userId, product2.name, product2.price)
+            productRepositoryImpl.insertProduct(product1.productId, product1.userId, product1.name, product1.price)
+            productRepositoryImpl.insertProduct(product2.productId, product2.userId, product2.name, product2.price)
             val getProducts = productServices.handleGetProducts()
             assertEquals(listOf(product1, product2), getProducts)
         }
@@ -73,7 +76,7 @@ class ProductServiceTest {
             val user = User(1, "jasmin")
             usersRepository.createUser(user.id, user.name)
             val product = Product(1, user.id, "cake", 40)
-            productRepository.insertProduct(product.productId, product.userId, product.name, product.price)
+            productRepositoryImpl.insertProduct(product.productId, product.userId, product.name, product.price)
             val retrievedProduct = productServices.handleGetProductById(product.productId)
             assertEquals(product, retrievedProduct)
         }
@@ -86,8 +89,8 @@ class ProductServiceTest {
             usersRepository.createUser(user.id, user.name)
             val product1 = Product(1, user.id, "cake", 40)
             val product2 = Product(2, user.id, "chocolate", 40)
-            productRepository.insertProduct(product1.productId, product1.userId, product1.name, product1.price)
-            productRepository.insertProduct(product2.productId, product2.userId, product2.name, product2.price)
+            productRepositoryImpl.insertProduct(product1.productId, product1.userId, product1.name, product1.price)
+            productRepositoryImpl.insertProduct(product2.productId, product2.userId, product2.name, product2.price)
             val products=productServices.handleGetProductsByUserId(user.id)
             assertEquals(listOf(product1,product2),products)
 
@@ -100,7 +103,7 @@ class ProductServiceTest {
             val user = User(1, "jasmin")
             usersRepository.createUser(user.id, user.name)
             val product = Product(1, user.id, "cake", 40)
-            productRepository.insertProduct(product.productId, product.userId, product.name, product.price)
+            productRepositoryImpl.insertProduct(product.productId, product.userId, product.name, product.price)
             val deleteProduct = productServices.handleDeleteProduct(product.productId)
             assertEquals(true, deleteProduct)
         }
@@ -112,7 +115,7 @@ class ProductServiceTest {
             val user = User(1, "jasmin")
             usersRepository.createUser(user.id, user.name)
             val product = Product(1, user.id, "cake", 40)
-            productRepository.insertProduct(product.productId, product.userId, product.name, product.price)
+            productRepositoryImpl.insertProduct(product.productId, product.userId, product.name, product.price)
             val updatedProduct=Product(product.productId,product.userId,"chocolate cake",100)
             val editDetails=productServices.handleUpdateProduct(updatedProduct.productId,updatedProduct)
             assertEquals(true,editDetails)

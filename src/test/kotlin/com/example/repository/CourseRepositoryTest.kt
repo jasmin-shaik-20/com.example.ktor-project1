@@ -1,7 +1,7 @@
 package com.example.repository
 
-import com.example.dao.Courses
-import com.example.dao.StudentCourses
+import com.example.database.table.Courses
+import com.example.database.table.StudentCourses
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -26,7 +26,7 @@ class CourseRepositoryTest {
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_REPEATABLE_READ
 
         transaction(database) {
-            SchemaUtils.create(Courses,StudentCourses)
+            SchemaUtils.create(Courses, StudentCourses)
         }
     }
 
@@ -41,8 +41,8 @@ class CourseRepositoryTest {
     @Test
     fun testInsertCourseSuccess() = runBlocking {
         val courseRepository = CourseRepository()
-        val studentRepository=StudentRepository()
-        studentRepository.insertStudent(1,"jasmin")
+        val studentRepositoryImpl=StudentRepositoryImpl()
+        studentRepositoryImpl.insertStudent(1,"jasmin")
         val newCourse = courseRepository.insertCourse(1, "Math")
         assertEquals(1, newCourse?.id)
         assertEquals(1, newCourse?.studentId)
@@ -52,8 +52,8 @@ class CourseRepositoryTest {
     @Test
     fun testGetAllCourses() = runBlocking {
         val courseRepository = CourseRepository()
-        val studentRepository=StudentRepository()
-        studentRepository.insertStudent(1,"jasmin")
+        val studentRepositoryImpl=StudentRepositoryImpl()
+        studentRepositoryImpl.insertStudent(1,"jasmin")
         courseRepository.insertCourse(1, "Math")
         courseRepository.insertCourse(2, "Science")
         courseRepository.insertCourse(1, "History")
@@ -64,8 +64,8 @@ class CourseRepositoryTest {
     @Test
     fun testDeleteCourseSuccess() = runBlocking {
         val courseRepository = CourseRepository()
-        val studentRepository = StudentRepository()
-        studentRepository.insertStudent(1, "Jasmin")
+        val studentRepositoryImpl = StudentRepositoryImpl()
+        studentRepositoryImpl.insertStudent(1, "Jasmin")
         val course = courseRepository.insertCourse(1, "Math")
         val deleteResult = courseRepository.deleteCourse(course!!.id)
         assertTrue(deleteResult)
@@ -75,8 +75,8 @@ class CourseRepositoryTest {
     @Test
     fun testEditCourseSuccess() = runBlocking {
         val courseRepository = CourseRepository()
-        val studentRepository=StudentRepository()
-        studentRepository.insertStudent(1,"jasmin")
+        val studentRepositoryImpl=StudentRepositoryImpl()
+        studentRepositoryImpl.insertStudent(1,"jasmin")
         courseRepository.insertCourse(1, "Math")
         val editResult = courseRepository.editCourse(1, "Science")
         assertTrue(editResult)
@@ -86,8 +86,8 @@ class CourseRepositoryTest {
     @Test
     fun testGetCourseByIdSuccess() = runBlocking {
         val courseRepository = CourseRepository()
-        val studentRepository=StudentRepository()
-        studentRepository.insertStudent(1,"jasmin")
+        val studentRepositoryImpl=StudentRepositoryImpl()
+        studentRepositoryImpl.insertStudent(1,"jasmin")
         courseRepository.insertCourse(1, "Math")
         val retrievedCourse = courseRepository.getCourseById(1)
         assertEquals("Math", retrievedCourse?.name)

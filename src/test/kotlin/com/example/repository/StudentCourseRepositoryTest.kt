@@ -1,6 +1,6 @@
 package com.example.repository
 
-import com.example.dao.StudentCourses
+import com.example.database.table.StudentCourses
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -35,10 +35,10 @@ class StudentCourseRepositoryTest {
 
     @Test
     fun testGetCoursesForStudent(): Unit = runBlocking {
-        val studentRepository=StudentRepository()
+        val studentRepositoryImpl=StudentRepositoryImpl()
         val courseRepository=CourseRepository()
         val studentCourseRepository=StudentCourseRepository()
-        studentRepository.insertStudent(1,"jasmin")
+        studentRepositoryImpl.insertStudent(1,"jasmin")
         courseRepository.insertCourse(1,"Maths")
         studentCourseRepository.getCoursesStudentId(1)
         assertEquals(1,1,"Maths")
@@ -46,10 +46,10 @@ class StudentCourseRepositoryTest {
 
     @Test
     fun testGetStudentsForCourse(): Unit = runBlocking {
-        val studentRepository = StudentRepository()
+        val studentRepositoryImpl = StudentRepositoryImpl()
         val courseRepository = CourseRepository()
         val studentCourseRepository = StudentCourseRepository()
-        studentRepository.insertStudent(1, "jasmin")
+        studentRepositoryImpl.insertStudent(1, "jasmin")
         courseRepository.insertCourse(1, "Maths")
         val studentsForCourse = studentCourseRepository.getStudentsCourseId(1)
         val studentName = studentsForCourse.firstOrNull()?.name
