@@ -23,10 +23,10 @@ class UserServices {
                                nameMaxLength: Int?
     ):User {
         if (userDetails.name.length in nameMinLength!!..nameMaxLength!!) {
-            val user = usersRepository.createUser(userDetails.id,
+            return usersRepository.createUser(
+                userDetails.id,
                 userDetails.name
-            )?: throw UserCreationFailedException()
-            return user
+            ) ?: throw UserCreationFailedException()
         } else {
             throw UserInvalidNameLengthException()
         }

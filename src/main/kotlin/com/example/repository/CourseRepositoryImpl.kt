@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class CourseRepository : CourseDao  {
+class CourseRepositoryImpl : CourseDao  {
     override suspend fun insertCourse(studentId: Int, name: String): Course? = dbQuery {
         val insert = Courses.insert {
             it[Courses.studentId] = studentId

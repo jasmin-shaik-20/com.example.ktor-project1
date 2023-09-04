@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class PersonRepository : PersonDao{
+class PersonRepositoryImpl : PersonDao{
 
     override suspend fun createPersonData(id: Int, name: String): Person? = dbQuery {
         val insert= Persons.insert {

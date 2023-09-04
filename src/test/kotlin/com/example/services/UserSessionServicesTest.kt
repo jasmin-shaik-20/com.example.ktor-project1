@@ -3,7 +3,6 @@ package com.example.services
 import com.example.database.table.UserSession
 import com.example.redis.RedisUtils
 import com.example.routes.LoginResult
-import com.example.utils.appConstants.GlobalConstants
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
@@ -29,7 +28,7 @@ class UserSessionServicesTest {
         runBlocking {
             val userSession = UserSession(id = "2", username = "Jasmin", password = "Jas@20")
             val sessionId = "session123"
-            RedisUtils.set(sessionId, userSession.toJson(), GlobalConstants.EXPIRE_TIME)
+            RedisUtils.set(sessionId, userSession.toJson())
             val result=userSessionServices.handleUserSession(sessionId)
             assertEquals("Username is ${userSession.username}",result)
         }
@@ -40,7 +39,7 @@ class UserSessionServicesTest {
         runBlocking {
             val userSessionServices = UserSessionServices()
             val sessionId = "session123"
-            RedisUtils.set(sessionId, "SomeUserSessionJson", GlobalConstants.EXPIRE_TIME)
+            RedisUtils.set(sessionId, "SomeUserSessionJson")
             val result = userSessionServices.handleLogout(sessionId)
             assertEquals("Logout successful!", result)
             assertNull(RedisUtils.get(sessionId))

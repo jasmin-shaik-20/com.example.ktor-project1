@@ -4,14 +4,14 @@ import com.example.database.table.Course
 import com.example.exceptions.CourseCreationFailedException
 import com.example.exceptions.CourseNameInvalidLengthException
 import com.example.exceptions.CourseNotFoundException
-import com.example.repository.CourseRepository
+import com.example.repository.CourseRepositoryImpl
 
 class CourseServices {
 
-    private val courseRepository = CourseRepository()
+    private val courseRepositoryImpl = CourseRepositoryImpl()
 
     suspend fun handleGetCourses(): List<Course> {
-        val courses = courseRepository.getAllCourses()
+        val courses = courseRepositoryImpl.getAllCourses()
         return if (courses.isEmpty()) {
             emptyList()
         } else {
@@ -25,7 +25,7 @@ class CourseServices {
         courseNameMaxLength: Int?
     ): Course {
         if (courseDetails.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
-            val insert = courseRepository.insertCourse(courseDetails.studentId, courseDetails.name)
+            val insert = courseRepositoryImpl.insertCourse(courseDetails.studentId, courseDetails.name)
             return insert ?: throw CourseCreationFailedException()
         } else {
             throw CourseNameInvalidLengthException()
@@ -33,7 +33,7 @@ class CourseServices {
     }
 
     suspend fun handleDeleteCourse(id: Int): Boolean {
-        val delCourse = courseRepository.deleteCourse(id)
+        val delCourse = courseRepositoryImpl.deleteCourse(id)
         return if (delCourse) {
             true
         } else {
@@ -42,7 +42,7 @@ class CourseServices {
     }
 
     suspend fun handlePutCourse(id:Int,courseDetails: Course): Boolean {
-        val editCourse = courseRepository.editCourse(id, courseDetails.name)
+        val editCourse = courseRepositoryImpl.editCourse(id, courseDetails.name)
         return if (editCourse) {
             true
         } else {
@@ -51,7 +51,7 @@ class CourseServices {
     }
 
     suspend fun handleGetCourseById(id: Int): Course {
-        val fetchedCourse = courseRepository.getCourseById(id)
+        val fetchedCourse = courseRepositoryImpl.getCourseById(id)
         return fetchedCourse ?: throw CourseNotFoundException()
     }
 }

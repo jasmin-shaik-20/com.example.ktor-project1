@@ -2,7 +2,7 @@ package com.example.services
 
 import com.example.database.table.Person
 import com.example.database.table.Persons
-import com.example.repository.PersonRepository
+import com.example.repository.PersonRepositoryImpl
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 
 class PersonServicesTest {
 
-    private val personRepository = PersonRepository()
+    private val personRepositoryImpl = PersonRepositoryImpl()
     private val personServices = PersonServices()
     private lateinit var database:Database
 
@@ -43,7 +43,7 @@ class PersonServicesTest {
     fun testHandlePostPersonDetails() {
         runBlocking {
             val person1=Person(1,"Jasmin")
-            personRepository.createPersonData(person1.id,person1.name)
+            personRepositoryImpl.createPersonData(person1.id,person1.name)
             val person=Person(1,"Jasmin")
             personServices.handlePostPersonDetails(person)
             assertEquals(person1.id,person.id)
@@ -57,12 +57,12 @@ class PersonServicesTest {
     fun testHandleGetDataFromCacheOrSourceWithDataFromSource() {
         runBlocking {
             val person1= Person(1,"Jasmin")
-            personRepository.createPersonData(person1.id,person1.name)
+            personRepositoryImpl.createPersonData(person1.id,person1.name)
             val jedis = Jedis()
             val id = 1
             jedis.get("my_cached_data")
-            val getData=personRepository.fetchData(id)
-            val response=personServices.handleGetDataFromCacheOrSource(personRepository, jedis, id)
+            val getData=personRepositoryImpl.fetchData(id)
+            val response=personServices.handleGetDataFromCacheOrSource(personRepositoryImpl, jedis, id)
             assertEquals("Data from source: $getData", response)
         }
     }

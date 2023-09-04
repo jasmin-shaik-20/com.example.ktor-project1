@@ -17,7 +17,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class CourseRepositoryTest {
+class CourseRepositoryImplTest {
     private lateinit var database: Database
 
     @Before
@@ -40,10 +40,10 @@ class CourseRepositoryTest {
     //sucess
     @Test
     fun testInsertCourseSuccess() = runBlocking {
-        val courseRepository = CourseRepository()
+        val courseRepositoryImpl = CourseRepositoryImpl()
         val studentRepositoryImpl=StudentRepositoryImpl()
         studentRepositoryImpl.insertStudent(1,"jasmin")
-        val newCourse = courseRepository.insertCourse(1, "Math")
+        val newCourse = courseRepositoryImpl.insertCourse(1, "Math")
         assertEquals(1, newCourse?.id)
         assertEquals(1, newCourse?.studentId)
         assertEquals("Math", newCourse?.name)
@@ -51,45 +51,45 @@ class CourseRepositoryTest {
 
     @Test
     fun testGetAllCourses() = runBlocking {
-        val courseRepository = CourseRepository()
+        val courseRepositoryImpl = CourseRepositoryImpl()
         val studentRepositoryImpl=StudentRepositoryImpl()
         studentRepositoryImpl.insertStudent(1,"jasmin")
-        courseRepository.insertCourse(1, "Math")
-        courseRepository.insertCourse(2, "Science")
-        courseRepository.insertCourse(1, "History")
-        val allCourses = courseRepository.getAllCourses()
+        courseRepositoryImpl.insertCourse(1, "Math")
+        courseRepositoryImpl.insertCourse(2, "Science")
+        courseRepositoryImpl.insertCourse(1, "History")
+        val allCourses = courseRepositoryImpl.getAllCourses()
         assertEquals(3, allCourses.size)
 
     }
     @Test
     fun testDeleteCourseSuccess() = runBlocking {
-        val courseRepository = CourseRepository()
+        val courseRepositoryImpl = CourseRepositoryImpl()
         val studentRepositoryImpl = StudentRepositoryImpl()
         studentRepositoryImpl.insertStudent(1, "Jasmin")
-        val course = courseRepository.insertCourse(1, "Math")
-        val deleteResult = courseRepository.deleteCourse(course!!.id)
+        val course = courseRepositoryImpl.insertCourse(1, "Math")
+        val deleteResult = courseRepositoryImpl.deleteCourse(course!!.id)
         assertTrue(deleteResult)
-        val deletedCourse = courseRepository.getCourseById(course.id)
+        val deletedCourse = courseRepositoryImpl.getCourseById(course.id)
         assertNull(deletedCourse)
     }
     @Test
     fun testEditCourseSuccess() = runBlocking {
-        val courseRepository = CourseRepository()
+        val courseRepositoryImpl = CourseRepositoryImpl()
         val studentRepositoryImpl=StudentRepositoryImpl()
         studentRepositoryImpl.insertStudent(1,"jasmin")
-        courseRepository.insertCourse(1, "Math")
-        val editResult = courseRepository.editCourse(1, "Science")
+        courseRepositoryImpl.insertCourse(1, "Math")
+        val editResult = courseRepositoryImpl.editCourse(1, "Science")
         assertTrue(editResult)
-        val updatedCourse = courseRepository.getCourseById(1)
+        val updatedCourse = courseRepositoryImpl.getCourseById(1)
         assertEquals("Science", updatedCourse?.name)
     }
     @Test
     fun testGetCourseByIdSuccess() = runBlocking {
-        val courseRepository = CourseRepository()
+        val courseRepositoryImpl = CourseRepositoryImpl()
         val studentRepositoryImpl=StudentRepositoryImpl()
         studentRepositoryImpl.insertStudent(1,"jasmin")
-        courseRepository.insertCourse(1, "Math")
-        val retrievedCourse = courseRepository.getCourseById(1)
+        courseRepositoryImpl.insertCourse(1, "Math")
+        val retrievedCourse = courseRepositoryImpl.getCourseById(1)
         assertEquals("Math", retrievedCourse?.name)
     }
 
@@ -97,22 +97,22 @@ class CourseRepositoryTest {
 
     @Test
     fun testDeleteCourseNotFound() = runBlocking {
-        val courseRepository = CourseRepository()
-        val deleteResult = courseRepository.deleteCourse(1)
+        val courseRepositoryImpl = CourseRepositoryImpl()
+        val deleteResult = courseRepositoryImpl.deleteCourse(1)
         assertFalse(deleteResult)
     }
 
     @Test
     fun testEditCourseNotFound() = runBlocking {
-        val courseRepository = CourseRepository()
-        val editResult = courseRepository.editCourse(1, "Science")
+        val courseRepositoryImpl = CourseRepositoryImpl()
+        val editResult = courseRepositoryImpl.editCourse(1, "Science")
         assertFalse(editResult)
     }
 
     @Test
     fun testGetCourseByIdNotFound() = runBlocking {
-        val courseRepository = CourseRepository()
-        val retrievedCourse = courseRepository.getCourseById(1)
+        val courseRepositoryImpl = CourseRepositoryImpl()
+        val retrievedCourse = courseRepositoryImpl.getCourseById(1)
         assertNull(retrievedCourse)
     }
 }

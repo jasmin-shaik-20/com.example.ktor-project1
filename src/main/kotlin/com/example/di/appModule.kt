@@ -8,7 +8,7 @@ val appModule=module{
     single<ProfileRepositoryImpl>{ ProfileRepositoryImpl() }
     single<ProductRepositoryImpl>{ ProductRepositoryImpl() }
     single<StudentRepositoryImpl>{ StudentRepositoryImpl() }
-    single<CourseRepository>{ CourseRepository() }
-    single<StudentCourseRepository>{ StudentCourseRepository() }
-    single<PersonRepository>{ PersonRepository() }
+    single<CourseRepositoryImpl>{ CourseRepositoryImpl() }
+    single<StudentCourseRepositoryImpl>{ StudentCourseRepositoryImpl() }
+    single<PersonRepositoryImpl>{ PersonRepositoryImpl() }
 }

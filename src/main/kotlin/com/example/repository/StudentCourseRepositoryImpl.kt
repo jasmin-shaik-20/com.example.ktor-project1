@@ -8,7 +8,7 @@ import com.example.utils.helperFunctions.rowToStudent
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class StudentCourseRepository : StudentCourseRepositoryDao {
+class StudentCourseRepositoryImpl : StudentCourseRepositoryDao {
     override suspend fun getCoursesStudentId(id: Int): List<Course> = dbQuery{
         return@dbQuery transaction {
             (Courses innerJoin StudentCourses).

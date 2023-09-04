@@ -13,7 +13,7 @@ import org.junit.Test
 import java.sql.Connection
 import kotlin.test.assertEquals
 
-class PersonRepositoryTest {
+class PersonRepositoryImplTest {
     private lateinit var database: Database
 
     @Before
@@ -35,23 +35,23 @@ class PersonRepositoryTest {
 
     @Test
     fun testCreatePersonData() = runBlocking {
-        val personRepository = PersonRepository()
-        val createdPerson = personRepository.createPersonData(1, "Alice")
+        val personRepositoryImpl = PersonRepositoryImpl()
+        val createdPerson = personRepositoryImpl.createPersonData(1, "Alice")
         assertEquals("Alice", createdPerson?.name)
     }
 
     @Test
     fun testFetchDataExistingPerson() = runBlocking {
-        val personRepository = PersonRepository()
-        personRepository.createPersonData(1,"Alice")
-        val fetchedData = personRepository.fetchData(1)
+        val personRepositoryImpl = PersonRepositoryImpl()
+        personRepositoryImpl.createPersonData(1,"Alice")
+        val fetchedData = personRepositoryImpl.fetchData(1)
         assertEquals("Alice", fetchedData)
     }
 
     @Test
     fun testFetchDataNonExistingPerson() = runBlocking {
-        val personRepository = PersonRepository()
-        val fetchedData = personRepository.fetchData(1)
+        val personRepositoryImpl = PersonRepositoryImpl()
+        val fetchedData = personRepositoryImpl.fetchData(1)
         assertEquals("Person not found", fetchedData)
     }
 }

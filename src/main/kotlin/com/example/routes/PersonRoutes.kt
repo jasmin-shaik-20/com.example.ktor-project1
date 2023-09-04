@@ -1,7 +1,7 @@
 package com.example.routes
 
 import com.example.database.table.Person
-import com.example.repository.PersonRepository
+import com.example.repository.PersonRepositoryImpl
 import com.example.services.PersonServices
 import com.example.utils.appConstants.ApiEndPoints
 import io.ktor.http.HttpStatusCode
@@ -14,7 +14,7 @@ import redis.clients.jedis.Jedis
 import org.koin.ktor.ext.inject
 
 fun Application.configurePersonRoutes() {
-    val personRepository: PersonRepository by inject()
+    val personRepositoryImpl: PersonRepositoryImpl by inject()
     val personServices = PersonServices()
     val jedis: Jedis by inject()
 
@@ -32,7 +32,7 @@ routing {
 
         get("/data-from-cache-or-source") {
             val id = call.request.queryParameters["id"]?.toIntOrNull()
-            val result = personServices.handleGetDataFromCacheOrSource(personRepository, jedis, id)
+            val result = personServices.handleGetDataFromCacheOrSource(personRepositoryImpl, jedis, id)
             if (result is Pair<*, *>) {
                 call.respond(result.first, result.second as TypeInfo)
             } else {

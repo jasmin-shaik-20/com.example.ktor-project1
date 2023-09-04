@@ -13,7 +13,7 @@ import org.junit.Test
 import java.sql.Connection
 import kotlin.test.assertEquals
 
-class StudentCourseRepositoryTest {
+class StudentCourseRepositoryImplImplTest {
     private lateinit var database: Database
 
     @Before
@@ -36,22 +36,22 @@ class StudentCourseRepositoryTest {
     @Test
     fun testGetCoursesForStudent(): Unit = runBlocking {
         val studentRepositoryImpl=StudentRepositoryImpl()
-        val courseRepository=CourseRepository()
-        val studentCourseRepository=StudentCourseRepository()
+        val courseRepositoryImpl=CourseRepositoryImpl()
+        val studentCourseRepositoryImpl=StudentCourseRepositoryImpl()
         studentRepositoryImpl.insertStudent(1,"jasmin")
-        courseRepository.insertCourse(1,"Maths")
-        studentCourseRepository.getCoursesStudentId(1)
+        courseRepositoryImpl.insertCourse(1,"Maths")
+        studentCourseRepositoryImpl.getCoursesStudentId(1)
         assertEquals(1,1,"Maths")
     }
 
     @Test
     fun testGetStudentsForCourse(): Unit = runBlocking {
         val studentRepositoryImpl = StudentRepositoryImpl()
-        val courseRepository = CourseRepository()
-        val studentCourseRepository = StudentCourseRepository()
+        val courseRepositoryImpl = CourseRepositoryImpl()
+        val studentCourseRepositoryImpl = StudentCourseRepositoryImpl()
         studentRepositoryImpl.insertStudent(1, "jasmin")
-        courseRepository.insertCourse(1, "Maths")
-        val studentsForCourse = studentCourseRepository.getStudentsCourseId(1)
+        courseRepositoryImpl.insertCourse(1, "Maths")
+        val studentsForCourse = studentCourseRepositoryImpl.getStudentsCourseId(1)
         val studentName = studentsForCourse.firstOrNull()?.name
         assertEquals("jasmin", studentName)
     }
