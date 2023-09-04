@@ -1,7 +1,8 @@
 
 import com.example.database.table.User
 import com.example.database.table.Users
-import com.example.plugins.UserNotFoundException
+import com.example.exceptions.UserInvalidNameLengthException
+import com.example.exceptions.UserNotFoundException
 import com.example.repository.UsersRepositoryImpl
 import com.example.services.UserServices
 import com.example.utils.H2Database
@@ -104,7 +105,7 @@ class UserServicesTest {
     fun testHandlePostUserInvalidNameLength() {
         runBlocking {
             val userDetails = User(4, "David")
-            assertFailsWith<Exception>("Invalid name length") {
+            assertFailsWith<UserInvalidNameLengthException>("Invalid user name length") {
                 userServices.handlePostUser(userDetails, 6, 10)
             }
         }

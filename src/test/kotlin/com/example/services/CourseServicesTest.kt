@@ -2,7 +2,8 @@ package com.example.services
 
 import com.example.dao.*
 import com.example.database.table.*
-import com.example.plugins.CourseNotFoundException
+import com.example.exceptions.CourseNameInvalidLengthException
+import com.example.exceptions.CourseNotFoundException
 import com.example.repository.CourseRepositoryImpl
 import com.example.repository.StudentRepositoryImpl
 import com.example.utils.H2Database
@@ -117,7 +118,7 @@ class CourseServicesTest {
     fun testHandlePostCourseInvalidLength(){
         runBlocking {
             val course=Course(1,1,"python")
-            assertFailsWith<Exception>("Invalid course name"){
+            assertFailsWith<CourseNameInvalidLengthException>("Invalid course name length"){
                 courseServices.handlePostCourse(course,3,5)
             }
         }

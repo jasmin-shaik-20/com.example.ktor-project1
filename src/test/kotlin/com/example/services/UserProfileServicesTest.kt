@@ -4,7 +4,8 @@ import com.example.database.table.Profile
 import com.example.database.table.User
 import com.example.database.table.UserProfile
 import com.example.database.table.Users
-import com.example.plugins.UserProfileNotFoundException
+import com.example.exceptions.UserProfileInvalidEmailLengthException
+import com.example.exceptions.UserProfileNotFoundException
 import com.example.repository.ProfileRepositoryImpl
 import com.example.repository.UsersRepositoryImpl
 import com.example.utils.H2Database
@@ -118,7 +119,7 @@ class UserProfileServicesTest {
     fun testHandlePostProfileInvalidLength(){
         runBlocking {
             val profile=UserProfile(1,1,"jasmin1234@gmail.com",21)
-            assertFailsWith<Exception>("Invalid email length"){
+            assertFailsWith<UserProfileInvalidEmailLengthException>("Invalid email length"){
                 userProfileServices.handlePostUserProfile(profile,4,7)
             }
         }

@@ -4,7 +4,8 @@ import com.example.database.table.Product
 import com.example.database.table.Products
 import com.example.database.table.User
 import com.example.database.table.Users
-import com.example.plugins.ProductNotFoundException
+import com.example.exceptions.ProductNameInvalidLengthException
+import com.example.exceptions.ProductNotFoundException
 import com.example.repository.ProductRepositoryImpl
 import com.example.repository.UsersRepositoryImpl
 import com.example.utils.H2Database
@@ -127,7 +128,7 @@ class ProductServiceTest {
     fun testHandlePostProductInvalidName(){
         runBlocking {
             val product=Product(1,1,"ice cream",120)
-            assertFailsWith<Exception>("Invalid length"){
+            assertFailsWith<ProductNameInvalidLengthException>("Invalid product name length"){
                 productServices.handlePostProduct(product,4,7)
             }
         }

@@ -2,7 +2,8 @@ package com.example.services
 
 import com.example.database.table.Student
 import com.example.database.table.Students
-import com.example.plugins.StudentNotFoundException
+import com.example.exceptions.StudentNameInvalidLengthException
+import com.example.exceptions.StudentNotFoundException
 import com.example.repository.StudentRepositoryImpl
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
@@ -100,7 +101,7 @@ class StudentServicesTest {
     fun testHandlePostStudentInvalidLength(){
         runBlocking {
             val student=Student(1,"Shaik Jasmin")
-            assertFailsWith<Exception>("Invalid name length"){
+            assertFailsWith<StudentNameInvalidLengthException>("Invalid student name length"){
                 studentServices.handlePostStudent(student,4,7)
             }
         }
