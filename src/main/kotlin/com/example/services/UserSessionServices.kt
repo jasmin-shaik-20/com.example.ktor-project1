@@ -1,7 +1,7 @@
 package com.example.services
 
-import com.example.database.table.RedisUtils
 import com.example.database.table.UserSession
+import com.example.redis.RedisUtils
 import com.example.routes.LoginResult
 
 class UserSessionServices {

@@ -4,8 +4,8 @@ import com.example.config.SessionsConfig.sessionNameMaxLength
 import com.example.config.SessionsConfig.sessionNameMinLength
 import com.example.config.SessionsConfig.sessionPasswordMaxLength
 import com.example.config.SessionsConfig.sessionPasswordMinLength
-import com.example.database.table.RedisUtils
 import com.example.database.table.UserSession
+import com.example.redis.RedisUtils
 import com.example.services.UserSessionServices
 import com.example.utils.appConstants.ApiEndPoints
 import com.example.utils.appConstants.GlobalConstants.EXPIRE_TIME
