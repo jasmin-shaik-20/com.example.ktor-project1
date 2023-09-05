@@ -4,9 +4,14 @@ import com.example.repository.ProductRepositoryImpl
 import com.example.entities.ProductEntity
 import com.example.exceptions.ProductNameInvalidLengthException
 import com.example.exceptions.ProductNotFoundException
+import com.example.repository.ProfileRepositoryImpl
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 
-class ProductServices(private val productRepositoryImpl : ProductRepositoryImpl) {
+class ProductServices:KoinComponent {
+
+    private val productRepositoryImpl by inject<ProductRepositoryImpl>()
 
     fun handleGetProducts(): List<ProductEntity> {
         return productRepositoryImpl.getAllProducts()

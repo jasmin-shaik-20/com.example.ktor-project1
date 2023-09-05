@@ -4,9 +4,13 @@ import com.example.repository.ProfileRepositoryImpl
 import com.example.entities.UserProfileEntity
 import com.example.exceptions.UserProfileInvalidEmailLengthException
 import com.example.exceptions.UserProfileNotFoundException
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.UUID
 
-class UserProfileServices(private val profileRepositoryImpl: ProfileRepositoryImpl) {
+class UserProfileServices:KoinComponent {
+
+    private val profileRepositoryImpl by inject<ProfileRepositoryImpl>()
 
     fun handleGetUserProfiles(): List<UserProfileEntity> {
        return profileRepositoryImpl.getAllUserProfiles()

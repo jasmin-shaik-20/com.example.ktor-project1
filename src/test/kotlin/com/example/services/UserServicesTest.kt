@@ -3,6 +3,7 @@ import com.example.database.table.Users
 import com.example.entities.UserEntity
 import com.example.exceptions.UserInvalidNameLengthException
 import com.example.exceptions.UserNotFoundException
+import com.example.services.UserServices
 import com.example.utils.H2Database
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.runBlocking
@@ -18,7 +19,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class UserServicesTest( private val userServices :UserServices) {
+class UserServicesTest( private val userServices : UserServices) {
 
     private lateinit var database: Database
 

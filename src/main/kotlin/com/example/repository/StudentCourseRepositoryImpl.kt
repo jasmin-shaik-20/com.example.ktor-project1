@@ -1,6 +1,6 @@
 package com.example.repository
 
-import com.example.dao.StudentCourseRepositoryDao
+import com.example.dao.StudentCourseDao
 import com.example.database.table.Courses
 import com.example.database.table.StudentCourses
 import com.example.database.table.Students
@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
-class StudentCourseRepositoryImpl : StudentCourseRepositoryDao {
+class StudentCourseRepositoryImpl : StudentCourseDao {
 
     override suspend fun getCoursesByStudentId(studentId: UUID): List<CourseEntity> {
         return transaction {

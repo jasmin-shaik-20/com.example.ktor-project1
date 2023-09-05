@@ -3,10 +3,15 @@ package com.example.services
 import com.example.entities.StudentEntity
 import com.example.exceptions.StudentNameInvalidLengthException
 import com.example.exceptions.StudentNotFoundException
+import com.example.repository.ProfileRepositoryImpl
 import com.example.repository.StudentRepositoryImpl
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 
-class StudentServices( private val studentRepositoryImpl : StudentRepositoryImpl) {
+class StudentServices:KoinComponent {
+
+    private val studentRepositoryImpl by inject<StudentRepositoryImpl>()
 
     fun handleGetStudents(): List<StudentEntity> {
         return studentRepositoryImpl.getAllStudents()

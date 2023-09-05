@@ -2,13 +2,18 @@ package com.example.services
 
 import com.example.entities.PersonEntity
 import com.example.repository.PersonRepositoryImpl
+import com.example.repository.ProductRepositoryImpl
 import com.example.utils.appConstants.GlobalConstants.TIME
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import redis.clients.jedis.Jedis
 import java.util.*
 
-class PersonServices(private val personRepositoryImpl:PersonRepositoryImpl) {
+class PersonServices:KoinComponent {
 
-    suspend fun handlePostPersonDetails(post: PersonEntity): Any? {
+    private val personRepositoryImpl by inject<PersonRepositoryImpl>()
+
+    suspend fun handlePostPersonDetails(post: PersonEntity): Any {
         return personRepositoryImpl.createPerson(post.name)
     }
 

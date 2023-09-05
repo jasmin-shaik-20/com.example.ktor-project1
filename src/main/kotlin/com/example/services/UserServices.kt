@@ -1,10 +1,16 @@
+package com.example.services
+
 import com.example.repository.UsersRepositoryImpl
 import com.example.entities.UserEntity
 import com.example.exceptions.UserInvalidNameLengthException
 import com.example.exceptions.UserNotFoundException
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 
-class UserServices(private val usersRepository: UsersRepositoryImpl) {
+class UserServices : KoinComponent {
+
+    private val usersRepository by inject<UsersRepositoryImpl>()
 
     fun handleGetUsers(): List<UserEntity> {
         return usersRepository.getAllUsers()

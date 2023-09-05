@@ -55,6 +55,7 @@ dependencies {
 
     //koin
     implementation ("io.insert-koin:koin-ktor:3.4.1")
+    implementation("org.koin:koin-experimental-builder:3.1.2")
 
 
     //client

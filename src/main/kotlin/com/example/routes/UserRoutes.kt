@@ -1,5 +1,5 @@
 package com.example.routes
-import UserServices
+import com.example.services.UserServices
 import com.example.config.UserConfig.nameMaxLength
 import com.example.config.UserConfig.nameMinLength
 import com.example.entities.UserEntity

@@ -3,11 +3,14 @@ package com.example.services
 import com.example.entities.CourseEntity
 import com.example.entities.StudentEntity
 import com.example.repository.StudentCourseRepositoryImpl
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 import kotlin.NoSuchElementException
 
-class StudentCourseServices {
-    private val studentCourseRepositoryImpl=StudentCourseRepositoryImpl()
+class StudentCourseServices : KoinComponent {
+
+    private val studentCourseRepositoryImpl by inject<StudentCourseRepositoryImpl>()
     suspend fun handleGetCoursesByStudentId(studentId: UUID): List<CourseEntity> {
         val courses = studentCourseRepositoryImpl.getCoursesByStudentId(studentId)
         if (courses.isNotEmpty()) {

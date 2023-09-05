@@ -4,9 +4,14 @@ import CourseRepositoryImpl
 import com.example.entities.CourseEntity
 import com.example.exceptions.CourseNameInvalidLengthException
 import com.example.exceptions.CourseNotFoundException
+import com.example.repository.ProfileRepositoryImpl
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 
-class CourseServices(private val courseRepositoryImpl : CourseRepositoryImpl) {
+class CourseServices : KoinComponent {
+
+    private val courseRepositoryImpl by inject<CourseRepositoryImpl>()
 
     suspend fun handleGetCourses(): List<CourseEntity> {
         return courseRepositoryImpl.getAllCourses()

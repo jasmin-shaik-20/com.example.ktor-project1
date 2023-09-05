@@ -9,7 +9,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-class UsersRepositoryImpl(id: EntityID<UUID>) : UUIDEntity(id), UserDao {
+class UsersRepositoryImpl( id: EntityID<UUID>) : UUIDEntity(id), UserDao {
     companion object : UUIDEntityClass<UsersRepositoryImpl>(Users)
 
     override fun createUser(name: String): UserEntity {
