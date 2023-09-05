@@ -1,33 +1,29 @@
 package com.example.services
 
-import com.example.database.table.Person
+import com.example.entities.PersonEntity
 import com.example.repository.PersonRepositoryImpl
 import com.example.utils.appConstants.GlobalConstants.TIME
-import io.ktor.http.*
 import redis.clients.jedis.Jedis
+import java.util.*
 
-class PersonServices {
+class PersonServices(private val personRepositoryImpl:PersonRepositoryImpl) {
 
-    private val personRepositoryImpl=PersonRepositoryImpl()
-    suspend fun handlePostPersonDetails(post: Person): Any? {
-        return personRepositoryImpl.createPersonData(post.id, post.name)
+    suspend fun handlePostPersonDetails(post: PersonEntity): Any? {
+        return personRepositoryImpl.createPerson(post.name)
     }
 
     suspend fun handleGetDataFromCacheOrSource(
         personRepositoryImpl: PersonRepositoryImpl,
         jedis: Jedis,
-        id: Int?
+        id: UUID
     ): Any {
         val cachedData = jedis.get("my_cached_data")
-        if (cachedData != null) {
-            return "Cached data: $cachedData"
+        return if (cachedData != null) {
+            "Cached data: $cachedData"
         } else {
-            if (id == null) {
-                return HttpStatusCode.BadRequest to "Invalid 'id' parameter"
-            }
-            val dataFromSource = personRepositoryImpl.fetchData(id)
+            val dataFromSource = personRepositoryImpl.getPersonById(id)
             jedis.setex("my_cached_data", TIME, dataFromSource)
-            return "Data from source: $dataFromSource"
+            "Data from source: $dataFromSource"
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.example.routes
 
-import com.example.database.table.Person
+import com.example.entities.PersonEntity
 import com.example.repository.PersonRepositoryImpl
 import com.example.services.PersonServices
 import com.example.utils.appConstants.ApiEndPoints
@@ -12,16 +12,17 @@ import io.ktor.server.routing.*
 import io.ktor.util.reflect.*
 import redis.clients.jedis.Jedis
 import org.koin.ktor.ext.inject
+import java.util.*
 
 fun Application.configurePersonRoutes() {
     val personRepositoryImpl: PersonRepositoryImpl by inject()
-    val personServices = PersonServices()
+    val personServices : PersonServices by inject()
     val jedis: Jedis by inject()
 
 routing {
     route(ApiEndPoints.PERSON) {
         post {
-            val post = call.receive<Person>()
+            val post = call.receive<PersonEntity>()
             val person = personServices.handlePostPersonDetails(post)
             if (person != null) {
                 call.respond(HttpStatusCode.OK, person)
@@ -31,7 +32,8 @@ routing {
         }
 
         get("/data-from-cache-or-source") {
-            val id = call.request.queryParameters["id"]?.toIntOrNull()
+            val id = runCatching { UUID.fromString(call.parameters["id"] ?: "") }
+                .getOrNull()?:return@get call.respond("Missing id")
             val result = personServices.handleGetDataFromCacheOrSource(personRepositoryImpl, jedis, id)
             if (result is Pair<*, *>) {
                 call.respond(result.first, result.second as TypeInfo)
