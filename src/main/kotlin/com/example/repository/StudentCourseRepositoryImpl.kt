@@ -1,31 +1,32 @@
 package com.example.repository
 
 import com.example.dao.StudentCourseRepositoryDao
-import com.example.database.table.*
-import com.example.plugins.dbQuery
-import com.example.utils.helperFunctions.rowToCourse
-import com.example.utils.helperFunctions.rowToStudent
+import com.example.database.table.Courses
+import com.example.database.table.StudentCourses
+import com.example.database.table.Students
+import com.example.entities.CourseEntity
+import com.example.entities.StudentEntity
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.UUID
 
 class StudentCourseRepositoryImpl : StudentCourseRepositoryDao {
-    override suspend fun getCoursesStudentId(id: Int): List<Course> = dbQuery{
-        return@dbQuery transaction {
-            (Courses innerJoin StudentCourses).
-            select{ StudentCourses.studentId eq id}.
-            map(::rowToCourse)
-        }
-    }
-    override suspend fun getStudentsCourseId(id: Int): List<Student> = dbQuery {
-        return@dbQuery transaction {
-            (Students innerJoin StudentCourses).select {
-                StudentCourses.courseId eq id
-            }.map(::rowToStudent)
+
+    override suspend fun getCoursesByStudentId(studentId: UUID): List<CourseEntity> {
+        return transaction {
+            (Courses innerJoin StudentCourses)
+                .slice(Courses.columns)
+                .select { StudentCourses.studentId eq studentId }
+                .map { CourseEntity.wrapRow(it) }
         }
     }
 
+    override suspend fun getStudentsByCourseId(courseId: UUID): List<StudentEntity> {
+        return transaction {
+            (Students innerJoin StudentCourses)
+                .slice(Students.columns)
+                .select { StudentCourses.courseId eq courseId }
+                .map { StudentEntity.wrapRow(it) }
+        }
+    }
 }
-
-
-
-

@@ -1,46 +1,39 @@
 package com.example.services
 
-import com.example.database.table.UserProfile
-import com.example.exceptions.UserProfileCreationFailedException
+import com.example.repository.ProfileRepositoryImpl
+import com.example.entities.UserProfileEntity
 import com.example.exceptions.UserProfileInvalidEmailLengthException
 import com.example.exceptions.UserProfileNotFoundException
-import com.example.repository.ProfileRepositoryImpl
+import java.util.UUID
 
-class UserProfileServices {
+class UserProfileServices(private val profileRepositoryImpl: ProfileRepositoryImpl) {
 
-    private val profileRepositoryImpl = ProfileRepositoryImpl()
-
-    suspend fun handleGetUserProfiles(): List<UserProfile> {
-        val profiles = profileRepositoryImpl.getAllUserProfile()
-        return if (profiles.isEmpty()) {
-            emptyList()
-        } else {
-            profiles
-        }
+    fun handleGetUserProfiles(): List<UserProfileEntity> {
+       return profileRepositoryImpl.getAllUserProfiles()
     }
 
-    suspend fun handlePostUserProfile(
-        userDetails: UserProfile,
+    fun handlePostUserProfile(
+        userDetails: UserProfileEntity,
         emailMinLength: Int?,
         emailMaxLength: Int?
-    ): UserProfile {
+    ): UserProfileEntity {
         if (userDetails.email.length in emailMinLength!!..emailMaxLength!!) {
             return profileRepositoryImpl.createUserProfile(
-                userDetails.userId,
+                userDetails.userId.id.value,
                 userDetails.email,
                 userDetails.age
-            ) ?: throw UserProfileCreationFailedException()
+            )
         } else {
             throw UserProfileInvalidEmailLengthException()
         }
     }
 
-    suspend fun handleGetUserProfileById(id: Int?): UserProfile {
-        return profileRepositoryImpl.getUserProfile(id!!)
+    fun handleGetUserProfileById(id: UUID): UserProfileEntity {
+        return profileRepositoryImpl.getUserProfileById(id)
             ?: throw UserProfileNotFoundException()
     }
 
-    suspend fun handleDeleteUserProfile(id: Int): Boolean {
+    fun handleDeleteUserProfile(id: UUID): Boolean {
         val deleted = profileRepositoryImpl.deleteUserProfile(id)
         if (!deleted) {
             throw UserProfileNotFoundException()
@@ -48,8 +41,8 @@ class UserProfileServices {
         return true
     }
 
-    suspend fun handlePutUserProfile(id: Int, updatedProfile: UserProfile): Boolean {
-        val updated = profileRepositoryImpl.editUserProfile(id, updatedProfile.email, updatedProfile.age)
+    fun handlePutUserProfile(id:UUID, updatedProfile: UserProfileEntity): Boolean {
+        val updated = profileRepositoryImpl.updateUserProfile(id, updatedProfile.email, updatedProfile.age)
         if (!updated) {
             throw UserProfileNotFoundException()
         }

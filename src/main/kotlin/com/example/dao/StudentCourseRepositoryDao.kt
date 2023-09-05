@@ -1,11 +1,10 @@
 package com.example.dao
 
-import com.example.database.table.Course
-import com.example.database.table.Student
+import com.example.entities.CourseEntity
+import com.example.entities.StudentEntity
+import java.util.*
 
 interface StudentCourseRepositoryDao {
-
-    suspend fun getCoursesStudentId(id: Int): List<Course>
-
-    suspend fun getStudentsCourseId(id: Int): List<Student>
+    suspend fun getCoursesByStudentId(studentId: UUID): List<CourseEntity>
+    suspend fun getStudentsByCourseId(courseId: UUID): List<StudentEntity>
 }

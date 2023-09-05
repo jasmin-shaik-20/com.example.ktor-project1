@@ -1,16 +1,12 @@
 package com.example.dao
 
-import com.example.database.table.Student
+import com.example.entities.StudentEntity
+import java.util.UUID
 
 interface StudentDao {
-
-    suspend fun insertStudent(id: Int, name: String): Student?
-
-    suspend fun getAllStudents():List<Student>
-
-    suspend fun deleteStudent(id: Int): Boolean
-
-    suspend fun editStudent(id: Int, newName: String): Boolean
-
-    suspend fun getStudentById(id: Int): Student?
+    suspend fun createStudent(name: String): StudentEntity
+    fun getStudentById(studentId: UUID): StudentEntity?
+    fun getAllStudents(): List<StudentEntity>
+    fun updateStudent(studentId: UUID, name: String): Boolean
+    fun deleteStudent(studentId: UUID): Boolean
 }

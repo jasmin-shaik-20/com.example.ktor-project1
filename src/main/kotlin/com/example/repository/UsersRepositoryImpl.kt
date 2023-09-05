@@ -1,48 +1,59 @@
 package com.example.repository
 
-import com.example.dao.UserDao
-import com.example.database.table.User
+import UserDao
 import com.example.database.table.Users
-import com.example.plugins.dbQuery
-import com.example.utils.helperFunctions.resultRowToUser
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import com.example.entities.UserEntity
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
-class UsersRepositoryImpl : UserDao {
-    override suspend fun createUser(id:Int,name: String): User? = dbQuery {
+class UsersRepositoryImpl(id: EntityID<UUID>) : UUIDEntity(id), UserDao {
+    companion object : UUIDEntityClass<UsersRepositoryImpl>(Users)
 
-        val insertStatement = Users.insert {
-            it[Users.name] = name
+    override fun createUser(name: String): UserEntity {
+        return transaction {
+            val newUser = UserEntity.new {
+                this.name = name
+            }
+            newUser
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToUser)
     }
 
-    override suspend fun getAllUsers(): List<User> = dbQuery {
-        Users.selectAll().map(::resultRowToUser)
-    }
-
-    override suspend fun selectUser(id: Int): User? = dbQuery {
-        Users
-            .select(Users.id eq id)
-            .map(::resultRowToUser)
-            .firstOrNull()
-    }
-
-    override suspend fun deleteUser(id: Int):Boolean = dbQuery{
-        val delUser = Users.deleteWhere { Users.id eq id }
-        delUser>0
-    }
-
-    override suspend fun editUser(id: Int, newName:String): Boolean = dbQuery {
-        val editUser=Users.update ({ Users.id eq id }){
-            it[name]=newName
+    override fun getUserById(id: UUID): UserEntity? {
+        return transaction {
+            UserEntity.findById(id)
         }
-        editUser>0
     }
 
+    override fun getAllUsers(): List<UserEntity> {
+        return transaction {
+            UserEntity.all().toList()
+        }
+    }
 
+    override fun updateUser(id: UUID, name: String): Boolean {
+        return transaction {
+            val user = UserEntity.findById(id)
+            if (user != null) {
+                user.name = name
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    override  fun deleteUser(id: UUID): Boolean {
+        return transaction {
+            val user = UserEntity.findById(id)
+            if (user != null) {
+                user.delete()
+                true
+            } else {
+                false
+            }
+        }
+    }
 }

@@ -1,55 +1,44 @@
-package com.example.services
-
-import com.example.database.table.User
-import com.example.exceptions.UserCreationFailedException
+import com.example.repository.UsersRepositoryImpl
+import com.example.entities.UserEntity
 import com.example.exceptions.UserInvalidNameLengthException
 import com.example.exceptions.UserNotFoundException
-import com.example.repository.UsersRepositoryImpl
+import java.util.*
 
-class UserServices {
+class UserServices(private val usersRepository: UsersRepositoryImpl) {
 
-    private var usersRepository= UsersRepositoryImpl()
-    suspend fun handleGetUsers():List<User> {
-        val getUsers = usersRepository.getAllUsers()
-        return if (getUsers.isEmpty()) {
-            emptyList()
-        } else {
-            getUsers
-        }
+    fun handleGetUsers(): List<UserEntity> {
+        return usersRepository.getAllUsers()
     }
 
-    suspend fun handlePostUser(userDetails: User,
+    fun handlePostUser(userDetails: UserEntity,
                                nameMinLength: Int?,
                                nameMaxLength: Int?
-    ):User {
+    ): UserEntity {
         if (userDetails.name.length in nameMinLength!!..nameMaxLength!!) {
-            return usersRepository.createUser(
-                userDetails.id,
-                userDetails.name
-            ) ?: throw UserCreationFailedException()
+            return usersRepository.createUser(userDetails.name)
         } else {
             throw UserInvalidNameLengthException()
         }
     }
 
-    suspend fun handleGetUserById(id: Int?): User {
-        return usersRepository.selectUser(id!!) ?: throw UserNotFoundException()
+    fun handleGetUserById(id: UUID): UserEntity {
+        return usersRepository.getUserById(id) ?: throw UserNotFoundException()
     }
 
-    suspend fun handleDeleteUser(id: Int):Boolean{
-        val delUser= usersRepository.deleteUser(id)
-        return if(delUser)
-             true
-        else {
+    fun handleDeleteUser(id: UUID): Boolean {
+        val delUser = usersRepository.deleteUser(id)
+        return if (delUser) {
+            true
+        } else {
             throw UserNotFoundException()
         }
     }
 
-    suspend fun handleUpdateUser(id: Int, userDetails: User): Boolean {
-            val isUpdated = usersRepository.editUser(id,userDetails.name)
-        return if(isUpdated){
+    fun handleUpdateUser(id: UUID, userDetails: UserEntity): Boolean {
+        val isUpdated = usersRepository.updateUser(id, userDetails.name)
+        return if (isUpdated) {
             true
-        }else {
+        } else {
             throw UserNotFoundException()
         }
     }

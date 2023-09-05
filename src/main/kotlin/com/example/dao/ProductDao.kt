@@ -1,18 +1,13 @@
 package com.example.dao
 
-import com.example.database.table.Product
+import com.example.entities.ProductEntity
+import java.util.UUID
 
 interface ProductDao {
-
-    suspend fun insertProduct(productId: Int, userId: Int, name: String, price: Int): Product?
-
-    suspend fun getAllProducts(): List<Product>
-
-    suspend fun getProductsById(userId: Int): List<Product>
-
-    suspend fun getProduct(id: Int): Product?
-
-    suspend fun deleteProduct(productId: Int): Boolean
-
-    suspend fun editProduct(productId: Int, newName: String, newPrice: Int): Boolean
+    suspend fun createProduct(userId: UUID, name: String, price: Int): ProductEntity
+    fun getProductById(productId: UUID): ProductEntity?
+    fun getProductByUserID(userId: UUID): List<ProductEntity>
+    fun getAllProducts(): List<ProductEntity>
+    fun updateProduct(productId: UUID, name: String, price: Int): Boolean
+    fun deleteProduct(productId: UUID): Boolean
 }

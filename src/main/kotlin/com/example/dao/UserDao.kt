@@ -1,16 +1,10 @@
-package com.example.dao
+import com.example.entities.UserEntity
+import java.util.UUID
 
-import com.example.database.table.User
-
-interface UserDao{
-
-    suspend fun createUser(id:Int,name: String): User?
-
-    suspend fun getAllUsers(): List<User>
-
-    suspend fun selectUser(id: Int): User?
-
-    suspend fun deleteUser(id: Int):Boolean
-
-    suspend fun editUser(id: Int,newName:String): Boolean
+interface UserDao {
+    fun createUser(name: String): UserEntity
+    fun getUserById(id: UUID): UserEntity?
+    fun getAllUsers(): List<UserEntity>
+    fun updateUser(id: UUID, name: String): Boolean
+    fun deleteUser(id: UUID): Boolean
 }

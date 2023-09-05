@@ -10,8 +10,8 @@ import com.example.routes.configureStudentCourseRoutes
 import com.example.routes.configureUserSession
 import configureCustomerRoutes
 import configureLoginRoutes
-import configureStudentRoutes
-import configureUserRoutes
+import com.example.routes.configureStudentRoutes
+import com.example.routes.configureUserRoutes
 import io.ktor.server.application.Application
 
 fun Application.configureRouting() {

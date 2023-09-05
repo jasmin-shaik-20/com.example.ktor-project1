@@ -1,29 +1,30 @@
 package com.example.repository
 
 import com.example.dao.PersonDao
-import com.example.database.table.Person
-import com.example.database.table.Persons
-import com.example.plugins.dbQuery
-import com.example.utils.helperFunctions.rowToPerson
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.UUID
+import com.example.database.table.Persons
+import com.example.entities.PersonEntity
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 
-class PersonRepositoryImpl : PersonDao{
+class PersonRepositoryImpl(id: EntityID<UUID>) : UUIDEntity(id), PersonDao {
+    companion object : UUIDEntityClass<PersonRepositoryImpl>(Persons)
 
-    override suspend fun createPersonData(id: Int, name: String): Person? = dbQuery {
-        val insert= Persons.insert {
-            it[Persons.name]=name
+    override suspend fun createPerson(name: String): PersonEntity {
+        return transaction {
+            val newPerson = PersonEntity.new{
+                this.name = name
+            }
+            newPerson
         }
-        insert.resultedValues?.singleOrNull()?.let(::rowToPerson)
     }
 
-    override suspend fun fetchData(id: Int):String {
-        val data= transaction {
-            Persons.select { Persons.id eq id }.singleOrNull()
-        }?.get(Persons.name) ?: "Person not found"
-        return data
+    override suspend fun getPersonById(id: UUID): String {
+        return transaction {
+            val person = PersonEntity.findById(id)
+            person?.name ?: throw NoSuchElementException("Person not found with ID: $id")
+        }
     }
 }
-
-

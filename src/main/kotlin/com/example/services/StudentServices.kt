@@ -1,56 +1,46 @@
 package com.example.services
 
-import com.example.database.table.Student
-import com.example.exceptions.StudentCreationFailedException
+import com.example.entities.StudentEntity
 import com.example.exceptions.StudentNameInvalidLengthException
 import com.example.exceptions.StudentNotFoundException
 import com.example.repository.StudentRepositoryImpl
+import java.util.*
 
-class StudentServices {
+class StudentServices( private val studentRepositoryImpl : StudentRepositoryImpl) {
 
-    private val studentRepositoryImpl = StudentRepositoryImpl()
-
-    suspend fun handleGetStudents(): List<Student> {
-        val students = studentRepositoryImpl.getAllStudents()
-        return if (students.isEmpty()) {
-            emptyList()
-        } else {
-            students
-        }
+    fun handleGetStudents(): List<StudentEntity> {
+        return studentRepositoryImpl.getAllStudents()
     }
 
     suspend fun handlePostStudent(
-        studentDetails: Student,
+        studentDetails: StudentEntity,
         studentNameMinLength: Int?,
         studentNameMaxLength: Int?
-    ): Student {
+    ): StudentEntity {
         if (studentDetails.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
-            return studentRepositoryImpl.insertStudent(studentDetails.id, studentDetails.name)
-                ?: throw StudentCreationFailedException()
+            return studentRepositoryImpl.createStudent(studentDetails.name)
         } else {
             throw StudentNameInvalidLengthException()
         }
     }
 
-    suspend fun handleGetStudentById(id: Int?): Student {
-        return studentRepositoryImpl.getStudentById(id!!) ?: throw StudentNotFoundException()
+    fun handleGetStudentById(id: UUID): StudentEntity {
+        return studentRepositoryImpl.getStudentById(id) ?: throw StudentNotFoundException()
     }
 
-    suspend fun handleDeleteStudent(id: Int): Boolean {
+    fun handleDeleteStudent(id: UUID): Boolean {
         val deleted = studentRepositoryImpl.deleteStudent(id)
-        return if (deleted) {
-            true
-        } else {
+        if(!deleted){
             throw StudentNotFoundException()
         }
+        return true
     }
 
-    suspend fun handleUpdateStudent(id: Int, studentDetails: Student): Boolean {
-        val isUpdated = studentRepositoryImpl.editStudent(id, studentDetails.name)
-        return if (isUpdated) {
-            true
-        } else {
+    fun handleUpdateStudent(id: UUID, studentDetails: StudentEntity): Boolean {
+        val isUpdated = studentRepositoryImpl.updateStudent(id, studentDetails.name)
+        if(!isUpdated){
             throw StudentNotFoundException()
         }
+        return true
     }
 }

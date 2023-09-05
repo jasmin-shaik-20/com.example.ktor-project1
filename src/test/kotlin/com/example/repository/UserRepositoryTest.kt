@@ -11,9 +11,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.After
 import org.junit.Before
 import java.sql.Connection
+import java.util.*
 import kotlin.test.Test
 
-class UserRepositoryTest {
+class UserRepositoryTest(private val usersRepository: UsersRepositoryImpl) {
 
     private lateinit var database: Database
 
@@ -38,68 +39,63 @@ class UserRepositoryTest {
     @Test
     fun testCreateUserSuccess()=
         runBlocking {
-        val usersRepository = UsersRepositoryImpl()
-            val newUser = usersRepository.createUser(1,"John Doe")
-            assertEquals(1, newUser?.id)
-            assertEquals("John Doe", newUser?.name)
+            val newUser = usersRepository.createUser("John Doe")
+            assertEquals(newUser.id.value, newUser.id)
+            assertEquals("John Doe", newUser.name)
     }
 
     @Test
     fun testGetAllUsersSuccess() = runBlocking{
-        val usersRepository = UsersRepositoryImpl()
-        usersRepository.createUser(1,"John Doe")
+        val user=usersRepository.createUser("John Doe")
         val allUsers = usersRepository.getAllUsers()
-        assertEquals(1, allUsers.size)
+        assertEquals(user.id.value, allUsers.size)
         assertEquals("John Doe", allUsers[0].name)
     }
 
     @Test
     fun testSelectUserSuccess()= runBlocking {
-        val usersRepository = UsersRepositoryImpl()
-        usersRepository.createUser(1,"John Doe")
-        val selectedUser = usersRepository.selectUser(1)
+        val user=usersRepository.createUser("John Doe")
+        val selectedUser = usersRepository.getUserById(user.id.value)
         assertEquals("John Doe", selectedUser?.name)
     }
 
     @Test
     fun testEditUserSuccess()= runBlocking{
-        val usersRepository = UsersRepositoryImpl()
-        usersRepository.createUser(1,"John Doe")
-        val editResult = usersRepository.editUser(1, "Jane Doe")
+        val user=usersRepository.createUser("John Doe")
+        val editResult = usersRepository.updateUser(user.id.value, "Jane Doe")
         assertTrue(editResult)
-        val updatedUser = usersRepository.selectUser(1)
+        val updatedUser = usersRepository.getUserById(user.id.value)
         assertEquals("Jane Doe", updatedUser?.name)
     }
 
     @Test
     fun testDeleteUserSuccess()= runBlocking{
-        val usersRepository = UsersRepositoryImpl()
-        usersRepository.createUser(1,"John Doe")
-        val deleteResult = usersRepository.deleteUser(1)
+        val user=usersRepository.createUser("John Doe")
+        val deleteResult = usersRepository.deleteUser(user.id.value)
         assertTrue(deleteResult)
-        val deletedUser = usersRepository.selectUser(1)
+        val deletedUser = usersRepository.getUserById(user.id.value)
         assertNull(deletedUser)
     }
 
     //failure
     @Test
     fun testSelectUserNotFound()= runBlocking {
-        val usersRepository = UsersRepositoryImpl()
-        val selectedUser = usersRepository.selectUser(1)
+        val userId = UUID.randomUUID()
+        val selectedUser = usersRepository.getUserById(userId)
         assertNull(selectedUser)
     }
 
     @Test
     fun testEditUserNotFound()= runBlocking {
-        val usersRepository = UsersRepositoryImpl()
-        val editResult = usersRepository.editUser(1, "Jane Doe")
+        val userId = UUID.randomUUID()
+        val editResult = usersRepository.updateUser(userId, "Jane Doe")
         assertFalse(editResult)
     }
 
     @Test
     fun testDeleteUserNotFound()= runBlocking {
-        val usersRepository = UsersRepositoryImpl()
-        val deleteResult = usersRepository.deleteUser(1)
+        val userId = UUID.randomUUID()
+        val deleteResult = usersRepository.deleteUser(userId)
         assertFalse(deleteResult)
     }
 }

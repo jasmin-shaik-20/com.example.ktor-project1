@@ -1,56 +1,46 @@
 package com.example.services
 
-import com.example.database.table.Course
-import com.example.exceptions.CourseCreationFailedException
+import CourseRepositoryImpl
+import com.example.entities.CourseEntity
 import com.example.exceptions.CourseNameInvalidLengthException
 import com.example.exceptions.CourseNotFoundException
-import com.example.repository.CourseRepositoryImpl
+import java.util.*
 
-class CourseServices {
+class CourseServices(private val courseRepositoryImpl : CourseRepositoryImpl) {
 
-    private val courseRepositoryImpl = CourseRepositoryImpl()
-
-    suspend fun handleGetCourses(): List<Course> {
-        val courses = courseRepositoryImpl.getAllCourses()
-        return if (courses.isEmpty()) {
-            emptyList()
-        } else {
-            courses
-        }
+    suspend fun handleGetCourses(): List<CourseEntity> {
+        return courseRepositoryImpl.getAllCourses()
     }
 
     suspend fun handlePostCourse(
-        courseDetails: Course,
+        courseDetails: CourseEntity,
         courseNameMinLength: Int?,
         courseNameMaxLength: Int?
-    ): Course {
+    ): CourseEntity {
         if (courseDetails.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
-            val insert = courseRepositoryImpl.insertCourse(courseDetails.studentId, courseDetails.name)
-            return insert ?: throw CourseCreationFailedException()
+            return courseRepositoryImpl.createCourse(courseDetails.studentId.id.value, courseDetails.name)
         } else {
             throw CourseNameInvalidLengthException()
         }
     }
 
-    suspend fun handleDeleteCourse(id: Int): Boolean {
+    suspend fun handleDeleteCourse(id: UUID): Boolean {
         val delCourse = courseRepositoryImpl.deleteCourse(id)
-        return if (delCourse) {
-            true
-        } else {
+        if (!delCourse) {
             throw CourseNotFoundException()
         }
+        return true
     }
 
-    suspend fun handlePutCourse(id:Int,courseDetails: Course): Boolean {
-        val editCourse = courseRepositoryImpl.editCourse(id, courseDetails.name)
-        return if (editCourse) {
-            true
-        } else {
+    suspend fun handlePutCourse(id:UUID,courseDetails: CourseEntity): Boolean {
+        val editCourse = courseRepositoryImpl.updateCourse(id, courseDetails.name)
+        if (!editCourse) {
             throw CourseNotFoundException()
         }
+        return true
     }
 
-    suspend fun handleGetCourseById(id: Int): Course {
+    suspend fun handleGetCourseById(id: UUID): CourseEntity {
         val fetchedCourse = courseRepositoryImpl.getCourseById(id)
         return fetchedCourse ?: throw CourseNotFoundException()
     }

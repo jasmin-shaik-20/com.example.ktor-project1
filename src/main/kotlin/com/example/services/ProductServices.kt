@@ -1,44 +1,35 @@
 package com.example.services
 
-import com.example.database.table.Product
-import com.example.exceptions.ProductCreationFailedException
+import com.example.repository.ProductRepositoryImpl
+import com.example.entities.ProductEntity
 import com.example.exceptions.ProductNameInvalidLengthException
 import com.example.exceptions.ProductNotFoundException
-import com.example.repository.ProductRepositoryImpl
+import java.util.*
 
-class ProductServices {
+class ProductServices(private val productRepositoryImpl : ProductRepositoryImpl) {
 
-    private val productRepositoryImpl = ProductRepositoryImpl()
-
-    suspend fun handleGetProducts(): List<Product> {
-        val getProducts = productRepositoryImpl.getAllProducts()
-        return if (getProducts.isEmpty()) {
-            emptyList()
-        } else {
-            getProducts
-        }
+    fun handleGetProducts(): List<ProductEntity> {
+        return productRepositoryImpl.getAllProducts()
     }
 
     suspend fun handlePostProduct(
-        productDetails: Product,
+        productDetails: ProductEntity,
         productNameMinLength: Int?,
         productNameMaxLength: Int?
-    ): Product {
+    ): ProductEntity {
         if (productDetails.name.length in productNameMinLength!!..productNameMaxLength!!) {
-            val postProduct = productRepositoryImpl.insertProduct(
-                productDetails.productId,
-                productDetails.userId,
+            return productRepositoryImpl.createProduct(
+                productDetails.userId.id.value,
                 productDetails.name,
                 productDetails.price
             )
-            return postProduct ?: throw ProductCreationFailedException()
         } else {
             throw ProductNameInvalidLengthException()
         }
     }
 
-    suspend fun handleGetProductsByUserId(userId: Int): List<Product> {
-        val getProduct = productRepositoryImpl.getProductsById(userId)
+    fun handleGetProductsByUserId(userId: UUID): List<ProductEntity> {
+        val getProduct = productRepositoryImpl.getProductByUserID(userId)
         if (getProduct.isEmpty()) {
             throw ProductNotFoundException()
         } else {
@@ -46,28 +37,26 @@ class ProductServices {
         }
     }
 
-    suspend fun handleGetProductById(id: Int): Product {
-        return productRepositoryImpl.getProduct(id) ?: throw ProductNotFoundException()
+    fun handleGetProductById(id: UUID): ProductEntity {
+        return productRepositoryImpl.getProductById(id) ?: throw ProductNotFoundException()
     }
 
-    suspend fun handleDeleteProduct(id: Int): Boolean {
+    fun handleDeleteProduct(id: UUID): Boolean {
         val deleted = productRepositoryImpl.deleteProduct(id)
-        if (deleted) {
-            return true
-        } else {
+        if (!deleted) {
             throw ProductNotFoundException()
         }
+        return true
     }
 
-    suspend fun handleUpdateProduct(id:Int,productDetails: Product): Boolean {
-        val editProduct = productRepositoryImpl.editProduct(id,
+    fun handleUpdateProduct(id:UUID,productDetails: ProductEntity): Boolean {
+        val editProduct = productRepositoryImpl.updateProduct(id,
             productDetails.name,
             productDetails.price
         )
-        if (editProduct) {
-            return true
-        } else {
+        if (!editProduct) {
             throw ProductNotFoundException()
         }
+        return true
     }
 }

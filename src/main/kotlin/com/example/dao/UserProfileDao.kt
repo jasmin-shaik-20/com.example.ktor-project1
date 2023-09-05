@@ -1,18 +1,12 @@
-package com.example.dao
-
-import com.example.database.table.UserProfile
+import com.example.entities.UserProfileEntity
+import java.util.UUID
 
 interface UserProfileDao {
+    fun createUserProfile(userId: UUID, email: String, age: Int): UserProfileEntity
+    fun getUserProfileById(profileId: UUID): UserProfileEntity?
 
-    suspend fun createUserProfile(userId: Int, email: String, age: Int): UserProfile?
-
-    suspend fun getAllUserProfile(): List<UserProfile>
-
-    suspend fun getUserProfile(profileId: Int):UserProfile?
-
-    suspend fun getProfileByUserId(userId: Int):UserProfile?
-
-    suspend fun deleteUserProfile(profileId: Int): Boolean
-
-    suspend fun editUserProfile(profileId: Int, newEmail: String, newAge: Int): Boolean
+    fun getUserProfileByUserId(userId: UUID):UserProfileEntity?
+    fun getAllUserProfiles(): List<UserProfileEntity>
+    fun updateUserProfile(profileId: UUID, newEmail: String, newAge: Int): Boolean
+    fun deleteUserProfile(profileId: UUID): Boolean
 }

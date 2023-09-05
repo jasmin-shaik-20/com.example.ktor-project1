@@ -1,44 +1,58 @@
 package com.example.repository
 
 import com.example.dao.StudentDao
-import com.example.database.table.Student
 import com.example.database.table.Students
-import com.example.plugins.dbQuery
-import com.example.utils.helperFunctions.rowToStudent
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import com.example.entities.StudentEntity
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.UUID
 
-class StudentRepositoryImpl : StudentDao {
-    override suspend fun insertStudent(id: Int, name: String): Student? = dbQuery {
-        val insert = Students.insert {
-            it[Students.name] = name
+class StudentRepositoryImpl(id: EntityID<UUID>) : UUIDEntity(id), StudentDao {
+    companion object : UUIDEntityClass<StudentRepositoryImpl>(Students)
+    override suspend fun createStudent(name: String): StudentEntity {
+        return transaction {
+            val newStudent = StudentEntity.new {
+                this.name = name
+            }
+            newStudent
         }
-        insert.resultedValues?.singleOrNull()?.let(::rowToStudent)
-    }
-    override suspend fun getAllStudents():List<Student> = dbQuery {
-        Students.selectAll().map(::rowToStudent)
     }
 
-    override suspend fun deleteStudent(id: Int): Boolean = dbQuery {
-        val delStudent =Students.deleteWhere{Students.id eq id}
-        delStudent>0
-    }
-
-    override suspend fun editStudent(id: Int, newName: String): Boolean = dbQuery {
-        val editStudent=Students.update({Students.id eq id}){
-            it[name]=newName
+    override fun getStudentById(studentId: UUID): StudentEntity? {
+        return transaction {
+            StudentEntity.findById(studentId)
         }
-        editStudent>0
     }
 
-    override suspend fun getStudentById(id: Int): Student? = dbQuery {
-        Students.select { Students.id eq id }.map(::rowToStudent).singleOrNull()
+    override fun getAllStudents(): List<StudentEntity> {
+        return transaction {
+            StudentEntity.all().toList()
+        }
+    }
+
+    override fun updateStudent(studentId: UUID, name: String): Boolean {
+        return transaction {
+            val student = StudentEntity.findById(studentId)
+            if (student != null) {
+                student.name = name
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    override fun deleteStudent(studentId: UUID): Boolean {
+        return transaction {
+            val student = StudentEntity.findById(studentId)
+            if (student != null) {
+                student.delete()
+                true
+            } else {
+                false
+            }
+        }
     }
 }
-
-
-

@@ -1,52 +1,70 @@
 package com.example.repository
 
-
 import com.example.dao.ProductDao
-import com.example.database.table.Product
 import com.example.database.table.Products
 import com.example.database.table.Users
-import com.example.plugins.UserNotFoundException
-import com.example.plugins.dbQuery
-import com.example.utils.helperFunctions.rowToProduct
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import com.example.entities.ProductEntity
+import com.example.entities.UserEntity
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.UUID
 
-class ProductRepositoryImpl : ProductDao {
-    override suspend fun insertProduct(productId: Int, userId: Int, name: String, price: Int): Product? = dbQuery {
-        Users.select { Users.id eq userId }.singleOrNull()?:throw UserNotFoundException()
-        val insert = Products.insert {
-            it[Products.userId] = userId
-            it[Products.name] = name
-            it[Products.price] = price
+class ProductRepositoryImpl(id: EntityID<UUID>) : UUIDEntity(id), ProductDao {
+    companion object : UUIDEntityClass<ProductRepositoryImpl>(Products)
+    override suspend fun createProduct(userId: UUID, name: String, price: Int): ProductEntity {
+        return transaction {
+            val newProduct = ProductEntity.new {
+                this.userId = UserEntity[EntityID(userId, Users)]
+                this.name = name
+                this.price = price
+            }
+            newProduct
         }
-        insert.resultedValues?.singleOrNull()?.let(::rowToProduct)
     }
 
-    override suspend fun getAllProducts(): List<Product> = dbQuery{
-        Products.selectAll().map(::rowToProduct)
-    }
-
-    override suspend fun getProductsById(userId: Int): List<Product> = dbQuery {
-        Products.select { Products.userId eq userId }.map(::rowToProduct)
-    }
-    override suspend fun getProduct(id: Int): Product? = dbQuery {
-        Products.select(Products.productId eq id).map(::rowToProduct).singleOrNull()
-    }
-
-    override suspend fun deleteProduct(productId: Int): Boolean = dbQuery{
-        val delProduct= Products.deleteWhere { Products.productId eq productId  }
-        delProduct>0
-    }
-
-    override suspend fun editProduct(productId: Int, newName: String, newPrice: Int): Boolean = dbQuery{
-        val editProduct=Products.update({Products.productId eq productId}){
-            it[name]=newName
-            it[price]=newPrice
+    override fun getProductById(productId: UUID): ProductEntity? {
+        return transaction {
+            ProductEntity.findById(productId)
         }
-        editProduct>0
+    }
+
+    override fun getProductByUserID(userId: UUID): List<ProductEntity> {
+        return transaction {
+            ProductEntity.find { Products.userId eq userId }
+                .toList()
+        }
+    }
+
+    override fun getAllProducts(): List<ProductEntity> {
+        return transaction {
+            ProductEntity.all().toList()
+        }
+    }
+
+    override fun updateProduct(productId: UUID, name: String, price: Int): Boolean {
+        return transaction {
+            val product = ProductEntity.findById(productId)
+            if (product != null) {
+                product.name = name
+                product.price = price
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    override fun deleteProduct(productId: UUID): Boolean {
+        return transaction {
+            val product = ProductEntity.findById(productId)
+            if (product != null) {
+                product.delete()
+                true
+            } else {
+                false
+            }
+        }
     }
 }

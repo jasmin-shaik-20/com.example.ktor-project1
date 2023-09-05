@@ -1,13 +1,15 @@
 package com.example.services
 
-import com.example.database.table.Course
-import com.example.database.table.Student
+import com.example.entities.CourseEntity
+import com.example.entities.StudentEntity
 import com.example.repository.StudentCourseRepositoryImpl
+import java.util.*
+import kotlin.NoSuchElementException
 
 class StudentCourseServices {
     private val studentCourseRepositoryImpl=StudentCourseRepositoryImpl()
-    suspend fun handleGetCoursesByStudentId(studentId: Int): List<Course> {
-        val courses = studentCourseRepositoryImpl.getCoursesStudentId(studentId)
+    suspend fun handleGetCoursesByStudentId(studentId: UUID): List<CourseEntity> {
+        val courses = studentCourseRepositoryImpl.getCoursesByStudentId(studentId)
         if (courses.isNotEmpty()) {
             return courses
         } else {
@@ -15,13 +17,12 @@ class StudentCourseServices {
         }
     }
 
-    suspend fun handleGetStudentsByCourseId(courseId: Int): List<Student> {
-        val students = studentCourseRepositoryImpl.getStudentsCourseId(courseId)
+    suspend fun handleGetStudentsByCourseId(courseId: UUID): List<StudentEntity> {
+        val students = studentCourseRepositoryImpl.getStudentsByCourseId(courseId)
         if (students.isNotEmpty()) {
             return students
         } else {
             throw NoSuchElementException("No students found with the given course id")
         }
     }
-
 }
