@@ -12,25 +12,20 @@ fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<Throwable> { call,cause ->
             when(cause){
-                is UserNotFoundException -> call.respond("User not found")
+                is UserNotFoundException -> call.respond("com.example.model.User not found")
                 is UserInvalidNameLengthException -> call.respond("Invalid username length")
-                is UserCreationFailedException -> call.respond("User creation failed")
 
                 is UserProfileNotFoundException -> call.respond("Profile not found")
                 is UserProfileInvalidEmailLengthException -> call.respond("Invalid userProfile name length")
-                is UserProfileCreationFailedException -> call.respond("UserProfile creation failed")
 
                 is ProductNotFoundException -> call.respond("Product not found")
                 is ProductNameInvalidLengthException -> call.respond("Invalid product name length")
-                is ProductCreationFailedException -> call.respond("Product creation failed")
 
                 is StudentNotFoundException -> call.respond("Student not found")
                 is StudentNameInvalidLengthException -> call.respond("Invalid student name length")
-                is StudentCreationFailedException -> call.respond("Student creation failed")
 
                 is CourseNotFoundException -> call.respond("Course not found")
                 is CourseNameInvalidLengthException -> call.respond("Invalid course name length")
-                is CourseCreationFailedException -> call.respond("Course creation failed")
 
                 is UserSessionsInvalidLengthException -> call.respond("Invalid username and password length")
 

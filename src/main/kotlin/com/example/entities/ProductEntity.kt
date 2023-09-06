@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import java.util.UUID
 
-class ProductEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+class ProductEntity(productId: EntityID<UUID>) : UUIDEntity(productId) {
     companion object : UUIDEntityClass<ProductEntity>(Products)
     var userId by UserEntity referencedOn Products.userId
     var name by Products.name

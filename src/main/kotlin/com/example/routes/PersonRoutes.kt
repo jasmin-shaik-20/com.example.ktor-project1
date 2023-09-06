@@ -24,11 +24,7 @@ routing {
         post {
             val post = call.receive<PersonEntity>()
             val person = personServices.handlePostPersonDetails(post)
-            if (person != null) {
-                call.respond(HttpStatusCode.OK, person)
-            } else {
-                call.respond(HttpStatusCode.InternalServerError)
-            }
+            call.respond(HttpStatusCode.OK, person)
         }
 
         get("/data-from-cache-or-source") {

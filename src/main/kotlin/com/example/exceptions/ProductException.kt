@@ -4,4 +4,3 @@ class ProductNotFoundException:Exception()
 
 class ProductNameInvalidLengthException:Exception()
 
-class ProductCreationFailedException:Exception()

@@ -4,6 +4,8 @@ import com.example.repository.UsersRepositoryImpl
 import com.example.entities.UserEntity
 import com.example.exceptions.UserInvalidNameLengthException
 import com.example.exceptions.UserNotFoundException
+import com.example.model.User
+import org.jetbrains.exposed.dao.id.EntityID
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
@@ -12,14 +14,14 @@ class UserServices : KoinComponent {
 
     private val usersRepository by inject<UsersRepositoryImpl>()
 
-    fun handleGetUsers(): List<UserEntity> {
+    fun handleGetUsers(): List<User> {
         return usersRepository.getAllUsers()
     }
 
-    fun handlePostUser(userDetails: UserEntity,
+    fun handlePostUser(userDetails: User,
                                nameMinLength: Int?,
                                nameMaxLength: Int?
-    ): UserEntity {
+    ): User {
         if (userDetails.name.length in nameMinLength!!..nameMaxLength!!) {
             return usersRepository.createUser(userDetails.name)
         } else {
@@ -27,7 +29,7 @@ class UserServices : KoinComponent {
         }
     }
 
-    fun handleGetUserById(id: UUID): UserEntity {
+    fun handleGetUserById(id: UUID): User {
         return usersRepository.getUserById(id) ?: throw UserNotFoundException()
     }
 
@@ -40,7 +42,7 @@ class UserServices : KoinComponent {
         }
     }
 
-    fun handleUpdateUser(id: UUID, userDetails: UserEntity): Boolean {
+    fun handleUpdateUser(id: UUID, userDetails: User): Boolean {
         val isUpdated = usersRepository.updateUser(id, userDetails.name)
         return if (isUpdated) {
             true

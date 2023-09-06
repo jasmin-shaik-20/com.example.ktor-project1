@@ -16,12 +16,12 @@ fun configureDatabase() {
     Database.connect(url = url, driver = driver, user = user, password = password)
 
     transaction {
-        SchemaUtils.createMissingTablesAndColumns(Users, Profile)
+        SchemaUtils.createMissingTablesAndColumns(Users, UserProfiles)
         SchemaUtils.createMissingTablesAndColumns(Products)
         SchemaUtils.createMissingTablesAndColumns(Students, Courses,StudentCourses)
         SchemaUtils.createMissingTablesAndColumns(Persons)
     }
 }
 
-suspend fun <T> dbQuery(block: suspend () -> T): T =
-    newSuspendedTransaction(Dispatchers.IO) { block() }
+//suspend fun <T> dbQuery(block: suspend () -> T): T =
+//    newSuspendedTransaction(Dispatchers.IO) { block() }

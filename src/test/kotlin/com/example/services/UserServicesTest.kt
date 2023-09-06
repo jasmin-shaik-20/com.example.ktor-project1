@@ -125,7 +125,7 @@ class UserServicesTest( private val userServices : UserServices) {
     fun testHandleGetUserByIdUserNotFound() {
         runBlocking {
             val userId = UUID.randomUUID()
-            assertFailsWith<UserNotFoundException>("User not found") {
+            assertFailsWith<UserNotFoundException>("com.example.model.User not found") {
                 userServices.handleGetUserById(userId)
             }
         }
@@ -135,7 +135,7 @@ class UserServicesTest( private val userServices : UserServices) {
     fun testHandleDeleteUserNotFound() {
         runBlocking {
             val userIdToDelete = UUID.randomUUID()
-            assertFailsWith<UserNotFoundException>("User not found") {
+            assertFailsWith<UserNotFoundException>("com.example.model.User not found") {
                 userServices.handleDeleteUser(userIdToDelete)
             }
         }
@@ -148,7 +148,7 @@ class UserServicesTest( private val userServices : UserServices) {
             val userDetails = UserEntity.new {
                 name = "UpdatedName"
             }
-            assertFailsWith<UserNotFoundException>("User not found") {
+            assertFailsWith<UserNotFoundException>("com.example.model.User not found") {
                 userServices.handleUpdateUser(userIdToUpdate, userDetails)
             }
         }

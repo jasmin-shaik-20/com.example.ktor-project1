@@ -9,6 +9,7 @@ import io.ktor.server.routing.routing
 import io.ktor.server.routing.route
 import io.ktor.server.routing.get
 import org.koin.ktor.ext.inject
+import java.util.*
 
 fun Application.configureStudentCourseRoutes(){
 
@@ -19,15 +20,15 @@ fun Application.configureStudentCourseRoutes(){
             val studentCourseServices:StudentCourseServices by inject()
 
             get("/courses/{studentId}") {
-                val studentId = call.parameters["studentId"]?.toIntOrNull()
-                    ?: return@get call.respond("Invalid studentId")
+                val studentId = runCatching { UUID.fromString(call.parameters["studentId"] ?: "") }
+                    .getOrNull()?:return@get call.respond("Missing studentId")
                 val courses = studentCourseServices.handleGetCoursesByStudentId(studentId)
                 call.respond(courses)
             }
 
             get("/students/{courseId}") {
-                val courseId = call.parameters["courseId"]?.toIntOrNull()
-                    ?: return@get call.respond("Invalid courseId")
+                val courseId = runCatching { UUID.fromString(call.parameters["courseId"] ?: "") }
+                    .getOrNull()?: return@get call.respond("Missing courseId")
                 val students = studentCourseServices.handleGetStudentsByCourseId(courseId)
                 call.respond(students)
             }

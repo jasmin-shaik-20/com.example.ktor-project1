@@ -12,5 +12,4 @@ object ApiEndPoints {
     const val PERSON="/person"
     const val IMAGE="/postural"
     const val SESSION="/session"
-
 }

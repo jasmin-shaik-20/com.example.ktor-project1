@@ -39,6 +39,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-serialization:$ktor_version")
+    implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
 
 
     //redis
@@ -55,7 +56,6 @@ dependencies {
 
     //koin
     implementation ("io.insert-koin:koin-ktor:3.4.1")
-    implementation("org.koin:koin-experimental-builder:3.1.2")
 
 
     //client

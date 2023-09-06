@@ -37,7 +37,7 @@ fun Application.configureUserProfile() {
                 val id = runCatching { UUID.fromString(call.parameters["id"] ?: "") }
                     .getOrNull()?:return@get call.respond("Missing id")
                 val userProfile = userProfileServices.handleGetUserProfileById(id)
-                call.application.log.info("User profile found by ID")
+                call.application.log.info("com.example.model.User profile found by ID")
                 call.respond(userProfile)
             }
 
@@ -45,8 +45,8 @@ fun Application.configureUserProfile() {
                 val id = runCatching { UUID.fromString(call.parameters["id"] ?: "") }
                     .getOrNull()?:return@delete call.respond("Missing id")
                 userProfileServices.handleDeleteUserProfile(id)
-                call.application.log.info("User profile deleted by ID")
-                call.respond(HttpStatusCode.OK, "User profile deleted")
+                call.application.log.info("com.example.model.User profile deleted by ID")
+                call.respond(HttpStatusCode.OK, "com.example.model.User profile deleted")
             }
 
             put("/{id?}") {
@@ -54,8 +54,8 @@ fun Application.configureUserProfile() {
                     .getOrNull()?:return@put call.respond("Missing id")
                 val userProfileDetails = call.receive<UserProfileEntity>()
                 userProfileServices.handlePutUserProfile(id, userProfileDetails)
-                call.application.log.info("User profile updated by ID")
-                call.respond(HttpStatusCode.OK, "User profile updated")
+                call.application.log.info("com.example.model.User profile updated by ID")
+                call.respond(HttpStatusCode.OK, "com.example.model.User profile updated")
             }
         }
     }

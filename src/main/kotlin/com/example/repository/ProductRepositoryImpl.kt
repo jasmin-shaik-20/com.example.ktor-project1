@@ -11,7 +11,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
-class ProductRepositoryImpl(id: EntityID<UUID>) : UUIDEntity(id), ProductDao {
+class ProductRepositoryImpl(productId: EntityID<UUID>) : UUIDEntity(productId), ProductDao {
     companion object : UUIDEntityClass<ProductRepositoryImpl>(Products)
     override suspend fun createProduct(userId: UUID, name: String, price: Int): ProductEntity {
         return transaction {

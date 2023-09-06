@@ -1,43 +1,44 @@
 package com.example.repository
 
-import UserDao
+import com.example.dao.UserDao
 import com.example.database.table.Users
 import com.example.entities.UserEntity
+import com.example.model.User
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-class UsersRepositoryImpl( id: EntityID<UUID>) : UUIDEntity(id), UserDao {
-    companion object : UUIDEntityClass<UsersRepositoryImpl>(Users)
-
-    override fun createUser(name: String): UserEntity {
+class UsersRepositoryImpl:UserDao {
+    override fun createUser(name: String): User {
         return transaction {
-            val newUser = UserEntity.new {
+            val newUserEntity = UserEntity.new {
                 this.name = name
             }
-            newUser
+            User(newUserEntity.id.value,newUserEntity.name)
         }
     }
 
-    override fun getUserById(id: UUID): UserEntity? {
+
+    override fun getUserById(id: UUID): User?{
         return transaction {
-            UserEntity.findById(id)
+           val user= UserEntity.findById(id)
+            user?.let { User(it.id.value, it.name) }
         }
     }
 
-    override fun getAllUsers(): List<UserEntity> {
+    override fun getAllUsers(): List<User> {
         return transaction {
-            UserEntity.all().toList()
+            UserEntity.all().map { User(it.id.value, it.name) }
         }
     }
 
     override fun updateUser(id: UUID, name: String): Boolean {
         return transaction {
-            val user = UserEntity.findById(id)
-            if (user != null) {
-                user.name = name
+            val userEntity = UserEntity.findById(id)
+            if (userEntity != null) {
+                userEntity.name = name
                 true
             } else {
                 false
@@ -45,11 +46,11 @@ class UsersRepositoryImpl( id: EntityID<UUID>) : UUIDEntity(id), UserDao {
         }
     }
 
-    override  fun deleteUser(id: UUID): Boolean {
+    override fun deleteUser(id: UUID): Boolean {
         return transaction {
-            val user = UserEntity.findById(id)
-            if (user != null) {
-                user.delete()
+            val userEntity = UserEntity.findById(id)
+            if (userEntity != null) {
+                userEntity.delete()
                 true
             } else {
                 false

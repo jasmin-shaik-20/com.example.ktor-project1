@@ -42,20 +42,20 @@ class ProductServices:KoinComponent {
         }
     }
 
-    fun handleGetProductById(id: UUID): ProductEntity {
-        return productRepositoryImpl.getProductById(id) ?: throw ProductNotFoundException()
+    fun handleGetProductById(productId: UUID): ProductEntity {
+        return productRepositoryImpl.getProductById(productId) ?: throw ProductNotFoundException()
     }
 
-    fun handleDeleteProduct(id: UUID): Boolean {
-        val deleted = productRepositoryImpl.deleteProduct(id)
+    fun handleDeleteProduct(productId: UUID): Boolean {
+        val deleted = productRepositoryImpl.deleteProduct(productId)
         if (!deleted) {
             throw ProductNotFoundException()
         }
         return true
     }
 
-    fun handleUpdateProduct(id:UUID,productDetails: ProductEntity): Boolean {
-        val editProduct = productRepositoryImpl.updateProduct(id,
+    fun handleUpdateProduct(productId:UUID,productDetails: ProductEntity): Boolean {
+        val editProduct = productRepositoryImpl.updateProduct(productId,
             productDetails.name,
             productDetails.price
         )
