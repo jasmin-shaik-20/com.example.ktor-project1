@@ -1,12 +1,14 @@
 import com.example.entities.UserProfileEntity
+import com.example.model.UserProfile
+import com.example.model.UserProfileInput
 import java.util.UUID
 
 interface UserProfileDao {
-    fun createUserProfile(userId: UUID, email: String, age: Int): UserProfileEntity
-    fun getUserProfileById(profileId: UUID): UserProfileEntity?
+    suspend fun createUserProfile(userProfileInput: UserProfileInput): UserProfile?
+    suspend fun getUserProfileById(profileId: UUID): UserProfile?
 
-    fun getUserProfileByUserId(userId: UUID):UserProfileEntity?
-    fun getAllUserProfiles(): List<UserProfileEntity>
-    fun updateUserProfile(profileId: UUID, newEmail: String, newAge: Int): Boolean
-    fun deleteUserProfile(profileId: UUID): Boolean
+    suspend fun getUserProfileByUserId(userId: UUID):UserProfile?
+    suspend fun getAllUserProfiles(): List<UserProfile>
+    suspend fun updateUserProfile(profileId: UUID, newEmail: String, newAge: Int): Boolean
+    suspend fun deleteUserProfile(profileId: UUID): Boolean
 }

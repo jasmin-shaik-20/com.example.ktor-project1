@@ -1,11 +1,10 @@
 package com.example.services
 
 import com.example.repository.UsersRepositoryImpl
-import com.example.entities.UserEntity
 import com.example.exceptions.UserInvalidNameLengthException
 import com.example.exceptions.UserNotFoundException
 import com.example.model.User
-import org.jetbrains.exposed.dao.id.EntityID
+import com.example.model.UserName
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
@@ -14,26 +13,27 @@ class UserServices : KoinComponent {
 
     private val usersRepository by inject<UsersRepositoryImpl>()
 
-    fun handleGetUsers(): List<User> {
+    suspend fun handleGetUsers(): List<User> {
         return usersRepository.getAllUsers()
     }
 
-    fun handlePostUser(userDetails: User,
-                               nameMinLength: Int?,
-                               nameMaxLength: Int?
+    suspend fun handlePostUser(
+        userName: UserName,
+        nameMinLength: Int?,
+        nameMaxLength: Int?
     ): User {
-        if (userDetails.name.length in nameMinLength!!..nameMaxLength!!) {
-            return usersRepository.createUser(userDetails.name)
-        } else {
-            throw UserInvalidNameLengthException()
-        }
+            if (userName.name.length in nameMinLength!!..nameMaxLength!!) {
+                return usersRepository.createUser(userName)
+            } else {
+                throw UserInvalidNameLengthException()
+            }
     }
 
-    fun handleGetUserById(id: UUID): User {
+    suspend fun handleGetUserById(id: UUID): User {
         return usersRepository.getUserById(id) ?: throw UserNotFoundException()
     }
 
-    fun handleDeleteUser(id: UUID): Boolean {
+    suspend fun handleDeleteUser(id: UUID): Boolean {
         val delUser = usersRepository.deleteUser(id)
         return if (delUser) {
             true
@@ -42,7 +42,7 @@ class UserServices : KoinComponent {
         }
     }
 
-    fun handleUpdateUser(id: UUID, userDetails: User): Boolean {
+    suspend fun handleUpdateUser(id: UUID, userDetails: UserName): Boolean {
         val isUpdated = usersRepository.updateUser(id, userDetails.name)
         return if (isUpdated) {
             true

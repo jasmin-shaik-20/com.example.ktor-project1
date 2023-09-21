@@ -74,7 +74,7 @@ dependencies {
 
     //callLogging
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
-    implementation("ch.qos.logback:logback-classic:1.2.6")
+    implementation('ch.qos.logback:logback-classic:1.2.9')
 
     //requestValidation
     implementation("io.ktor:ktor-server-request-validation:$ktor_version")
@@ -84,7 +84,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
     testImplementation "io.mockk:mockk:1.13.3"
     implementation("com.h2database:h2:1.4.192")
-    testImplementation 'org.testng:testng:7.1.0'
+    testImplementation 'org.testng:testng:7.7.0'
 
 
 }
