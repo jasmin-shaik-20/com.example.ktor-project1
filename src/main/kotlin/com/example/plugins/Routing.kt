@@ -5,7 +5,6 @@ import com.example.routes.configureCourseRoutes
 
 import com.example.routes.configureProductRoutes
 import com.example.routes.configureUserProfile
-import com.example.routes.configurePersonRoutes
 import com.example.routes.configureStudentCourseRoutes
 import com.example.routes.configureUserSession
 import configureCustomerRoutes
@@ -24,7 +23,6 @@ fun Application.configureRouting() {
     configureCourseRoutes()
     configureCallLogging()
     configureImageRoutes()
-    configurePersonRoutes()
     configureLoginRoutes()
     configureStudentCourseRoutes()
     configureUserSession()

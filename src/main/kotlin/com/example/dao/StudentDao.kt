@@ -1,12 +1,13 @@
 package com.example.dao
 
-import com.example.entities.StudentEntity
+import com.example.model.Student
+import com.example.model.StudentInput
 import java.util.UUID
 
 interface StudentDao {
-    suspend fun createStudent(name: String): StudentEntity
-    fun getStudentById(studentId: UUID): StudentEntity?
-    fun getAllStudents(): List<StudentEntity>
-    fun updateStudent(studentId: UUID, name: String): Boolean
-    fun deleteStudent(studentId: UUID): Boolean
+    suspend fun createStudent(studentInput: StudentInput): Student
+    suspend fun getStudentById(studentId: UUID): Student?
+    suspend fun getAllStudents(): List<Student>
+    suspend fun updateStudent(studentId: UUID, newName: String): Boolean
+    suspend fun deleteStudent(studentId: UUID): Boolean
 }

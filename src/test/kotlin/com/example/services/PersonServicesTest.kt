@@ -1,8 +1,6 @@
 package com.example.services
 
 import com.example.database.table.Person
-import com.example.database.table.Persons
-import com.example.repository.PersonRepositoryImpl
 import com.example.utils.H2Database
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database

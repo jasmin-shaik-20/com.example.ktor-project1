@@ -1,8 +1,7 @@
 package com.example.utils.helperFunctions
 
 import com.example.database.table.*
-import com.example.model.User
-import com.example.model.UserProfile
+import com.example.model.*
 import org.jetbrains.exposed.sql.ResultRow
 
 fun resultRowToUser(row: ResultRow) =
@@ -11,17 +10,17 @@ fun resultRowToUser(row: ResultRow) =
         name = row[Users.name]
     )
 
-//fun rowToStudent(row: ResultRow) =
-//    Student(row[Students.id],
-//        row[Students.name]
-//    )
-//
-//fun rowToCourse(row: ResultRow) =
-//    Course(row[Courses.id],
-//        row[Courses.studentId],
-//        row[Courses.name]
-//    )
-//
+fun resultRowToStudent(row: ResultRow) =
+    Student(row[Students.id].toString(),
+        row[Students.name]
+    )
+
+fun resultRowToCourse(row: ResultRow) =
+    Course(row[Courses.id].toString(),
+        row[Courses.studentId].toString(),
+        row[Courses.name]
+    )
+
 fun resultRowToProfile(row: ResultRow) =
     UserProfile(
         id= row[UserProfiles.id].toString(),
@@ -29,15 +28,11 @@ fun resultRowToProfile(row: ResultRow) =
         email = row[UserProfiles.email],
         age = row[UserProfiles.age]
     )
-//
-//fun rowToProduct(row: ResultRow)=
-//    Product(row[Products.productId],
-//        row[Products.userId],
-//        row[Products.name],
-//        row[Products.price]
-//    )
-//
-//fun rowToPerson(row: ResultRow) =
-//    Person(row[Persons.id],
-//        row[Persons.name]
-//    )
+
+fun resultRowToProduct(row: ResultRow)=
+    Product(row[Products.id].toString(),
+        row[Products.userId].toString(),
+        row[Products.name],
+        row[Products.price]
+    )
+

@@ -7,6 +7,5 @@ object GlobalConstants{
     const val COOKIE_PATH = "/"
     const val SECONDS=300L
     const val TOKEN_EXPIRATION=6000L
-    const val TIME=300
     const val EXPIRE_TIME=300
 }

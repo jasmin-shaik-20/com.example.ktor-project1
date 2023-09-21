@@ -4,6 +4,8 @@ import com.example.repository.ProductRepositoryImpl
 import com.example.entities.ProductEntity
 import com.example.exceptions.ProductNameInvalidLengthException
 import com.example.exceptions.ProductNotFoundException
+import com.example.model.Product
+import com.example.model.ProductInput
 import com.example.repository.ProfileRepositoryImpl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -13,27 +15,23 @@ class ProductServices:KoinComponent {
 
     private val productRepositoryImpl by inject<ProductRepositoryImpl>()
 
-    fun handleGetProducts(): List<ProductEntity> {
+    suspend fun handleGetProducts(): List<Product> {
         return productRepositoryImpl.getAllProducts()
     }
 
     suspend fun handlePostProduct(
-        productDetails: ProductEntity,
+        productInput: ProductInput,
         productNameMinLength: Int?,
         productNameMaxLength: Int?
-    ): ProductEntity {
-        if (productDetails.name.length in productNameMinLength!!..productNameMaxLength!!) {
-            return productRepositoryImpl.createProduct(
-                productDetails.userId.id.value,
-                productDetails.name,
-                productDetails.price
-            )
+    ): Product {
+        if (productInput.name.length in productNameMinLength!!..productNameMaxLength!!) {
+            return productRepositoryImpl.createProduct(productInput)
         } else {
             throw ProductNameInvalidLengthException()
         }
     }
 
-    fun handleGetProductsByUserId(userId: UUID): List<ProductEntity> {
+    suspend fun handleGetProductsByUserId(userId: UUID): List<Product> {
         val getProduct = productRepositoryImpl.getProductByUserID(userId)
         if (getProduct.isEmpty()) {
             throw ProductNotFoundException()
@@ -42,11 +40,11 @@ class ProductServices:KoinComponent {
         }
     }
 
-    fun handleGetProductById(productId: UUID): ProductEntity {
+    suspend fun handleGetProductById(productId: UUID): Product {
         return productRepositoryImpl.getProductById(productId) ?: throw ProductNotFoundException()
     }
 
-    fun handleDeleteProduct(productId: UUID): Boolean {
+    suspend fun handleDeleteProduct(productId: UUID): Boolean {
         val deleted = productRepositoryImpl.deleteProduct(productId)
         if (!deleted) {
             throw ProductNotFoundException()
@@ -54,7 +52,7 @@ class ProductServices:KoinComponent {
         return true
     }
 
-    fun handleUpdateProduct(productId:UUID,productDetails: ProductEntity): Boolean {
+    suspend fun handleUpdateProduct(productId:UUID, productDetails: Product): Boolean {
         val editProduct = productRepositoryImpl.updateProduct(productId,
             productDetails.name,
             productDetails.price

@@ -4,6 +4,8 @@ package com.example.routes
 import com.example.config.ProductConfig.productNameMaxLength
 import com.example.config.ProductConfig.productNameMinLength
 import com.example.entities.ProductEntity
+import com.example.model.Product
+import com.example.model.ProductInput
 import com.example.services.ProductServices
 import com.example.utils.appConstants.ApiEndPoints
 import io.ktor.http.*
@@ -34,7 +36,7 @@ fun Application.configureProductRoutes() {
             }
 
             post {
-                val productDetails = call.receive<ProductEntity>()
+                val productDetails = call.receive<ProductInput>()
                 val product = productServices.handlePostProduct(
                     productDetails,
                     productNameMinLength,
@@ -71,7 +73,7 @@ fun Application.configureProductRoutes() {
             put("/{id?}") {
                 val id = runCatching { UUID.fromString(call.parameters["id"] ?: "") }
                     .getOrNull() ?: return@put call.respond("Missing id")
-                val productDetails = call.receive<ProductEntity>()
+                val productDetails = call.receive<Product>()
                 productServices.handleUpdateProduct(id,productDetails)
                 call.respond(HttpStatusCode.OK, "Product updated successfully")
                 call.application.environment.log.info("Updated product with ID: $id")

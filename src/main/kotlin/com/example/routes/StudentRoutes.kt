@@ -2,6 +2,8 @@ package com.example.routes
 import com.example.config.StudentConfig.studentNameMaxLength
 import com.example.config.StudentConfig.studentNameMinLength
 import com.example.entities.StudentEntity
+import com.example.model.Student
+import com.example.model.StudentInput
 import io.ktor.http.*
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -26,7 +28,7 @@ fun Application.configureStudentRoutes() {
             }
 
             post {
-                val studentDetails = call.receive<StudentEntity>()
+                val studentDetails = call.receive<StudentInput>()
                 val student = studentServices.handlePostStudent(
                     studentDetails, studentNameMinLength, studentNameMaxLength)
                 call.respond(HttpStatusCode.Created, student)
@@ -52,7 +54,7 @@ fun Application.configureStudentRoutes() {
             put("/{id?}") {
                 val id = runCatching { UUID.fromString(call.parameters["id"] ?: "") }
                     .getOrNull()?:return@put call.respond("Missing id")
-                val studentDetails = call.receive<StudentEntity>()
+                val studentDetails = call.receive<Student>()
                 studentServices.handleUpdateStudent(id, studentDetails)
                 call.respond(HttpStatusCode.OK, "Student updated successfully")
                 call.application.environment.log.info("Updated student with ID: $id")

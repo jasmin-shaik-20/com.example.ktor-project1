@@ -3,6 +3,8 @@ package com.example.routes
 import com.example.config.CourseConfig.courseNameMaxLength
 import com.example.config.CourseConfig.courseNameMinLength
 import com.example.entities.CourseEntity
+import com.example.model.Course
+import com.example.model.CourseInput
 import com.example.services.CourseServices
 import com.example.utils.appConstants.ApiEndPoints
 import io.ktor.http.*
@@ -32,7 +34,7 @@ fun Application.configureCourseRoutes() {
             }
 
             post {
-                val courseDetails = call.receive<CourseEntity>()
+                val courseDetails = call.receive<CourseInput>()
                 val course = courseServices.handlePostCourse(courseDetails, courseNameMinLength, courseNameMaxLength)
                 call.respond(HttpStatusCode.Created, course)
                 call.application.environment.log.info("Created a new course: $course")
@@ -57,7 +59,7 @@ fun Application.configureCourseRoutes() {
             put("/{id?}") {
                 val id = runCatching { UUID.fromString(call.parameters["id"] ?: "") }
                     .getOrNull()?:return@put call.respond("Missing id")
-                val courseDetails = call.receive<CourseEntity>()
+                val courseDetails = call.receive<Course>()
                 courseServices.handlePutCourse(id, courseDetails)
                 call.respond(HttpStatusCode.OK, "Course updated successfully")
                 call.application.environment.log.info("Updated course with ID: $id")

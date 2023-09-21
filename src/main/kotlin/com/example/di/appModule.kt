@@ -4,9 +4,9 @@ import CourseRepositoryImpl
 import com.example.dao.UserDao
 import UserProfileDao
 import com.example.dao.*
+import com.example.database.table.StudentCourses
 import com.example.repository.*
-import com.example.services.UserProfileServices
-import com.example.services.UserServices
+import com.example.services.*
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -20,7 +20,10 @@ val appModule=module{
     singleOf(::StudentRepositoryImpl){ bind<StudentDao>() }
     singleOf(::CourseRepositoryImpl){ bind<CourseDao>() }
     singleOf(::StudentCourseRepositoryImpl){ bind<StudentCourseDao>() }
-    singleOf(::PersonRepositoryImpl){ bind<PersonDao>() }
     single { UserServices() }
     single { UserProfileServices()}
+    single { ProductServices()}
+    single { StudentServices()}
+    single { CourseServices()}
+    single { StudentCourseServices()}
 }

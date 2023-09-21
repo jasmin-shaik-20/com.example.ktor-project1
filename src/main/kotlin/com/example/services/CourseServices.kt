@@ -4,6 +4,8 @@ import CourseRepositoryImpl
 import com.example.entities.CourseEntity
 import com.example.exceptions.CourseNameInvalidLengthException
 import com.example.exceptions.CourseNotFoundException
+import com.example.model.Course
+import com.example.model.CourseInput
 import com.example.repository.ProfileRepositoryImpl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -13,17 +15,17 @@ class CourseServices : KoinComponent {
 
     private val courseRepositoryImpl by inject<CourseRepositoryImpl>()
 
-    suspend fun handleGetCourses(): List<CourseEntity> {
+    suspend fun handleGetCourses(): List<Course> {
         return courseRepositoryImpl.getAllCourses()
     }
 
     suspend fun handlePostCourse(
-        courseDetails: CourseEntity,
+        courseInput: CourseInput,
         courseNameMinLength: Int?,
         courseNameMaxLength: Int?
-    ): CourseEntity {
-        if (courseDetails.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
-            return courseRepositoryImpl.createCourse(courseDetails.studentId.id.value, courseDetails.name)
+    ): Course {
+        if (courseInput.name.length in courseNameMinLength!!..courseNameMaxLength!!) {
+            return courseRepositoryImpl.createCourse(courseInput)
         } else {
             throw CourseNameInvalidLengthException()
         }
@@ -37,7 +39,7 @@ class CourseServices : KoinComponent {
         return true
     }
 
-    suspend fun handlePutCourse(id:UUID,courseDetails: CourseEntity): Boolean {
+    suspend fun handlePutCourse(id:UUID,courseDetails: Course): Boolean {
         val editCourse = courseRepositoryImpl.updateCourse(id, courseDetails.name)
         if (!editCourse) {
             throw CourseNotFoundException()
@@ -45,7 +47,7 @@ class CourseServices : KoinComponent {
         return true
     }
 
-    suspend fun handleGetCourseById(id: UUID): CourseEntity {
+    suspend fun handleGetCourseById(id: UUID): Course {
         val fetchedCourse = courseRepositoryImpl.getCourseById(id)
         return fetchedCourse ?: throw CourseNotFoundException()
     }

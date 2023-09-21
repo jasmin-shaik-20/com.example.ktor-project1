@@ -3,6 +3,8 @@ package com.example.services
 import com.example.entities.StudentEntity
 import com.example.exceptions.StudentNameInvalidLengthException
 import com.example.exceptions.StudentNotFoundException
+import com.example.model.Student
+import com.example.model.StudentInput
 import com.example.repository.ProfileRepositoryImpl
 import com.example.repository.StudentRepositoryImpl
 import org.koin.core.component.KoinComponent
@@ -13,27 +15,27 @@ class StudentServices:KoinComponent {
 
     private val studentRepositoryImpl by inject<StudentRepositoryImpl>()
 
-    fun handleGetStudents(): List<StudentEntity> {
+    suspend fun handleGetStudents(): List<Student> {
         return studentRepositoryImpl.getAllStudents()
     }
 
     suspend fun handlePostStudent(
-        studentDetails: StudentEntity,
+        studentInput: StudentInput,
         studentNameMinLength: Int?,
         studentNameMaxLength: Int?
-    ): StudentEntity {
-        if (studentDetails.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
-            return studentRepositoryImpl.createStudent(studentDetails.name)
+    ): Student {
+        if (studentInput.name.length in studentNameMinLength!!..studentNameMaxLength!!) {
+            return studentRepositoryImpl.createStudent(studentInput)
         } else {
             throw StudentNameInvalidLengthException()
         }
     }
 
-    fun handleGetStudentById(id: UUID): StudentEntity {
+    suspend fun handleGetStudentById(id: UUID): Student {
         return studentRepositoryImpl.getStudentById(id) ?: throw StudentNotFoundException()
     }
 
-    fun handleDeleteStudent(id: UUID): Boolean {
+    suspend fun handleDeleteStudent(id: UUID): Boolean {
         val deleted = studentRepositoryImpl.deleteStudent(id)
         if(!deleted){
             throw StudentNotFoundException()
@@ -41,7 +43,7 @@ class StudentServices:KoinComponent {
         return true
     }
 
-    fun handleUpdateStudent(id: UUID, studentDetails: StudentEntity): Boolean {
+    suspend fun handleUpdateStudent(id: UUID, studentDetails: Student): Boolean {
         val isUpdated = studentRepositoryImpl.updateStudent(id, studentDetails.name)
         if(!isUpdated){
             throw StudentNotFoundException()

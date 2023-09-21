@@ -19,7 +19,6 @@ fun configureDatabase() {
         SchemaUtils.createMissingTablesAndColumns(Users, UserProfiles)
         SchemaUtils.createMissingTablesAndColumns(Products)
         SchemaUtils.createMissingTablesAndColumns(Students, Courses,StudentCourses)
-        SchemaUtils.createMissingTablesAndColumns(Persons)
     }
 }
 
